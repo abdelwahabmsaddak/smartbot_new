@@ -1,112 +1,167 @@
-# backend/routes/payments.py
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
+import requests
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from backend.database import get_db, User
+from backend.database import SessionLocal, User
+from backend import config
 
-# ❗ غيّر هذا import حسب ما سميناه في auth route
-from backend.routes.auth import get_current_user  # get_current_user يرجع User
 
 router = APIRouter(
-    prefix="/api/billing",
-    tags=["billing"],
+    prefix="/payments",
+    tags=["payments"],
 )
 
-TRIAL_DAYS = 30
-PLAN_PRICE = 29.0  # دولار
-PLAN_NAME = "الخطة الشاملة"
+
+# ====== موديلات للـ API ======
+
+class PlanInfo(BaseModel):
+    name: str
+    price: float
+    currency: str
+    trial_days: int
+    description: str
 
 
-class PaymentConfirm(BaseModel):
-    provider: str = "paypal"
-    transaction_id: str
+class PaypalSubscriptionRequest(BaseModel):
+    user_id: int  # مؤقتاً يجي من الفرونت (ID المستخدم بعد تسجيل الدخول)
 
 
-@router.get("/status")
-def billing_status(
-    current_user: User = Depends(get_current_user),
-):
+class PaypalSubscriptionResponse(BaseModel):
+    approve_url: str
+
+
+# ====== معلومات الباقة (شهر مجاني + 29$) ======
+
+@router.get("/plan", response_model=PlanInfo)
+def get_plan_info():
     """
-    يرجع حالة الباقة للمستخدم الحالي:
-    - هل هو في التجربة المجانية؟
-    - هل الاشتراك المدفوع شغال؟
-    - متى التجديد؟
+    ترجع معلومات الباقة لعرضها في الواجهة:
+    - شهر أول مجاني
+    - بعده 29$ شهرياً يشمل كل المميزات
     """
-    status_text = current_user.subscription_status()
+    return PlanInfo(
+        name=config.PLAN_NAME,
+        price=config.PLAN_PRICE,
+        currency=config.PLAN_CURRENCY,
+        trial_days=config.PLAN_TRIAL_DAYS,
+        description=(
+            "شهر أول مجاني، بعده 29$ / شهر يشمل كل المميزات: "
+            "تحليل العملات، الذهب، الأسهم، التداول الآلي، التنبيهات، تتبع الحيتان، "
+            "المدونة، والدردشة."
+        ),
+    )
 
-    return {
-        "plan": PLAN_NAME,
-        "price": PLAN_PRICE,
-        "trial_ends_at": current_user.trial_ends_at,
-        "is_subscriber": current_user.is_subscriber,
-        "next_billing_at": current_user.next_billing_at,
-        "status_text": status_text,
-    }
 
+# ====== دوال مساعدة للـ PayPal ======
 
-@router.post("/start-trial")
-def start_trial(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
+def _get_paypal_access_token() -> str:
     """
-    يستعمل فقط إذا حبيت تعيد التجربة (للاختبار).
-    في الاستخدام الحقيقي، التجربة تتعمل تلقائيًا وقت التسجيل
-    لأننا حطينا default في model.
+    تأخذ access token من PayPal باستخدام client_id / client_secret
     """
-    now = datetime.now(timezone.utc)
-    current_user.trial_ends_at = now + timedelta(days=TRIAL_DAYS)
-    current_user.is_subscriber = False
-    current_user.next_billing_at = None
-
-    db.add(current_user)
-    db.commit()
-    db.refresh(current_user)
-
-    return {
-        "message": "تم بدء التجربة المجانية لشهر كامل",
-        "trial_ends_at": current_user.trial_ends_at,
-    }
-
-
-@router.post("/confirm-payment")
-def confirm_payment(
-    data: PaymentConfirm,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    """
-    هذه الراوت تُستدعى بعد ما يتم الدفع بنجاح بواسطة بايبال.
-    من جهة الفرونت أو Webhook:
-    - تتحقق من الدفع عند بايبال
-    - ثم تنادي هذا الـ endpoint وتبعث transaction_id
-
-    هنا نحن فقط نعتبر أن الدفع ناجح، ونحدّث الاشتراك.
-    """
-
-    if data.provider.lower() != "paypal":
+    if not config.PAYPAL_CLIENT_ID or not config.PAYPAL_CLIENT_SECRET:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="مزود دفع غير مدعوم حالياً (ندعم PayPal فقط).",
+            status_code=500,
+            detail="إعدادات PayPal غير مكتملة (CLIENT_ID / CLIENT_SECRET غير موجودة).",
         )
 
-    now = datetime.now(timezone.utc)
+    resp = requests.post(
+        f"{config.PAYPAL_BASE_URL}/v1/oauth2/token",
+        data={"grant_type": "client_credentials"},
+        auth=(config.PAYPAL_CLIENT_ID, config.PAYPAL_CLIENT_SECRET),
+    )
 
-    # لو كان لأول مرة يدفع بعد التجربة
-    current_user.is_subscriber = True
-    current_user.next_billing_at = now + timedelta(days=30)
+    if resp.status_code != 200:
+        print("PayPal token error:", resp.text)
+        raise HTTPException(status_code=500, detail="فشل الحصول على توكن من PayPal")
 
-    db.add(current_user)
-    db.commit()
-    db.refresh(current_user)
+    data = resp.json()
+    return data["access_token"]
 
-    return {
-        "message": "تم تفعيل الاشتراك الشهري بنجاح",
-        "plan": PLAN_NAME,
-        "price": PLAN_PRICE,
-        "next_billing_at": current_user.next_billing_at,
-        "transaction_id": data.transaction_id,
-    }
+
+# ====== إنشاء اشتراك PayPal شهري ======
+
+@router.post(
+    "/paypal/create-subscription",
+    response_model=PaypalSubscriptionResponse,
+)
+def create_paypal_subscription(body: PaypalSubscriptionRequest):
+    """
+    تنشئ اشتراك شهري عبر PayPal لخطة واحدة:
+    - شهر مجاني من داخل الموقع (trial_end)
+    - بعد الموافقة في PayPal يبدأ خصم 29$ شهرياً حسب الخطة في PayPal.
+    """
+    if not config.PAYPAL_PLAN_ID:
+        raise HTTPException(
+            status_code=500,
+            detail="PAYPAL_PLAN_ID غير مضبوط في الإعدادات.",
+        )
+
+    db = SessionLocal()
+
+    try:
+        # تأكد أن المستخدم موجود
+        user = db.query(User).filter(User.id == body.user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="المستخدم غير موجود")
+
+        access_token = _get_paypal_access_token()
+
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "plan_id": config.PAYPAL_PLAN_ID,
+            "subscriber": {
+                "email_address": user.email,
+            },
+            "application_context": {
+                "brand_name": "SmartBot",
+                "locale": "ar-EG",
+                "shipping_preference": "NO_SHIPPING",
+                "user_action": "SUBSCRIBE_NOW",
+                "return_url": "https://smartbot-ai-1.onrender.com/success",
+                "cancel_url": "https://smartbot-ai-1.onrender.com/cancel",
+            },
+        }
+
+        resp = requests.post(
+            f"{config.PAYPAL_BASE_URL}/v1/billing/subscriptions",
+            json=payload,
+            headers=headers,
+        )
+
+        if resp.status_code not in (200, 201):
+            print("PayPal subscription error:", resp.text)
+            raise HTTPException(
+                status_code=500,
+                detail="فشل إنشاء الاشتراك في PayPal",
+            )
+
+        sub_data = resp.json()
+
+        # رابط الموافقة (approve_url)
+        approve_url = None
+        for link in sub_data.get("links", []):
+            if link.get("rel") == "approve":
+                approve_url = link.get("href")
+                break
+
+        if not approve_url:
+            raise HTTPException(
+                status_code=500,
+                detail="لم يتم العثور على رابط الموافقة من PayPal",
+            )
+
+        # حفظ معلومات الاشتراك في قاعدة البيانات
+        user.paypal_subscription_id = sub_data["id"]
+        user.subscription_status = "pending"
+        db.commit()
+
+        return PaypalSubscriptionResponse(approve_url=approve_url)
+
+    finally:
+        db.close()

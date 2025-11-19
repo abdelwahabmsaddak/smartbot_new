@@ -1,17 +1,23 @@
-# backend/database.py
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
-from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy import create_engine
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+    DateTime,
+    Boolean,
+)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = "sqlite:///./smartbot.db"
 
 engine = create_engine(
     DATABASE_URL, connect_args={"check_same_thread": False}
 )
-
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 Base = declarative_base()
 
 
@@ -22,48 +28,14 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
 
-    created_at = Column(
-        DateTime, default=lambda: datetime.now(timezone.utc)
-    )
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-    # 🟡 الباقة الوحيدة: شهر مجاني ثم 29$
-    # تاريخ نهاية التجربة المجانية
-    trial_ends_at = Column(
-        DateTime,
-        default=lambda: datetime.now(timezone.utc) + timedelta(days=30),
-    )
+    # الاشتراك
+    trial_end = Column(DateTime, nullable=False)          # نهاية الشهر المجاني
+    subscription_status = Column(String, default="trial") # trial, active, canceled, expired
+    paypal_subscription_id = Column(String, nullable=True)
 
-    # هل عنده اشتراك مدفوع نشط؟
-    is_subscriber = Column(Boolean, default=False)
-
-    # متى سيتم تجديد الاشتراك الشهري القادم؟
-    next_billing_at = Column(DateTime, nullable=True)
-
-    def subscription_status(self):
-        """يرجع حالة الاشتراك كنص بسيط"""
-        now = datetime.now(timezone.utc)
-
-        # إذا عنده اشتراك مدفوع ومزال وقت على الفاتورة الجاية
-        if self.is_subscriber and self.next_billing_at and self.next_billing_at > now:
-            days_left = (self.next_billing_at - now).days
-            return f"اشتراك مدفوع، يتجدد بعد {days_left} يوم"
-
-        # لو ما دفعش بعد، لكن التجربة مازالت جارية
-        if self.trial_ends_at and self.trial_ends_at > now:
-            days_left = (self.trial_ends_at - now).days
-            return f"تجربة مجانية، متبقي {days_left} يوم"
-
-        # انتهت التجربة وما ثماش اشتراك
-        return "منتهي، يلزم تجدد الاشتراك"
-
-
-def get_db():
-    """Dependency تستعملها في الراوترات"""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    is_active = Column(Boolean, default=True)
 
 
 def init_db():

@@ -1,17 +1,4 @@
-# backend/config.py
-import os
+PAYPAL_CLIENT_ID = "AarCp3bOi8dxdhk46lTloPQNQlte2Pmmkbu1LpLQ71NB1ySsabbNzPTptrAmEldzTS2fLgc7QIQF9Ja5"
+PAYPAL_CLIENT_SECRET = "EEwlQPjsT_ti3WeXNzmOyfJZOEFqpUkj86dMH6Tc5aWN1t6Wv3Z8befhiSC33UuUe9MlvYo8ygaBYKFe"
 
-# ===== إعدادات قاعدة البيانات ... (اترك اللي عندك) =====
-
-# ===== إعدادات بايبال =====
-PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID", "YOUR_PAYPAL_CLIENT_ID")
-PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET", "YOUR_PAYPAL_SECRET")
-
-# للـ Sandbox:
-PAYPAL_BASE_URL = os.getenv(
-    "PAYPAL_BASE_URL",
-    "https://api-m.sandbox.paypal.com"
-)
-
-# لما تمر للإنتاج غيّرها إلى:
-# "https://api-m.paypal.com"
+PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com"

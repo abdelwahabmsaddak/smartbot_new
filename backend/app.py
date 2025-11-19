@@ -1,32 +1,42 @@
 from flask import Flask
 from flask_cors import CORS
-from database import db
-from config import Config
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
+
+from .database import init_db
+from .routes.auth import auth_bp
+from .routes.api import api_bp
+from .routes.payments import payments_bp  # نجهزه كستب لاحقة
+
+
+bcrypt = Bcrypt()
+jwt = JWTManager()
+
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = Config.DATABASE_URL
-    app.config['SECRET_KEY'] = Config.SECRET_KEY
 
+    # سر للجت توكن – غيّرو في الحقيقة
+    app.config["SECRET_KEY"] = "CHANGE_THIS_TO_A_STRONG_SECRET"
+    app.config["JWT_SECRET_KEY"] = "CHANGE_THIS_JWT_SECRET_TOO"
+
+    # تفعيل CORS للفرونت
     CORS(app)
-    db.init_app(app)
 
-    # Import routes
-    from routes.auth import auth_bp
-    from routes.payments import payments_bp
-    from routes.analysis import analysis_bp
-    from routes.whales import whales_bp
-    from routes.blog import blog_bp
+    # تهيئة الإضافات
+    bcrypt.init_app(app)
+    jwt.init_app(app)
 
-    app.register_blueprint(auth_bp, url_prefix="/api/auth")
-    app.register_blueprint(payments_bp, url_prefix="/api/pay")
-    app.register_blueprint(analysis_bp, url_prefix="/api/analyze")
-    app.register_blueprint(whales_bp, url_prefix="/api/whales")
-    app.register_blueprint(blog_bp, url_prefix="/api/blog")
+    # إنشاء الجداول
+    init_db()
+
+    # تسجيل البلوبرنتس
+    app.register_blueprint(auth_bp, url_prefix="/auth")
+    app.register_blueprint(api_bp, url_prefix="/api")
+    app.register_blueprint(payments_bp, url_prefix="/payments")
+
+    @app.get("/health")
+    def health():
+        return {"status": "ok"}
 
     return app
-
-app = create_app()
-
-if __name__ == "__main__":
-    app.run(debug=True)

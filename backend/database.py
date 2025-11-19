@@ -1,27 +1,17 @@
-from datetime import datetime, timedelta
+# backend/database.py
+from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import (
-    create_engine,
-    Column,
-    Integer,
-    String,
-    DateTime,
-    Boolean,
-    Float,
-    ForeignKey,
-)
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy import create_engine
 
-# لو حاب Postgres بعد نبدل هذا الرابط فقط
-DATABASE_URL = "sqlite:///smartbot.db"
+DATABASE_URL = "sqlite:///./smartbot.db"
 
 engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
+    DATABASE_URL, connect_args={"check_same_thread": False}
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
 
@@ -29,85 +19,52 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(255), unique=True, index=True, nullable=False)
-    password_hash = Column(String(255), nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(
+        DateTime, default=lambda: datetime.now(timezone.utc)
+    )
 
-    # ربط مع الاشتراك
-    subscription = relationship("Subscription", back_populates="user", uselist=False)
+    # 🟡 الباقة الوحيدة: شهر مجاني ثم 29$
+    # تاريخ نهاية التجربة المجانية
+    trial_ends_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc) + timedelta(days=30),
+    )
 
-    # إعدادات المخاطر (اختيارية الآن)
-    max_risk_per_trade = Column(Float, default=1.0)  # ٪ من الرصيد
-    max_daily_loss = Column(Float, default=5.0)      # ٪
-    leverage = Column(Float, default=1.0)
+    # هل عنده اشتراك مدفوع نشط؟
+    is_subscriber = Column(Boolean, default=False)
 
-    # تليجرام (لاحقاً نستعمله)
-    telegram_chat_id = Column(String(64), nullable=True)
+    # متى سيتم تجديد الاشتراك الشهري القادم؟
+    next_billing_at = Column(DateTime, nullable=True)
 
+    def subscription_status(self):
+        """يرجع حالة الاشتراك كنص بسيط"""
+        now = datetime.now(timezone.utc)
 
-class Subscription(Base):
-    __tablename__ = "subscriptions"
+        # إذا عنده اشتراك مدفوع ومزال وقت على الفاتورة الجاية
+        if self.is_subscriber and self.next_billing_at and self.next_billing_at > now:
+            days_left = (self.next_billing_at - now).days
+            return f"اشتراك مدفوع، يتجدد بعد {days_left} يوم"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+        # لو ما دفعش بعد، لكن التجربة مازالت جارية
+        if self.trial_ends_at and self.trial_ends_at > now:
+            days_left = (self.trial_ends_at - now).days
+            return f"تجربة مجانية، متبقي {days_left} يوم"
 
-    # حالة الاشتراك
-    is_active = Column(Boolean, default=True)
-
-    # تجربة مجانية
-    trial_start = Column(DateTime, default=datetime.utcnow)
-    trial_end = Column(DateTime, nullable=False)
-
-    # التجديد الشهري
-    next_billing_date = Column(DateTime, nullable=True)
-    price_monthly = Column(Float, default=29.0)
-
-    # آخر تحديث
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    user = relationship("User", back_populates="subscription")
-
-
-class Alert(Base):
-    __tablename__ = "alerts"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-
-    type = Column(String(50))  # signal / risk / system ...
-    message = Column(String(500))
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-
-def init_db():
-    """إنشاء الجداول لو مش موجودة"""
-    Base.metadata.create_all(bind=engine)
-
-
-def create_trial_subscription(user):
-    """يُنشئ اشتراك شهر مجاني لمستخدم جديد"""
-    db = SessionLocal()
-    try:
-        trial_days = 30
-        now = datetime.utcnow()
-        sub = Subscription(
-            user_id=user.id,
-            is_active=True,
-            trial_start=now,
-            trial_end=now + timedelta(days=trial_days),
-            next_billing_date=now + timedelta(days=trial_days),
-        )
-        db.add(sub)
-        db.commit()
-    finally:
-        db.close()
+        # انتهت التجربة وما ثماش اشتراك
+        return "منتهي، يلزم تجدد الاشتراك"
 
 
 def get_db():
-    """Dependency بسيطة لاستعمالها في الراوتس"""
+    """Dependency تستعملها في الراوترات"""
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+def init_db():
+    Base.metadata.create_all(bind=engine)

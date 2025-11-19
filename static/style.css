@@ -1,0 +1,213 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body.dark-body {
+  font-family: "Cairo", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #050509;
+  color: #eaeaea;
+}
+
+/* Header */
+.main-header {
+  position: sticky;
+  top: 0;
+  background: #080812;
+  padding: 10px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  border-bottom: 1px solid #1d1d2f;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #4f8bff;
+}
+
+.nav-links a {
+  margin-left: 15px;
+  color: #eaeaea;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+.nav-links a:hover {
+  color: #4f8bff;
+}
+
+/* Sections */
+.section {
+  padding: 60px 8%;
+}
+
+.hero {
+  padding: 80px 8% 60px;
+  text-align: right;
+}
+.hero-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+.hero-content p {
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.btn-primary {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #4f8bff;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Features */
+.features h2,
+.pricing h2,
+.affiliate h2,
+.chat-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+.features-grid {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+.feature-card {
+  background: #10101a;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #1e1e2d;
+}
+.feature-card h3 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+/* Pricing */
+.section-subtitle {
+  text-align: center;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+.pricing-card {
+  max-width: 420px;
+  margin: 0 auto;
+  background: #10101a;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #282842;
+  text-align: center;
+}
+.pricing-card .price {
+  font-size: 2rem;
+  margin: 10px 0;
+  color: #4f8bff;
+}
+.pricing-card .trial {
+  color: #f5c94b;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.pricing-card ul {
+  list-style: none;
+  text-align: right;
+  margin: 15px 0;
+}
+.pricing-card ul li {
+  margin-bottom: 8px;
+}
+
+/* Affiliate */
+.affiliate p {
+  max-width: 600px;
+  margin: 10px auto 0;
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* Chat */
+.chat-section p {
+  text-align: center;
+  margin-bottom: 15px;
+}
+.chat-box {
+  max-width: 500px;
+  margin: 0 auto;
+  background: #10101a;
+  border-radius: 12px;
+  border: 1px solid #282842;
+  padding: 15px;
+}
+.chat-messages {
+  height: 220px;
+  overflow-y: auto;
+  background: #070710;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+}
+.chat-input-row input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #0f0f18;
+  color: #eaeaea;
+}
+.chat-input-row button {
+  padding: 8px 15px;
+  border-radius: 6px;
+  border: none;
+  background: #4f8bff;
+  color: #fff;
+  cursor: pointer;
+}
+.chat-input-row button:hover {
+  opacity: 0.9;
+}
+.msg {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+.user-msg {
+  text-align: right;
+  color: #4f8bff;
+}
+.bot-msg {
+  text-align: left;
+  color: #f5c94b;
+}
+
+/* Footer */
+.main-footer {
+  text-align: center;
+  padding: 15px 8%;
+  border-top: 1px solid #1d1d2f;
+  background: #080812;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+}

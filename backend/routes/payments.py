@@ -1,99 +1,66 @@
-import requests
-from fastapi import APIRouter, HTTPException
-from backend.config import PAYPAL_CLIENT_ID, PAYPAL_SECRET_KEY, PAYPAL_API_BASE
+from fastapi import APIRouter, HTTPException, Request, Depends
+import httpx
+import os
+from backend.database import get_db, User
+from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/payments", tags=["payments"])
+router = APIRouter(prefix="/api/payments", tags=["payments"])
 
-# 1) إنشاء توكن اتصال مع PayPal
-def generate_access_token():
-    response = requests.post(
-        f"{PAYPAL_API_BASE}/v1/oauth2/token",
-        auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET_KEY),
-        headers={"Accept": "application/json"},
-        data={"grant_type": "client_credentials"},
-    )
+PAYPAL_CLIENT_ID = "AarCp3bOi8dxdhk46lTloPQNQlte2Pmmkbu1LpLQ71NB1ySsabbNzPTptrAmEldzTS2fLgc7QIQF9Ja5"
+PAYPAL_SECRET = "EEwlQPjsT_ti3WeXNzmOyfJZOEFqpUkj86dMH6Tc5aWN1t6Wv3Z8befhiSC33UuUe9MlvYo8ygaBYKFe"
 
-    if response.status_code != 200:
-        raise HTTPException(status_code=400, detail="PayPal Auth Failed")
-    
-    return response.json()["access_token"]
+BASE_URL = "https://api-m.sandbox.paypal.com"
 
+# ================================
+# 1) إنشاء اشتراك جديد
+# ================================
+@router.post("/create-subscription")
+async def create_subscription():
+    async with httpx.AsyncClient() as client:
+        # Token
+        auth = (PAYPAL_CLIENT_ID, PAYPAL_SECRET)
+        data = {"grant_type": "client_credentials"}
 
-# 2) إنشاء عملية دفع
-@router.post("/create")
-def create_payment():
-    token = generate_access_token()
+        r = await client.post(f"{BASE_URL}/v1/oauth2/token", data=data, auth=auth)
+        access_token = r.json()["access_token"]
 
-    payload = {
-        "intent": "CAPTURE",
-        "purchase_units": [
-            {
-                "amount": {
-                    "currency_code": "USD",
-                    "value": "29.00"
-                }
+        # Create subscription
+        headers = {"Authorization": f"Bearer {access_token}"}
+        body = {
+            "plan_id": "P-12345678912345678",  # 👈 ستعطيهولك بعد نعمل Plan رسمي
+            "application_context": {
+                "return_url": "https://smartbot-new.onrender.com/subscription",
+                "cancel_url": "https://smartbot-new.onrender.com/subscription"
             }
-        ],
-        "application_context": {
-            "return_url": "https://smartbot.com/thankyou",
-            "cancel_url": "https://smartbot.com/cancel"
         }
-    }
 
-    response = requests.post(
-        f"{PAYPAL_API_BASE}/v2/checkout/orders",
-        json=payload,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}"
-        }
-    )
+        r = await client.post(f"{BASE_URL}/v1/billing/subscriptions", json=body, headers=headers)
+        return r.json()
 
-    if response.status_code != 201:
-        raise HTTPException(status_code=400, detail="PayPal Payment Failed")
+# ================================
+# 2) Webhook — PayPal → موقعك
+# ================================
+@router.post("/webhook")
+async def webhook_listener(request: Request, db: Session = Depends(get_db)):
+    event = await request.json()
 
-    return response.json()
+    event_type = event.get("event_type")
+    resource = event.get("resource", {})
 
+    subscription_id = resource.get("id")
+    status = resource.get("status")
 
-# 3) تأكيد الدفع بعد رجوع العميل من PayPal
-@router.get("/capture/{order_id}")
-def capture_payment(order_id: str):
-    token = generate_access_token()
+    # مثال: تحديث حالة المستخدم
+    if event_type == "BILLING.SUBSCRIPTION.ACTIVATED":
+        user = db.query(User).filter(User.subscription_id == subscription_id).first()
+        if user:
+            user.is_active = True
+            db.commit()
 
-    response = requests.post(
-        f"{PAYPAL_API_BASE}/v2/checkout/orders/{order_id}/capture",
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}"
-        }
-    )
+    elif event_type == "BILLING.SUBSCRIPTION.CANCELLED":
+        user = db.query(User).filter(User.subscription_id == subscription_id).first()
+        if user:
+            user.is_active = False
+            db.commit()
 
-    if response.status_code != 201:
-        raise HTTPException(status_code=400, detail="Payment Capture Failed")
-
-    return response.json()
-    @router.post("/create-subscription")
-def create_subscription(user=Depends(get_current_user)):
-    plan_id = "P-TESTPLAN123"  # هذا سنعمله بعد قليل
-    url = f"{PAYPAL_API_BASE}/v1/billing/subscriptions"
-
-    payload = {
-        "plan_id": plan_id,
-        "subscriber": {
-            "email_address": user.email
-        },
-        "application_context": {
-            "brand_name": "SmartBot",
-            "user_action": "SUBSCRIBE_NOW",
-            "return_url": "https://smartbot-new.onrender.com/subscription-success",
-            "cancel_url": "https://smartbot-new.onrender.com/subscription-cancel"
-        }
-    }
-
-    response = requests.post(
-        url,
-        auth=(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET),
-        json=payload
-    )
-
-    return response.json()
+    return {"status": "ok"}

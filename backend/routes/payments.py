@@ -72,3 +72,28 @@ def capture_payment(order_id: str):
         raise HTTPException(status_code=400, detail="Payment Capture Failed")
 
     return response.json()
+    @router.post("/create-subscription")
+def create_subscription(user=Depends(get_current_user)):
+    plan_id = "P-TESTPLAN123"  # هذا سنعمله بعد قليل
+    url = f"{PAYPAL_API_BASE}/v1/billing/subscriptions"
+
+    payload = {
+        "plan_id": plan_id,
+        "subscriber": {
+            "email_address": user.email
+        },
+        "application_context": {
+            "brand_name": "SmartBot",
+            "user_action": "SUBSCRIBE_NOW",
+            "return_url": "https://smartbot-new.onrender.com/subscription-success",
+            "cancel_url": "https://smartbot-new.onrender.com/subscription-cancel"
+        }
+    }
+
+    response = requests.post(
+        url,
+        auth=(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET),
+        json=payload
+    )
+
+    return response.json()

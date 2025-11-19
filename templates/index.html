@@ -1,174 +1,50 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>SmartBot | تحليل العملات والذهب والأسهم</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-  <!-- PayPal SDK (غيّر client-id) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartTrade – منصة التداول الذكية</title>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
-<body class="dark-body">
+<body>
 
-  <!-- رأس الموقع -->
-  <header class="main-header">
-    <div class="logo">SmartBot</div>
-    <nav class="nav-links">
-      <a href="#features">المميزات</a>
-      <a href="#pricing">الاشتراك</a>
-      <a href="#affiliate">الشركاء</a>
-      <a href="#chat">الدردشة</a>
-    </nav>
-  </header>
+<header class="header">
+  <div class="logo">SmartTrade</div>
+  <nav>
+    <a href="index.html">الرئيسية</a>
+    <a href="pricing.html">الاشتراك</a>
+    <a href="login.html" class="btn">تسجيل الدخول</a>
+  </nav>
+</header>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>منصة ذكية لتحليل العملات، الذهب، والأسهم</h1>
-      <p>
-        راقب الأسواق في مكان واحد: عملات رقمية، ذهب، وأسهم، مع أدوات تداول
-        ومتابعة حركة السوق لحظة بلحظة.
-      </p>
-      <a href="#pricing" class="btn-primary">ابدأ الآن مجانًا</a>
-    </div>
-  </section>
+<section class="hero">
+  <h1>منصّة تداول شاملة</h1>
+  <p>تحليل العملات – الذهب – الأسهم – تنبيهات فورية – تداول آلي – لوحة تحكم كاملة.</p>
+  <a href="register.html" class="btn big">ابدأ الآن – الشهر الأول مجانًا</a>
+</section>
 
-  <!-- Features -->
-  <section id="features" class="section features">
-    <h2>ماذا يمكنك أن تفعل باستخدام SmartBot؟</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>تحليل العملات الرقمية</h3>
-        <p>أدخل رمز العملة وشاهد ملخّصًا لتحركاتها واتجاهها.</p>
-      </div>
-      <div class="feature-card">
-        <h3>تحليل الذهب والأسهم</h3>
-        <p>تابع الذهب وأسهم مختارة بسهولة مع نظرة سريعة للحركة.</p>
-      </div>
-      <div class="feature-card">
-        <h3>متابعة تحركات السوق</h3>
-        <p>تابع المناطق المهمة، والحركات القوية، وتغيّر السيولة.</p>
-      </div>
-      <div class="feature-card">
-        <h3>دردشة خاصة بالموقع</h3>
-        <p>واجهة محادثة خفيفة تساعدك على تدوين الملاحظات والتفاعل.</p>
-      </div>
-    </div>
-  </section>
+<section class="features">
+  <div class="box">
+    <h3>تحليل السوق</h3>
+    <p>تحليل مباشر للعملات، الذهب، والأسهم.</p>
+  </div>
 
-  <!-- Pricing -->
-  <section id="pricing" class="section pricing">
-    <h2>الاشتراك</h2>
-    <p class="section-subtitle">
-      شهر أول مجاني يتضمن جميع المميزات. بعد ذلك اشتراك شهري ثابت 29$.
-    </p>
-    <div class="pricing-card">
-      <h3>الخطة الشاملة</h3>
-      <p class="price">29 $ / شهر</p>
-      <p class="trial">الشهر الأول مجاني</p>
-      <ul>
-        <li>تحليل العملات الرقمية</li>
-        <li>تحليل الذهب والأسهم</li>
-        <li>لوحة مراقبة للحركة والأسعار</li>
-        <li>قسم ملاحظات ودردشة خاصة</li>
-        <li>وصول لكل التحديثات الجديدة</li>
-      </ul>
-      <!-- زر PayPal -->
-      <div id="paypal-button-container"></div>
-    </div>
-  </section>
+  <div class="box">
+    <h3>تداول آلي</h3>
+    <p>نظام تداول مع إدارة مخاطر وإشعارات.</p>
+  </div>
 
-  <!-- Affiliate -->
-  <section id="affiliate" class="section affiliate">
-    <h2>برنامج الشركاء</h2>
-    <p>
-      شارك المنصة مع الآخرين واحصل على 60% عمولة عن كل اشتراك يأتي عبرك.
-    </p>
-    <p>
-      مناسب لصناع المحتوى، التليغرام، الجروبات، والمدونين المهتمين بالأسواق المالية.
-    </p>
-  </section>
+  <div class="box">
+    <h3>تنبيهات</h3>
+    <p>إشعارات الأسعار – تتبع الحيتان – إشارات قوية.</p>
+  </div>
+</section>
 
-  <!-- Chat Section (واجهة بسيطة فقط) -->
-  <section id="chat" class="section chat-section">
-    <h2>دردشة الموقع</h2>
-    <p>مساحة للحديث السريع وتدوين الملاحظات أثناء متابعة السوق.</p>
-    <div class="chat-box">
-      <div id="chat-messages" class="chat-messages"></div>
-      <div class="chat-input-row">
-        <input id="chat-input" type="text" placeholder="اكتب رسالة..." />
-        <button id="chat-send">إرسال</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="main-footer">
-    <p>© 2025 SmartBot – جميع الحقوق محفوظة</p>
-  </footer>
-
-  <!-- Scripts -->
-  <script>
-    // PayPal Button
-    paypal.Buttons({
-      createOrder: function (data, actions) {
-        return actions.order.create({
-          purchase_units: [{
-            amount: { value: "29.00" },
-            description: "SmartBot Monthly Subscription (first month free handled by system)."
-          }]
-        });
-      },
-      onApprove: function (data, actions) {
-        return actions.order.capture().then(function (details) {
-          alert("تمت عملية الدفع بنجاح. شكراً لك " + details.payer.name.given_name + "!");
-          // ممكن تبعث طلب للباكند لتسجيل الاشتراك
-          // fetch("/paypal/success?order_id=" + data.orderID)
-        });
-      },
-      onError: function (err) {
-        console.error(err);
-        alert("حدث خطأ أثناء الدفع، حاول مرة أخرى.");
-      }
-    }).render("#paypal-button-container");
-
-    // Chat frontend بسيط
-    document.getElementById("chat-send").onclick = function () {
-      const input = document.getElementById("chat-input");
-      const text = input.value.trim();
-      if (!text) return;
-      const box = document.getElementById("chat-messages");
-
-      // إضافة رسالة المستخدم
-      const userMsg = document.createElement("div");
-      userMsg.className = "msg user-msg";
-      userMsg.textContent = text;
-      box.appendChild(userMsg);
-      box.scrollTop = box.scrollHeight;
-      input.value = "";
-
-      // إرسال للباكند (placeholder)
-      fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
-      })
-        .then(res => res.json())
-        .then(data => {
-          const botMsg = document.createElement("div");
-          botMsg.className = "msg bot-msg";
-          botMsg.textContent = data.reply || "تم الاستلام.";
-          box.appendChild(botMsg);
-          box.scrollTop = box.scrollHeight;
-        })
-        .catch(() => {
-          const botMsg = document.createElement("div");
-          botMsg.className = "msg bot-msg";
-          botMsg.textContent = "حدث خطأ بسيط، حاول لاحقاً.";
-          box.appendChild(botMsg);
-          box.scrollTop = box.scrollHeight;
-        });
-    };
-  </script>
+<footer class="footer">
+  <p>© 2025 SmartTrade – كل الحقوق محفوظة</p>
+</footer>
 
 </body>
 </html>

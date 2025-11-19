@@ -1,105 +1,83 @@
-# backend/routes/billing.py
-from datetime import datetime
-from typing import Optional
-
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
-
+import requests
+from fastapi import APIRouter, Depends, HTTPException
+from backend.database import get_db, User
+from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
-from backend.database import get_db, User
-from backend.routes.auth import get_current_user  # نستعمل نفس التوكن
+router = APIRouter(prefix="/billing", tags=["billing"])
 
-PLAN_PRICE_USD = 29
-CURRENCY = "USD"
-TRIAL_DAYS = 30
+PAYPAL_CLIENT_ID = "YOUR_PAYPAL_CLIENT_ID"
+PAYPAL_SECRET = "YOUR_PAYPAL_SECRET"
+PAYPAL_API = "https://api-m.paypal.com"   # Production
+# PAYPAL_API = "https://api-m.sandbox.paypal.com"  # Sandbox (اختبار)
 
-router = APIRouter(
-    prefix="/billing",
-    tags=["billing"],
-)
+# ====================================================
+# 1) Get PayPal Access Token
+# ====================================================
 
+def get_paypal_token():
+    response = requests.post(
+        f"{PAYPAL_API}/v1/oauth2/token",
+        auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
+        data={"grant_type": "client_credentials"},
+    )
+    if response.status_code != 200:
+        raise HTTPException(500, "PayPal token error")
+    return response.json()["access_token"]
 
-# ================================
-#   Schemas
-# ================================
+# ====================================================
+# 2) Create subscription
+# ====================================================
 
-class BillingStatus(BaseModel):
-    email: str
-    is_trial: bool
-    trial_ends_at: Optional[datetime] = None
-    trial_days_left: int
-    is_active: bool
-    plan_price: int
-    currency: str
+@router.post("/create-subscription")
+def create_subscription(user_id: int, db: Session = Depends(get_db)):
+    token = get_paypal_token()
 
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {token}",
+    }
 
-class ActivatePayload(BaseModel):
-    paypal_subscription_id: str
+    body = {
+        "plan_id": "P-1234567890123456",  # ID متاع الخطة من PayPal
+        "subscriber": {
+            "email_address": db.query(User).filter(User.id == user_id).first().email
+        },
+        "application_context": {
+            "return_url": "https://YOUR_DOMAIN/success",
+            "cancel_url": "https://YOUR_DOMAIN/cancel",
+        },
+    }
 
-
-# ================================
-#   Helpers
-# ================================
-
-def _compute_status(user: User) -> BillingStatus:
-    now = datetime.utcnow()
-
-    is_trial = False
-    days_left = 0
-    if user.trial_ends_at and user.trial_ends_at > now and not user.is_active:
-        is_trial = True
-        days_left = (user.trial_ends_at - now).days
-
-    return BillingStatus(
-        email=user.email,
-        is_trial=is_trial,
-        trial_ends_at=user.trial_ends_at,
-        trial_days_left=max(days_left, 0),
-        is_active=user.is_active,
-        plan_price=PLAN_PRICE_USD,
-        currency=CURRENCY,
+    r = requests.post(
+        f"{PAYPAL_API}/v1/billing/subscriptions",
+        json=body,
+        headers=headers,
     )
 
+    if r.status_code not in [200, 201]:
+        print(r.text)
+        raise HTTPException(500, "PayPal subscription error")
 
-# ================================
-#   Routes
-# ================================
+    return r.json()
 
-@router.get("/status", response_model=BillingStatus)
-def get_billing_status(
-    current_user: User = Depends(get_current_user),
-):
-    """
-    يرجع حالة الاشتراك للمستخدم الحالي:
-    - هل هو في الفترة التجريبية
-    - كم يوم متبقي
-    - هل الاشتراك مفعل
-    """
-    return _compute_status(current_user)
+# ====================================================
+# 3) Webhook (تفعيل الاشتراك بعد الدفع)
+# ====================================================
 
+@router.post("/webhook")
+def paypal_webhook(payload: dict, db: Session = Depends(get_db)):
+    event = payload.get("event_type")
 
-@router.post("/activate", response_model=BillingStatus)
-def activate_subscription(
-    payload: ActivatePayload,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """
-    يُستدعى بعد نجاح الدفع في بايبال:
-    - يفعّل الاشتراك
-    - يحفظ paypal_subscription_id للرجوع له عند الحاجة
-    """
+    # اشتراك جديد
+    if event == "BILLING.SUBSCRIPTION.ACTIVATED":
+        subscription = payload["resource"]
+        email = subscription["subscriber"]["email_address"]
 
-    if current_user.is_active:
-        # لو كان مفعل أصلاً نرجع الحالة فقط
-        return _compute_status(current_user)
+        user = db.query(User).filter(User.email == email).first()
+        if user:
+            user.is_active = True
+            user.trial_ends_at = None
+            db.commit()
 
-    current_user.is_active = True
-    current_user.paypal_subscription_id = payload.paypal_subscription_id
-
-    db.add(current_user)
-    db.commit()
-    db.refresh(current_user)
-
-    return _compute_status(current_user)
+    return {"status": "ok"}

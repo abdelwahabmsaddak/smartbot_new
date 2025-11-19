@@ -1,5 +1,5 @@
 import os
-
+from datetime import timedelta
 class Config:
     SECRET_KEY = "smartbot_super_secret"
     DATABASE_URL = "sqlite:///smartbot.db"

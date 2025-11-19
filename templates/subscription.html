@@ -1,0 +1,25 @@
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"></script>
+
+<div id="paypal-button-container"></div>
+
+<script>
+paypal.Buttons({
+    createOrder: function() {
+        return fetch("/payments/create-order", {
+            method: "POST"
+        })
+        .then(res => res.json())
+        .then(data => data.id);
+    },
+    onApprove: function(data) {
+        return fetch(`/payments/capture/${data.orderID}`, {
+            method: "POST"
+        })
+        .then(res => res.json())
+        .then(details => {
+            alert("Payment Success!");
+            window.location.href = "/dashboard";
+        });
+    }
+}).render('#paypal-button-container');
+</script>

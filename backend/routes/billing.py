@@ -79,5 +79,13 @@ def paypal_webhook(payload: dict, db: Session = Depends(get_db)):
             user.is_active = True
             user.trial_ends_at = None
             db.commit()
+@billing_bp.route('/admin/dashboard')
+def admin_dashboard():
+    if 'admin' not in session:
+        return redirect('/admin/login')
 
+    users = db.fetch_all("SELECT * FROM users")
+    subs = db.fetch_all("SELECT * FROM subscriptions")
+
+    return render_template('admin_dashboard.html', users=users, subs=subs)
     return {"status": "ok"}

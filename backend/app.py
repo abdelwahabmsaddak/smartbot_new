@@ -7,7 +7,8 @@ from .database import init_db
 from .routes.auth import auth_bp
 from .routes.api import api_bp
 from .routes.payments import payments_bp  # نجهزه كستب لاحقة
-
+from backend.routes import auth
+app.include_router(auth.router)
 
 bcrypt = Bcrypt()
 jwt = JWTManager()

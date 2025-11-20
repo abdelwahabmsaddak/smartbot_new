@@ -1,183 +1,195 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>لوحة التحكم | SmartBot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<title>لوحة العميل | SmartTrade+</title>
+<link rel="stylesheet" href="style.css">
+<style>
+
+body{
+  background:#0e0e11;
+  color:#eaeaea;
+  font-family:'Cairo',sans-serif;
+  margin:0;
+}
+
+.sidebar{
+  width:230px;
+  height:100vh;
+  background:#111;
+  padding:20px 10px;
+  position:fixed;
+  right:0;
+  top:0;
+  overflow-y:auto;
+  box-shadow:0 0 10px #0005;
+}
+
+.sidebar h2{
+  text-align:center;
+  margin-bottom:25px;
+  font-size:20px;
+  color:#3a7afe;
+}
+
+.sidebar a{
+  display:block;
+  padding:12px;
+  margin:8px 0;
+  background:#1a1a1d;
+  border-radius:8px;
+  color:#eaeaea;
+  text-decoration:none;
+  transition:0.2s;
+}
+
+.sidebar a:hover{
+  background:#3a7afe;
+  color:#fff;
+}
+
+.main{
+  margin-right:250px;
+  padding:25px;
+}
+
+.card{
+  background:#1a1a1d;
+  padding:20px;
+  border-radius:12px;
+  margin-bottom:20px;
+  box-shadow:0 0 8px #0004;
+}
+
+.row{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.card h3{
+  margin:0 0 10px;
+}
+
+.chat-icon{
+  position:fixed;
+  bottom:25px;
+  left:25px;
+  background:#3a7afe;
+  padding:12px 16px;
+  font-size:22px;
+  border-radius:50%;
+  cursor:pointer;
+  box-shadow:0 0 10px #0007;
+}
+
+.chat-box{
+  position:fixed;
+  bottom:90px;
+  left:25px;
+  width:300px;
+  background:#111;
+  border-radius:12px;
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 0 10px #0008;
+}
+
+.chat-header{
+  background:#1b1b1d;
+  padding:10px;
+  font-weight:bold;
+}
+
+.chat-messages{
+  height:250px;
+  overflow-y:auto;
+  padding:10px;
+}
+
+.chat-input{
+  border:none;
+  padding:10px;
+  width:100%;
+  background:#1a1a1d;
+  color:#fff;
+}
+
+.btn{
+  background:#3a7afe;
+  padding:10px 20px;
+  border-radius:6px;
+  color:#fff;
+  text-decoration:none;
+}
+</style>
 </head>
-<body class="dark-theme">
 
-  <!-- الهيدر نفس ستايل الصفحة الرئيسية -->
-  <header class="main-header">
-    <div class="logo">SmartBot</div>
-    <nav class="main-nav">
-      <a href="index.html">الرئيسية</a>
-      <a href="pricing.html">الأسعار</a>
-      <a href="dashboard.html" class="active">لوحة التحكم</a>
-      <a href="affiliate.html">الشركاء</a>
-      <a href="login.html" class="btn">تسجيل الدخول</a>
-    </nav>
-  </header>
+<body>
 
-  <main class="dashboard">
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2>SmartTrade+</h2>
+  <a href="#">الرئيسية</a>
+  <a href="#">تحليل العملات</a>
+  <a href="#">الذهب و الأسهم</a>
+  <a href="#">تتبع الحيتان</a>
+  <a href="#">التداول الآلي</a>
+  <a href="#">الإشعارات</a>
+  <a href="#">المدونة</a>
+  <a href="#">الدردشة</a>
+  <a href="#">الاشتراك</a>
+  <a href="#">الملف الشخصي</a>
+  <a href="#">تسجيل الخروج</a>
+</div>
 
-    <!-- قسم الترحيب وحالة الاشتراك -->
-    <section class="dash-hero">
-      <div>
-        <h1>مرحبًا 👋</h1>
-        <p>هذه هي لوحة التحكم الخاصة بك لمتابعة العملات، الذهب، والأسهم، والتنبيهات والتداول الآلي.</p>
-      </div>
-      <div class="subscription-status">
-        <p class="label">حالة الاشتراك</p>
-        <p class="status">الشهر الأول: <strong>مجاني</strong></p>
-        <p class="status">بعدها: <strong>29 $ شهريًا</strong> تشمل جميع الميزات.</p>
-        <a href="pricing.html" class="btn btn-small">تعديل / ترقية الاشتراك</a>
-      </div>
-    </section>
+<!-- Main -->
+<div class="main">
 
-    <!-- الشبكة الرئيسية في الداشبورد -->
-    <section class="dash-grid">
+  <h1>مرحبا بعودتك 👋</h1>
 
-      <!-- ملخص سريع -->
-      <div class="dash-card">
-        <h2>ملخص اليوم</h2>
-        <ul class="stats-list">
-          <li>عدد العملات المراقَبة: <strong>5</strong></li>
-          <li>تنبيهات نشطة: <strong>3</strong></li>
-          <li>صفقات تلقائية قيد العمل: <strong>1</strong></li>
-        </ul>
-      </div>
+  <div class="row">
+    <div class="card" style="flex:1;">
+      <h3>تحليل سريع</h3>
+      <p>آخر تحديثات السوق تظهر ارتفاعًا في 3 أصول…</p>
+      <a href="#" class="btn">تحليل الآن</a>
+    </div>
 
-      <!-- تحليل العملات / الذهب / الأسهم -->
-      <div class="dash-card">
-        <h2>آخر التحليلات</h2>
-        <div class="analysis-item">
-          <p class="asset">BTC / USDT</p>
-          <p class="signal positive">اتجاه صاعد على المدى المتوسط</p>
-        </div>
-        <div class="analysis-item">
-          <p class="asset">الذهب</p>
-          <p class="signal neutral">منطقة مراقبة، حركة جانبية</p>
-        </div>
-        <div class="analysis-item">
-          <p class="asset">سهم شركة X</p>
-          <p class="signal negative">احتمال تصحيح قصير المدى</p>
-        </div>
-        <a href="analysis.html" class="link-small">عرض كل التحليلات</a>
-      </div>
+    <div class="card" style="flex:1;">
+      <h3>تتبع الحيتان</h3>
+      <p>تم تسجيل 12 عملية شراء كبيرة مؤخراً.</p>
+      <a href="#" class="btn">عرض المزيد</a>
+    </div>
+  </div>
 
-      <!-- التنبيهات والتداول الآلي -->
-      <div class="dash-card">
-        <h2>التنبيهات والتداول الآلي</h2>
-        <ul class="alerts-list">
-          <li>تنبيه سعر BTC عند 70,000$ – <span class="badge badge-active">نشط</span></li>
-          <li>تنبيه الذهب عند 2,500$ – <span class="badge badge-paused">موقوف</span></li>
-        </ul>
-        <div class="auto-trade-status">
-          <p>وضع التداول الآلي: <span class="badge badge-active">مُفعَّل</span></p>
-          <a href="settings.html" class="link-small">إدارة إعدادات التداول والحدود</a>
-        </div>
-      </div>
+  <div class="card">
+    <h3>التداول الآلي</h3>
+    <p>تفعيل / تعطيل روبوت التداول.</p>
+    <a href="#" class="btn">إدارة الروبوت</a>
+  </div>
 
-      <!-- تتبع الحيتان -->
-      <div class="dash-card">
-        <h2>تتبع الحيتان</h2>
-        <p class="hint">أهم الحركات الكبيرة المسجَّلة مؤخرًا:</p>
-        <ul class="whales-list">
-          <li>تحويل كبير في BTC بقيمة 5M$ إلى منصة تداول</li>
-          <li>سحب عملات من محفظة قديمة إلى محفظة جديدة</li>
-        </ul>
-        <a href="whales.html" class="link-small">عرض سجل الحركات الكاملة</a>
-      </div>
+</div>
 
-      <!-- المدونة (محتوى متجدد) -->
-      <div class="dash-card">
-        <h2>آخر المقالات</h2>
-        <ul class="blog-list">
-          <li><a href="blog-post-1.html">كيف تنظّم متابعتك للأسعار اليومية</a></li>
-          <li><a href="blog-post-2.html">نصائح لإدارة رأس المال وتقليل المخاطر</a></li>
-          <li><a href="blog.html" class="link-small">المزيد من المقالات…</a></li>
-        </ul>
-      </div>
+<!-- Chat -->
+<div class="chat-icon" onclick="document.querySelector('.chat-box').style.display='flex';">💬</div>
 
-      <!-- الشراكة (أفيلييت) -->
-      <div class="dash-card">
-        <h2>الشراكة (Affiliate)</h2>
-        <p>شارك رابطك واحصل على <strong>60 ٪</strong> من قيمة كل اشتراك يأتي عن طريقك.</p>
-        <div class="affiliate-box">
-          <p class="label">رابط الشريك الخاص بك:</p>
-          <div class="affiliate-link-row">
-            <input type="text" id="affiliate-link" readonly
-                   value="https://smartbot-ai.com/?ref=YOURCODE">
-            <button class="btn btn-small" onclick="copyAffiliate()">نسخ</button>
-          </div>
-        </div>
-        <p class="small">يمكنك متابعة عدد الاشتراكات والأرباح من صفحة الشركاء.</p>
-      </div>
+<div class="chat-box">
+  <div class="chat-header">محادثة سريعة</div>
+  <div class="chat-messages" id="msgs"></div>
+  <input class="chat-input" id="chatInput" placeholder="اكتب...">
+</div>
 
-      <!-- صندوق صغير للدردشة -->
-      <div class="dash-card">
-        <h2>دردشة سريعة</h2>
-        <div class="mini-chat" id="mini-chat">
-          <div class="mini-chat-messages" id="mini-chat-messages">
-            <div class="msg bot">أهلاً! يمكنك تدوين ملاحظتك هنا أو تجربة المحادثة.</div>
-          </div>
-          <div class="mini-chat-input">
-            <input type="text" id="mini-chat-input" placeholder="اكتب رسالتك..." />
-            <button id="mini-chat-send">إرسال</button>
-          </div>
-        </div>
-        <p class="small">هذه الدردشة للواجهة فقط، ويمكن ربطها بالبكند لاحقًا.</p>
-      </div>
-
-    </section>
-  </main>
-
-  <footer class="main-footer">
-    <p>© 2025 SmartBot – جميع الحقوق محفوظة</p>
-  </footer>
-
-  <script>
-    // نسخ رابط الشريك
-    function copyAffiliate() {
-      const input = document.getElementById('affiliate-link');
-      input.select();
-      input.setSelectionRange(0, 99999);
-      document.execCommand('copy');
-      alert('تم نسخ رابط الشريك ✅');
-    }
-
-    // شات صغير داخل لوحة التحكم (واجهة فقط)
-    const miniInput = document.getElementById('mini-chat-input');
-    const miniSend  = document.getElementById('mini-chat-send');
-    const miniBox   = document.getElementById('mini-chat-messages');
-
-    function addMiniMessage(text, from='user') {
-      const div = document.createElement('div');
-      div.className = 'msg ' + from;
-      div.textContent = text;
-      miniBox.appendChild(div);
-      miniBox.scrollTop = miniBox.scrollHeight;
-    }
-
-    miniSend.addEventListener('click', () => {
-      const text = miniInput.value.trim();
-      if (!text) return;
-      addMiniMessage(text, 'user');
-      miniInput.value = '';
-      // رد بسيط تجريبي – البكند يتربط لاحقًا
-      setTimeout(() => {
-        addMiniMessage('تم تسجيل رسالتك في الواجهة ✅', 'bot');
-      }, 600);
-    });
-
-    miniInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        miniSend.click();
-      }
-    });
-  </script>
+<script>
+document.getElementById("chatInput").addEventListener("keypress",e=>{
+  if(e.key==="Enter"){
+    let text=e.target.value;
+    if(!text.trim())return;
+    document.getElementById("msgs").innerHTML+=`<div style="text-align:right;color:#3a7afe">${text}</div>`;
+    e.target.value="";
+  }
+});
+</script>
 
 </body>
 </html>

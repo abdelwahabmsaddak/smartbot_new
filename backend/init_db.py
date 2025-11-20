@@ -36,7 +36,22 @@ CREATE TABLE IF NOT EXISTS activity_logs (
     date TEXT
 )
 """)
+import sqlite3
 
+conn = sqlite3.connect("database.db")
+cursor = conn.cursor()
+
+cursor.execute("DELETE FROM admin")  # optional
+
+cursor.execute("""
+INSERT INTO admin (username, password)
+VALUES ('admin', 'admin123')
+""")
+
+conn.commit()
+conn.close()
+
+print("Admin user created.")
 conn.commit()
 conn.close()
 

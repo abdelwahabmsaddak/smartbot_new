@@ -1,124 +1,61 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>إنشاء حساب | SmartBot</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      background:#0f0f11;
-      font-family: "Cairo", sans-serif;
-      color:#eee;
-      margin:0;
-      padding:0;
-    }
-    .register-container {
-      max-width:420px;
-      margin:100px auto;
-      background:#1a1a1d;
-      padding:30px;
-      border-radius:14px;
-      box-shadow:0 0 12px #0008;
-    }
-    h2 {
-      text-align:center;
-      margin-bottom:15px;
-      font-size:26px;
-      color:#3a7afe;
-    }
-    .input-group {
-      margin-bottom:18px;
-    }
-    label {
-      display:block;
-      margin-bottom:6px;
-      font-size:15px;
-    }
-    input {
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:8px;
-      background:#111;
-      color:#fff;
-      font-size:15px;
-    }
-    button {
-      width:100%;
-      padding:12px;
-      background:#3a7afe;
-      border:none;
-      border-radius:8px;
-      color:white;
-      font-size:16px;
-      cursor:pointer;
-      margin-top:10px;
-    }
-    button:hover { background:#2f63d1; }
-    .note {
-      text-align:center;
-      font-size:14px;
-      margin-top:15px;
-      color:#aaa;
-    }
-    a { color:#3a7afe; text-decoration:none; }
-  </style>
+<meta charset="UTF-8">
+<title>إنشاء حساب</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="dark-theme">
 
-  <div class="register-container">
-    <h2>إنشاء حساب</h2>
+<header>
+  <a class="logo" href="index.html">SmartBot</a>
+</header>
 
-    <form id="registerForm">
-      <div class="input-group">
-        <label>البريد الإلكتروني</label>
-        <input type="email" id="email" required placeholder="example@gmail.com">
-      </div>
+<main class="auth-page">
+  <h2>إنشاء حساب جديد</h2>
 
-      <div class="input-group">
-        <label>كلمة السر</label>
-        <input type="password" id="password" required placeholder="******">
-      </div>
+  <form id="registerForm">
 
-      <button type="submit">تسجيل</button>
+    <label>البريد الإلكتروني</label>
+    <input type="email" id="email" required>
 
-      <p class="note">
-        الشهر الأول مجاني تلقائيًا • بعدها 29$/شهر  
-        <br>
-        لديك حساب؟ <a href="login.html">تسجيل الدخول</a>
-      </p>
-    </form>
-  </div>
+    <label>كلمة السر</label>
+    <input type="password" id="password" required>
 
-  <script>
-    // إرسال البيانات إلى الباكند (عندما نربطه)
-    document.getElementById("registerForm").addEventListener("submit", function(e){
-      e.preventDefault();
+    <button type="submit" class="btn">تسجيل</button>
 
-      const data = {
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
-        plan: "free_month"   // الشهر الأول مجاني
-      };
+    <p class="switch">
+      لديك حساب؟ <a href="login.html">تسجيل الدخول</a>
+    </p>
 
-      // عند تجهيز API الباكند نربطه هنا:
-      fetch("/api/register", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(data)
-      })
-      .then(res => res.json())
-      .then(res => {
-        alert("تم إنشاء الحساب بنجاح!");
-        window.location.href = "dashboard.html";
-      })
-      .catch(err => {
-        alert("خطأ في التسجيل");
-      });
+  </form>
+
+  <p id="msg"></p>
+
+</main>
+
+<script>
+document.getElementById("registerForm").onsubmit = async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    const res = await fetch("/api/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ email, password })
     });
-  </script>
+
+    const data = await res.json();
+    document.getElementById("msg").innerText = data.message;
+
+    if(data.status === "ok"){
+        setTimeout(()=> window.location="dashboard.html", 1000);
+    }
+}
+</script>
 
 </body>
 </html>

@@ -68,5 +68,25 @@ def create_app():
     @app.get("/health")
     def health():
         return {"status": "ok"}
+@app.get("/api/admin/users")
+def admin_users():
+    conn = db()
+    cur = conn.cursor()
 
+    cur.execute("SELECT id,email,plan,expired_at FROM users")
+    users = cur.fetchall()
+
+    total = len(users)
+    active = len([u for u in users if u[3] > datetime.datetime.now().isoformat()])
+    expired = total - active
+
+    return jsonify({
+        "total": total,
+        "active": active,
+        "expired": expired,
+        "users": [
+            {"id":u[0],"email":u[1],"plan":u[2],"expired_at":u[3]}
+            for u in users
+        ]
+    })
     return app

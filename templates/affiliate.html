@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>برنامج الشركاء | SmartBot</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .affiliate-container{
+      max-width:900px;
+      margin:80px auto;
+      background:#121214;
+      padding:40px;
+      border-radius:14px;
+      box-shadow:0 0 15px #0006;
+      color:#eee;
+    }
+    .affiliate-container h1{
+      text-align:center;
+      margin-bottom:20px;
+      font-size:2.2em;
+      color:#3a7afe;
+    }
+    .affiliate-container p{
+      line-height:1.8;
+      margin-bottom:15px;
+      font-size:1.1em;
+    }
+    .affiliate-box{
+      background:#1a1a1d;
+      padding:25px;
+      border-radius:10px;
+      margin-top:25px;
+      border:1px solid #222;
+    }
+    .code-box{
+      background:#0f0f11;
+      padding:15px;
+      border-radius:8px;
+      font-family:monospace;
+      color:#96b4ff;
+      margin-top:10px;
+      word-break:break-all;
+    }
+    .btn-copy{
+      background:#3a7afe;
+      color:#fff;
+      padding:10px 18px;
+      border-radius:8px;
+      border:none;
+      cursor:pointer;
+      margin-top:10px;
+    }
+    .lang-switch{
+      text-align:center;
+      margin-top:20px;
+      color:#aaa;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body class="dark-theme">
+
+  <!-- HEADER الخاص بموقعك (موجود جاهز عندك) -->
+  <!-- لا تغيره -->
+
+  <main>
+    <div class="affiliate-container" id="AR">
+      <h1>برنامج الشركاء</h1>
+
+      <p>اربح 60٪ عن كل مستخدم يقوم بالاشتراك الشهري عبر رابطك الخاص. برنامج الشركاء يمنحك عمولة قوية ودائمة طالما أن العميل مشترك.</p>
+
+      <div class="affiliate-box">
+        <h3>رابط الإحالة الخاص بك:</h3>
+        <div class="code-box" id="refAR">https://smartbot.com/?ref=USERID</div>
+        <button class="btn-copy" onclick="copyAR()">نسخ الرابط</button>
+      </div>
+
+      <div class="affiliate-box">
+        <h3>ماذا ستحصل؟</h3>
+        <p>✓ 60% عمولة من كل عملية اشتراك</p>
+        <p>✓ عمولة مستمرة طالما أن المستخدم مجدد اشتراكه</p>
+        <p>✓ صفحة خاصة لمتابعة المبيعات والعمولات</p>
+      </div>
+
+      <div class="lang-switch" onclick="switchEN()">English</div>
+    </div>
+
+
+    <!-- ENGLISH VERSION -->
+    <div class="affiliate-container" id="EN" style="display:none;" dir="ltr">
+      <h1>Affiliate Program</h1>
+
+      <p>Earn 60% commission for every user who subscribes through your referral link. Your earnings continue as long as the user stays subscribed.</p>
+
+      <div class="affiliate-box">
+        <h3>Your referral link:</h3>
+        <div class="code-box" id="refEN">https://smartbot.com/?ref=USERID</div>
+        <button class="btn-copy" onclick="copyEN()">Copy Link</button>
+      </div>
+
+      <div class="affiliate-box">
+        <h3>What You Get:</h3>
+        <p>✓ 60% commission per subscription</p>
+        <p>✓ Recurring lifetime earnings</p>
+        <p>✓ Dedicated dashboard to track referrals</p>
+      </div>
+
+      <div class="lang-switch" onclick="switchAR()">العربية</div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER الخاص بك -->
+  <!-- لا تغيره -->
+
+  <script>
+    function copyAR(){
+      navigator.clipboard.writeText(document.getElementById("refAR").innerText);
+      alert("تم نسخ الرابط ✓");
+    }
+    function copyEN(){
+      navigator.clipboard.writeText(document.getElementById("refEN").innerText);
+      alert("Copied ✓");
+    }
+
+    function switchEN(){
+      document.getElementById("AR").style.display="none";
+      document.getElementById("EN").style.display="block";
+    }
+    function switchAR(){
+      document.getElementById("EN").style.display="none";
+      document.getElementById("AR").style.display="block";
+    }
+  </script>
+
+</body>
+</html>

@@ -76,3 +76,18 @@ def login(email: str, password: str, db: Session = Depends(get_db)):
     token = create_token({"user_id": user.id})
 
     return {"message": "تسجيل دخول ناجح", "token": token}
+    @auth_bp.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        user = db.fetch_one("SELECT * FROM admin WHERE username=? AND password=?", (username, password))
+
+        if user:
+            session['admin'] = True
+            return redirect('/admin/dashboard')
+
+        return render_template('admin_login.html', error="خطأ في تسجيل الدخول")
+
+    return render_template('admin_login.html')

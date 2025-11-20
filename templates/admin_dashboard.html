@@ -74,6 +74,8 @@
       font-size:14px;
       text-decoration:none;
     }
+    if 'admin' not in session:
+    return redirect('/admin/login')
 <h2>عدد المستخدمين: {{ users|length }}</h2>
 <h2>عدد الاشتراكات: {{ subs|length }}</h2>
     .btn-small:hover { background:#2e63cf; }

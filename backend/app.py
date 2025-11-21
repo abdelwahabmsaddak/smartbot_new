@@ -21,3 +21,9 @@ def home():
 
 if __name__ == '__main__':
     app.run(debug=True)
+@main_bp.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    return render_template('dashboard.html')

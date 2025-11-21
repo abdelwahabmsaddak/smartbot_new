@@ -59,3 +59,4 @@ def get_db():
         yield db
     finally:
         db.close()
+        create_users_table()

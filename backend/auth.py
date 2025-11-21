@@ -91,3 +91,19 @@ def admin_login():
         return render_template('admin_login.html', error="خطأ في تسجيل الدخول")
 
     return render_template('admin_login.html')
+    @auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+
+        # إضافة المستخدم في قاعدة البيانات
+        db.execute("""
+            INSERT INTO users (username, email, password)
+            VALUES (?, ?, ?)
+        """, (username, email, password))
+
+        return redirect('/login')
+
+    return render_template('register.html')

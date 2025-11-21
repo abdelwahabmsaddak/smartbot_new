@@ -107,3 +107,21 @@ def register():
         return redirect('/login')
 
     return render_template('register.html')
+    @auth_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        user = db.fetch_one(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
+
+        if user:
+            session['user_id'] = user['id']
+            return redirect('/dashboard')
+        else:
+            return render_template('login.html', error="معلومات خاطئة")
+
+    return render_template('login.html')

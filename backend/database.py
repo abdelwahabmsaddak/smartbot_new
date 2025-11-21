@@ -1,7 +1,17 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-
+def create_users_table():
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE,
+            email TEXT,
+            password TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
 # قاعدة البيانات SQLite (ملف محلي)
 SQLALCHEMY_DATABASE_URL = "sqlite:///./smartbot.db"
 

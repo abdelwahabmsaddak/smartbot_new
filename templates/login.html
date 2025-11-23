@@ -2,104 +2,27 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>تسجيل الدخول | SmartTrade+</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <style>
-        body{
-            margin: 0;
-            padding: 0;
-            font-family: 'Cairo', sans-serif;
-            background: #0e0e11;
-            color: #eaeaea;
-        }
-
-        .container{
-            max-width: 400px;
-            margin: 70px auto;
-            background: #1a1a1e;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-        }
-
-        h2{
-            text-align: center;
-            margin-bottom: 25px;
-            color: #4CAF50;
-        }
-
-        label{
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        input{
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 6px;
-            color: white;
-            font-size: 15px;
-        }
-
-        input:focus{
-            border-color: #4CAF50;
-            outline: none;
-        }
-
-        button{
-            width: 100%;
-            padding: 12px;
-            background: #4CAF50;
-            border: none;
-            color: white;
-            border-radius: 6px;
-            font-size: 17px;
-            cursor: pointer;
-        }
-
-        button:hover{
-            background: #45a049;
-        }
-
-        .link{
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .link a{
-            color: #4CAF50;
-            text-decoration: none;
-        }
-
-        .link a:hover{
-            text-decoration: underline;
-        }
-    </style>
-
+    <title>تسجيل الدخول</title>
 </head>
 <body>
 
-<div class="container">
-    <h2>تسجيل الدخول</h2>
+<h2>تسجيل الدخول</h2>
 
-    <form method="POST" action="/login">
-        <label>البريد الإلكتروني</label>
-        <input type="email" name="email" required placeholder="example@gmail.com">
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
 
-        <label>كلمة المرور</label>
-        <input type="password" name="password" required placeholder="••••••••">
+<form method="POST" action="/login">
+    <label>البريد الإلكتروني</label>
+    <input type="email" name="email" required>
 
-        <button type="submit">دخول</button>
+    <label>كلمة المرور</label>
+    <input type="password" name="password" required>
 
-        <div class="link">
-            ليس لديك حساب؟ <a href="/register">إنشاء حساب</a>
-        </div>
-    </form>
-</div>
+    <button type="submit">دخول</button>
+</form>
+
+<a href="/register">ليس لديك حساب؟ إنشاء حساب</a>
 
 </body>
 </html>

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+هلfrom fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
@@ -117,7 +117,27 @@ def login():
             "SELECT * FROM users WHERE username=? AND password=?",
             (username, password)
         )
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
 
+        # تحقق إذا كان المستخدم موجود
+        existing = db.fetch_one("SELECT * FROM users WHERE username=? OR email=?", (username, email))
+        if existing:
+            return render_template('register.html', error="المستخدم موجود مسبقًا")
+
+        # إضافة المستخدم
+        db.execute(
+            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+            (username, email, password)
+        )
+
+        return redirect('/login')
+
+    return render_template('register.html')
         if user:
             session['user_id'] = user['id']
             return redirect('/dashboard')

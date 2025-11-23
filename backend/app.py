@@ -15,6 +15,6 @@ def dashboard():
 @app.route('/')
 def home():
     return render_template('index.html')
-
+app.register_blueprint(admin_bp)
 if __name__ == '__main__':
     app.run(debug=True)

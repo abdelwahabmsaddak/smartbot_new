@@ -1,4 +1,4 @@
-هلfrom fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
@@ -57,47 +57,30 @@ def register(email: str, password: str, db: Session = Depends(get_db)):
 
     return {"message": "تم إنشاء الحساب", "token": token}
 
+from flask import Blueprint, render_template, request, redirect, session
+from database import db
 
-# ----------------------------------------------------------
-#  Login Route
-# ----------------------------------------------------------
+auth_bp = Blueprint('auth_bp', __name__)
 
-@router.post("/login")
-def login(email: str, password: str, db: Session = Depends(get_db)):
-
-    user = db.query(User).filter(User.email == email).first()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="الحساب غير موجود")
-
-    if not verify_password(password, user.password):
-        raise HTTPException(status_code=401, detail="كلمة السر خاطئة")
-
-    token = create_token({"user_id": user.id})
-
-    return {"message": "تسجيل دخول ناجح", "token": token}
-    @auth_bp.route('/admin/login', methods=['GET', 'POST'])
-def admin_login():
+# ================================
+# 🔐 LOGIN
+# ================================
+@auth_bp.route('/login', methods=['GET', 'POST'])
+def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        user = db.fetch_one("SELECT * FROM admin WHERE username=? AND password=?", (username, password))
-
-        if user:
-            session['admin'] = True
-            return redirect('/admin/dashboard')
-
-        return render_template('admin_login.html', error="خطأ في تسجيل الدخول")
-
-    return render_template('admin_login.html')
-    @auth_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
         email = request.form['email']
         password = request.form['password']
 
+        user = db.fetch_one("SELECT * FROM users WHERE email=? AND password=?", (email, password))
+
+        if user:
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            return redirect('/dashboard')
+
+        return render_template('login.html', error="البريد أو كلمة المرور غير صحيحة")
+
+    return render_template('login.html')
         # إضافة المستخدم في قاعدة البيانات
         db.execute("""
             INSERT INTO users (username, email, password)
@@ -144,4 +127,4 @@ def register():
         else:
             return render_template('login.html', error="معلومات خاطئة")
 
-    return render_template('login.html')
+    return render_template('login.html نعم)

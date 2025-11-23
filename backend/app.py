@@ -1,6 +1,6 @@
 from flask import Flask, render_template, session, redirect
 from auth import auth_bp
-
+from routes.admin import admin_bp
 app = Flask(__name__)
 app.secret_key = "SECRET_KEY"
 

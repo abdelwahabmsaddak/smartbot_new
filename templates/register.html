@@ -55,6 +55,17 @@ document.getElementById("registerForm").onsubmit = async (e) => {
         setTimeout(()=> window.location="dashboard.html", 1000);
     }
 }
+  <form action="/register" method="POST" class="register-form">
+    <input type="text" name="username" placeholder="اسم المستخدم" required>
+    <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+    <input type="password" name="password" placeholder="كلمة السر" required>
+
+    <button type="submit">إنشاء حساب</button>
+
+    {% if error %}
+        <p style="color:red">{{ error }}</p>
+    {% endif %}
+</form>
 </script>
 
 </body>

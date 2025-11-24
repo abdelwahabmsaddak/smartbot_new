@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>الملف الشخصي | SmartTrade+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body{
+            margin:0;
+            padding:0;
+            background:#0e0e11;
+            font-family:'Cairo', sans-serif;
+            color:#fff;
+        }
+
+        .container{
+            width:90%;
+            max-width:500px;
+            margin:50px auto;
+            padding:25px;
+            background:#1a1a1e;
+            border-radius:12px;
+            box-shadow:0 0 20px rgba(0,0,0,0.5);
+        }
+
+        h2{
+            text-align:center;
+            margin-bottom:20px;
+        }
+
+        label{
+            display:block;
+            margin-top:15px;
+            font-size:15px;
+            color:#ccc;
+        }
+
+        input{
+            width:100%;
+            padding:12px;
+            margin-top:5px;
+            border:none;
+            background:#0f0f12;
+            border-radius:8px;
+            color:white;
+        }
+
+        button{
+            width:100%;
+            margin-top:25px;
+            padding:12px;
+            background:#4CAF50;
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        button:hover{
+            background:#45a049;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>الملف الشخصي</h2>
+
+    <form method="POST" action="/profile">
+        <label>اسم المستخدم</label>
+        <input type="text" name="username" value="{{ user.username }}" required>
+
+        <label>البريد الإلكتروني</label>
+        <input type="email" name="email" value="{{ user.email }}" required>
+
+        <label>كلمة المرور (اختياري)</label>
+        <input type="password" name="password" placeholder="اتركه فارغ إذا لا تريد التغيير">
+
+        <button type="submit">حفظ التغييرات</button>
+    </form>
+</div>
+
+</body>
+</html>

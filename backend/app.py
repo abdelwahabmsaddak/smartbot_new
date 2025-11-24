@@ -19,3 +19,4 @@ def home():
 app.register_blueprint(admin_bp)
 if __name__ == '__main__':
     app.run(debug=True)
+app.register_blueprint(profile_bp)

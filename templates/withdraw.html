@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>سحب الأرباح</title>
+    <style>
+        body { background:#0f0f10; color:white; font-family:Tajawal; padding:20px; }
+        .box { background:#151518; padding:20px; border-radius:12px; }
+        input { padding:10px; width:100%; margin:10px 0; border-radius:8px; }
+        .btn { background:#3a7cff; padding:10px; color:white; text-decoration:none; border-radius:8px; }
+    </style>
+</head>
+<body>
+
+<h2>💰 سحب الأرباح</h2>
+
+<div class="box">
+    <p>إجمالي أرباحك: {{ total }}$</p>
+
+    <form method="POST">
+        <label>المبلغ المراد سحبه:</label>
+        <input type="number" name="amount" min="1" max="{{ total }}" required>
+
+        <label>عنوان بايبال / USDT:</label>
+        <input type="text" name="wallet" required>
+
+        <button class="btn">طلب سحب</button>
+    </form>
+</div>
+
+</body>
+</html>

@@ -2,86 +2,52 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>برنامج الشراكة | SmartBot</title>
-    <link rel="stylesheet" href="style.css">
+    <title>نظام الأفلييت</title>
+    <style>
+        body { background:#0f0f10; color:white; font-family:Tajawal; padding:20px; }
+        .box { background:#151518; padding:20px; border-radius:12px; margin-bottom:20px; }
+        .btn { background:#3a7cff; padding:10px 18px; border-radius:8px; color:white; text-decoration:none; }
+        .copy-btn { background:#444; padding:6px 12px; border-radius:6px; cursor:pointer; }
+    </style>
 </head>
+<body>
 
-<body class="dark-theme">
+<h2>🔥 لوحة تحكم الأفلييت</h2>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">SmartBot</div>
-        <nav>
-            <a href="index.html">الرئيسية</a>
-            <a href="pricing.html">الأسعار</a>
-            <a href="affiliate.html" class="active">الشراكة</a>
-            <a href="login.html" class="btn">تسجيل الدخول</a>
-        </nav>
-    </header>
+<div class="box">
+    <h3>رابط الإحالة الخاص بك</h3>
+    <input id="refLink" value="{{ referral_link }}" style="width:80%; padding:8px;">
+    <button class="copy-btn" onclick="copyLink()">📋 نسخ</button>
+</div>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <h1>برنامج الشركاء</h1>
-            <p class="sub-text">
-                شارك رابطك واربح <strong>60% عمولة</strong> عن كل مشترك جديد، مدى الحياة.
-            </p>
-        </section>
+<div class="box">
+    <h3>إجمالي الأرباح: {{ total_earnings }}$</h3>
+    <h3>عدد الإحالات: {{ total_referrals }}</h3>
+    <a href="/withdraw" class="btn">💰 سحب الأرباح</a>
+</div>
 
-        <!-- Card Section -->
-        <section class="affiliate-container">
-            <div class="affiliate-card">
-                <h2>كيف يعمل برنامج الشراكة؟</h2>
-                <ul>
-                    <li>تسجّل في المنصة وتتحصل على رابط الإحالة الخاص بك.</li>
-                    <li>شارك الرابط مع أصدقائك أو على مواقع التواصل.</li>
-                    <li>كل شخص يشترك عبر رابطك → تربح 60% من اشتراكه الشهري.</li>
-                    <li>العمولة مستمرة كل شهر مادام المشترك يدفع.</li>
-                </ul>
-            </div>
+<div class="box">
+    <h3>سجل الأرباح</h3>
+    <table width="100%" border="1" style="border-color:#333;">
+        <tr><th>المبلغ</th><th>من المستخدم</th><th>التاريخ</th></tr>
+        {% for row in earnings %}
+        <tr>
+            <td>{{ row.amount }}$</td>
+            <td>{{ row.source_user }}</td>
+            <td>{{ row.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 
-            <div class="affiliate-card">
-                <h2>مزايا البرنامج</h2>
-                <ul>
-                    <li>عمولة ضخمة 60% لكل اشتراك.</li>
-                    <li>لوحة تحكم لمتابعة الأرباح والمشتركين.</li>
-                    <li>لا تحتاج خبرة — فقط شارك الرابط.</li>
-                    <li>صرف الأرباح شهريًا.</li>
-                </ul>
-            </div>
-
-            <div class="affiliate-card">
-                <h2>رابط الإحالة الخاص بك</h2>
-
-                <!-- سيتم تعويضه من الباكند لاحقًا -->
-                <div class="ref-box">
-                    <input type="text" value="https://smartbot-ai.com/ref/USER_ID" id="refLink" readonly>
-                    <button onclick="copyRef()">نسخ</button>
-                </div>
-
-                <p class="small">سيتم توليد الرابط الحقيقي بعد ربط قاعدة البيانات.</p>
-            </div>
-        </section>
-
-        <!-- Join Button -->
-        <section class="join-section">
-            <a href="register.html" class="btn big-btn">انضم الآن</a>
-        </section>
-
-    </main>
-
-    <footer class="footer">
-        <p>© 2025 SmartBot – جميع الحقوق محفوظة.</p>
-    </footer>
-
-    <script>
-        function copyRef() {
-            let copyText = document.getElementById("refLink");
-            copyText.select();
-            document.execCommand("copy");
-            alert("تم نسخ رابط الإحالة");
-        }
-    </script>
+<script>
+function copyLink() {
+    let text = document.getElementById("refLink");
+    text.select();
+    document.execCommand("copy");
+    alert("تم النسخ ✔");
+}
+</script>
 
 </body>
 </html>

@@ -79,6 +79,110 @@ function sendMessage(){
         box.scrollTop = box.scrollHeight;
     }, 500);
 }
+<!-- Chat Button -->
+<div id="chat-button">💬</div>
+
+<!-- Chat Box -->
+<div id="chat-box">
+  <div id="chat-header">
+    <span>AI Bot</span>
+    <button id="close-chat">×</button>
+  </div>
+
+  <div id="chat-messages"></div>
+
+  <div id="chat-input">
+    <input type="text" id="userInput" placeholder="اكتب رسالتك..." />
+    <button id="sendBtn">إرسال</button>
+  </div>
+</div>
+
+<style>
+#chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #0e0e11;
+  color: #fff;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0px 0px 10px #0004;
+}
+
+#chat-box {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 320px;
+  height: 420px;
+  background: #1a1a1e;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0px 0px 12px #0005;
+  overflow: hidden;
+}
+
+#chat-header {
+  background: #0e0e11;
+  padding: 12px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+  background: #111;
+  color: white;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.user-msg {
+  background: #007bff;
+  text-align: right;
+}
+
+.bot-msg {
+  background: #333;
+  text-align: left;
+}
+
+#chat-input {
+  display: flex;
+  border-top: 1px solid #333;
+}
+
+#chat-input input {
+  flex: 1;
+  padding: 10px;
+  background: #222;
+  color: white;
+  border: none;
+}
+
+#chat-input button {
+  padding: 10px 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+}
+</style>
 </script>
 
 </body>

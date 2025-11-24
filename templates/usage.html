@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استهلاك API | SmartTrade+</title>
+
+    <style>
+        body{
+            margin:0;
+            padding:0;
+            font-family:'Cairo', sans-serif;
+            background:#0e0e11;
+            color:#fff;
+        }
+
+        .container{
+            max-width:900px;
+            margin:40px auto;
+            background:#1a1a1e;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 0 25px rgba(0,0,0,0.3);
+        }
+
+        h2{
+            margin-bottom:20px;
+            text-align:center;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:20px;
+        }
+
+        table th, table td{
+            padding:12px;
+            border-bottom:1px solid #333;
+            text-align:center;
+        }
+
+        .key-box{
+            background:#111;
+            padding:15px;
+            border:1px solid #333;
+            border-radius:8px;
+            margin:15px 0;
+            font-size:15px;
+        }
+
+        .btn{
+            display:inline-block;
+            padding:10px 20px;
+            background:#4caf50;
+            color:white;
+            text-decoration:none;
+            border-radius:8px;
+            margin-top:10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>📊 استهلاك الـ API</h2>
+
+    <h3>🔑 مفتاح API الخاص بك</h3>
+    <div class="key-box">
+        {{ api_key }}
+    </div>
+
+    <h3>📈 السجلات اليومية:</h3>
+
+    <table>
+        <tr>
+            <th>التاريخ</th>
+            <th>الطلبات</th>
+        </tr>
+
+        {% for row in usage %}
+        <tr>
+            <td>{{ row['day'] }}</td>
+            <td>{{ row['requests'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>

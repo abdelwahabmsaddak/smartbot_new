@@ -74,6 +74,14 @@ conn.close()
 
 print("Admin user created.")
 conn.commit()
+CREATE TABLE IF NOT EXISTS withdrawals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    amount REAL,
+    wallet TEXT,
+    status TEXT,
+    created_at TEXT
+);
 conn.close()
 
 print("Database initialized.")

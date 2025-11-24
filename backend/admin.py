@@ -8,7 +8,18 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+@admin_bp.route('/admin/users')
+def users_page():
+    if 'user_id' not in session or session.get("is_admin") != 1:
+        return redirect('/login')
 
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM users ORDER BY id DESC")
+    users = cursor.fetchall()
+
+    return render_template("users.html", users=users)
 @admin_bp.route('/admin')
 def admin_home():
     if 'user_id' not in session or session.get("is_admin") != 1:

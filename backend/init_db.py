@@ -49,6 +49,27 @@ VALUES ('admin', 'admin123')
 """)
 
 conn.commit()
+# جدول أرباح الأفلييت
+cur.execute("""
+CREATE TABLE IF NOT EXISTS affiliate_earnings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    amount REAL,
+    source_user INTEGER,
+    created_at TEXT
+)
+""")
+
+# جدول الاشتراكات
+cur.execute("""
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    plan TEXT,
+    status TEXT,
+    created_at TEXT
+)
+""")
 conn.close()
 
 print("Admin user created.")

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>إحصاءات الأفيلييت</title>
+    <link rel="stylesheet" href="/static/affiliate.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>📊 إحصاءات الأفيلييت</h2>
+
+    <div class="stats-box">
+        <div class="stat-card">
+            <h3>عدد الإحالات</h3>
+            <p>{{ referrals }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>الأرباح الكلية</h3>
+            <p>{{ total_earn }} $</p>
+        </div>
+    </div>
+
+    <h3>الإحالات بالتفصيل</h3>
+    <table>
+        <tr>
+            <th>المستعمل</th>
+            <th>التاريخ</th>
+        </tr>
+        {% for r in referrals_list %}
+        <tr>
+            <td>{{ r.email }}</td>
+            <td>{{ r.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>الأرباح بالتفصيل</h3>
+    <table>
+        <tr>
+            <th>المبلغ</th>
+            <th>المصدر</th>
+            <th>التاريخ</th>
+        </tr>
+        {% for e in earnings_list %}
+        <tr>
+            <td>{{ e.amount }} $</td>
+            <td>{{ e.source_user }}</td>
+            <td>{{ e.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+</body>
+</html>

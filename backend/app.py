@@ -3,6 +3,8 @@ from auth import auth_bp
 from routes.admin import admin_bp
 from routes.profile import profile_bp
 from routes.usage import usage_bp
+from routes.chatbot import chatbot_bp
+app.register_blueprint(chatbot_bp)
 app.register_blueprint(usage_bp)
 app = Flask(__name__)
 app.secret_key = "SECRET_KEY"

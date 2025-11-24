@@ -182,6 +182,46 @@ function sendMessage(){
   color: white;
   border: none;
 }
+<script>
+document.getElementById("chat-button").onclick = function () {
+  document.getElementById("chat-box").style.display = "flex";
+};
+
+document.getElementById("close-chat").onclick = function () {
+  document.getElementById("chat-box").style.display = "none";
+};
+
+document.getElementById("sendBtn").onclick = sendMessage;
+
+function sendMessage() {
+  let input = document.getElementById("userInput");
+  let msg = input.value.trim();
+  if (!msg) return;
+
+  addMessage(msg, "user-msg");
+  input.value = "";
+
+  // إرسال للباك-إند Flask
+  fetch("/chatbot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: msg })
+  })
+  .then(res => res.json())
+  .then(data => {
+    addMessage(data.reply, "bot-msg");
+  });
+}
+
+function addMessage(text, type) {
+  let box = document.getElementById("chat-messages");
+  let div = document.createElement("div");
+  div.className = "message " + type;
+  div.innerText = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+</script>
 </style>
 </script>
 

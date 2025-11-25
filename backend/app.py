@@ -13,7 +13,12 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-
+@app.route('/api/analysis')
+def get_analysis():
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT id, category, title, content, date FROM analysis ORDER BY id DESC")
+    data = cursor.fetchall()
+    return jsonify(data)
 # === عرض إدارة المدونة ===
 @app.route("/admin/blog")
 def admin_blog():

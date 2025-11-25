@@ -14,9 +14,29 @@ from flask import Blueprint, request, jsonify
 import requests
 import talib
 import numpy as np
-from routes.autotrade import autotrade_bp
-app.register_blueprint(autotrade_bp)
-analysis_bp = Blueprint("analysis_bp", __name__)
+from backend.auto_trading import AutoTradingEngine, StrategyConfig, TradingMode, DummyExchange
+
+engine = AutoTradingEngine()
+
+# مثال: تسجيل منصة عامة (تستبدل DummyExchange لاحقاً بـ BinanceClient أو BybitClient إلخ)
+engine.register_exchange_client(
+    "binance",
+    DummyExchange(api_key="XXX", api_secret="YYY", name="binance")
+)
+
+# عند التسجيل أو من لوحة الإعدادات:
+config = StrategyConfig(
+    user_id=1,
+    mode=TradingMode.FULL_AUTO,          # أو SEMI_AUTO أو SIGNALS_ONLY
+    max_risk_per_trade_pct=1.0,
+    max_daily_loss_pct=5.0,
+    max_positions=3,
+    symbols=["BTCUSDT", "XAUUSD", "AAPL"],  # عملات + ذهب + أسهم
+    exchanges=["binance"],               # لاحقاً تضيف "bybit", "okx" ...
+    use_smart_analysis=True,
+    auto_trading_enabled=True,
+)
+engine.set_user_strategy(config)
 
 @analysis_bp.route("/analysis_api", methods=["POST"])
 def analysis_api():

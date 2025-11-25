@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>تنبيهات الحيتان | SmartBot</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="dark-theme">
+
+<header>
+    <a class="logo">SmartBot</a>
+    <nav>
+        <a href="dashboard.html">لوحة التحكم</a>
+        <a href="auto_trading.html">التداول الآلي</a>
+        <a href="whale_alerts.html" class="active">الحيتان</a>
+        <a href="analysis.html">التحليلات</a>
+        <a href="logout.html" class="btn">تسجيل خروج</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <h1>تنبيهات الحيتان</h1>
+        <p>تتبّع أكبر التحركات في السوق اللحظية: تحويلات كبيرة، صفقات محافظ قوية، دخول وخروج رؤوس الأموال.</p>
+    </section>
+
+    <section class="whale-box">
+        <h2>آخر تحركات الحيتان</h2>
+
+        <div id="alerts"></div>
+    </section>
+
+</main>
+
+<script>
+async function loadWhales() {
+    const res = await fetch("/api/whales");
+    const data = await res.json();
+
+    const box = document.getElementById("alerts");
+    box.innerHTML = "";
+
+    data.forEach(w => {
+        box.innerHTML += `
+        <div class="alert-item">
+            <h3>${w.symbol} | ${w.amount}</h3>
+            <p>من: ${w.from}</p>
+            <p>إلى: ${w.to}</p>
+            <p class="time">${w.time}</p>
+        </div>`;
+    });
+}
+
+loadWhales();
+setInterval(loadWhales, 15000);
+</script>
+
+</body>
+</html>

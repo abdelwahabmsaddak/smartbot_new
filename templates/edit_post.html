@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تعديل مقال</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dark-theme">
+
+<h1>تعديل المقال</h1>
+
+<form method="post">
+    <input type="text" name="title" value="{{ post[1] }}" required>
+    <textarea name="content" rows="8">{{ post[2] }}</textarea>
+    <button class="btn">حفظ التغييرات</button>
+</form>
+
+<a href="/admin/blog" class="btn">رجوع</a>
+
+</body>
+</html>

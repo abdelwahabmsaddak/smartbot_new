@@ -7,7 +7,78 @@ from routes.chatbot import chatbot_bp
 from routes.payments import payments_bp        # إن وجد
 from routes.billing import billing_bp          # إن وجد
 from routes.affiliate import affiliate_bp      # صفحة الافلييت
+from flask import Flask, render_template, request, redirect
+import sqlite3
+from datetime import datetime
 
+app = Flask(__name__)
+
+
+# === عرض إدارة المدونة ===
+@app.route("/admin/blog")
+def admin_blog():
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM posts ORDER BY id DESC")
+    posts = c.fetchall()
+    conn.close()
+    return render_template("admin_blog.html", posts=posts)
+
+
+# === إنشاء مقال ===
+@app.route("/admin/blog/create", methods=["POST"])
+def create_post():
+    title = request.form["title"]
+    content = request.form["content"]
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO posts (title, content, created_at, updated_at) VALUES (?, ?, ?, ?)",
+              (title, content, now, now))
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin/blog")
+
+
+# === تعديل مقال ===
+@app.route("/admin/blog/edit/<int:id>")
+def edit_post(id):
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM posts WHERE id=?", (id,))
+    post = c.fetchone()
+    conn.close()
+    return render_template("edit_post.html", post=post)
+
+
+@app.route("/admin/blog/edit/<int:id>", methods=["POST"])
+def save_edit_post(id):
+    title = request.form["title"]
+    content = request.form["content"]
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+    c.execute("UPDATE posts SET title=?, content=?, updated_at=? WHERE id=?",
+              (title, content, now, id))
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin/blog")
+
+
+# === حذف مقال ===
+@app.route("/admin/blog/delete/<int:id>")
+def delete_post(id):
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+    c.execute("DELETE FROM posts WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin/blog")
 app = Flask(__name__)
 app.secret_key = "SECRET_KEY"   # بدّلها فيما بعد
 

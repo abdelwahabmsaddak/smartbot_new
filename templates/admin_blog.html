@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة إدارة المدونة</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background:#0f0f11; color:#fff; font-family:"Cairo",sans-serif; }
+        .admin-container { width:90%; margin:40px auto; }
+        h1 { margin-bottom:20px; }
+        .box { background:#1a1a1d; padding:20px; border-radius:10px; margin-bottom:20px; }
+
+        input, textarea, select {
+            width:100%; padding:10px; border:1px solid #333;
+            background:#111; color:#fff; border-radius:8px; margin-top:8px;
+        }
+
+        button {
+            background:#3a7afe; border:none; padding:10px 20px;
+            color:#fff; font-size:16px; border-radius:8px; cursor:pointer; margin-top:10px;
+        }
+
+        table { width:100%; border-collapse:collapse; margin-top:20px; }
+        table th, table td {
+            border:1px solid #333; padding:12px; background:#111; text-align:center;
+        }
+
+        .btn-edit { background:#22d3ee; }
+        .btn-delete { background:#ef4444; }
+        .btn-generate { background:#805ad5; }
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+
+    <h1>إدارة المدونة</h1>
+
+    <!-- إضافة مقال جديد -->
+    <div class="box">
+        <h2>إضافة مقال جديد</h2>
+
+        <input id="title" type="text" placeholder="عنوان المقال">
+        <textarea id="content" rows="6" placeholder="نص المقال"></textarea>
+
+        <button onclick="addPost()">إضافة المقال</button>
+        <button class="btn-generate" onclick="generatePost()">توليد مقال تلقائي</button>
+    </div>
+
+    <!-- قائمة المقالات -->
+    <div class="box">
+        <h2>جميع المقالات</h2>
+        <table id="postsTable">
+            <thead>
+                <tr>
+                    <th>العنوان</th>
+                    <th>الحالة</th>
+                    <th>تعديل</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody id="postsBody">
+                <!-- يتم تعبئتها بالباك اند -->
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+async function loadPosts() {
+    const res = await fetch("/api/posts");
+    const data = await res.json();
+
+    const table = document.getElementById("postsBody");
+    table.innerHTML = "";
+
+    data.forEach(post => {
+        table.innerHTML += `
+            <tr>
+                <td>${post.title}</td>
+                <td>${post.status}</td>
+                <td><button class="btn-edit" onclick="editPost(${post.id})">تعديل</button></td>
+                <td><button class="btn-delete" onclick="deletePost(${post.id})">حذف</button></td>
+            </tr>
+        `;
+    });
+}
+loadPosts();
+
+async function addPost() {
+    const t = document.getElementById("title").value;
+    const c = document.getElementById("content").value;
+
+    const res = await fetch("/api/add_post", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ title:t, content:c })
+    });
+
+    loadPosts();
+}
+
+async function deletePost(id) {
+    await fetch(`/api/delete_post/${id}`, { method:"DELETE" });
+    loadPosts();
+}
+
+async function generatePost() {
+    const res = await fetch("/api/generate_post");
+    const data = await res.json();
+    document.getElementById("title").value = data.title;
+    document.getElementById("content").value = data.content;
+}
+</script>
+
+</body>
+</html>

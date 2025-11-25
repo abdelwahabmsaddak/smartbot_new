@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>التحليلات | SmartBot</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background:#0f0f11; color:#fff; font-family: "Cairo", sans-serif; }
+
+    .container {
+      width: 90%; max-width: 1100px; margin: auto; padding: 40px 0;
+    }
+
+    h1 { text-align:center; margin-bottom: 30px; }
+
+    .analysis-card {
+      background:#1a1a1d;
+      padding:20px;
+      border-radius:14px;
+      margin-bottom:20px;
+      border:1px solid #222;
+      transition:0.3s;
+    }
+
+    .analysis-card:hover { border-color:#3a7afe; }
+
+    .category {
+      font-size:14px;
+      color:#3a7afe;
+      margin-bottom:6px;
+    }
+
+    .title {
+      font-size:20px;
+      font-weight:bold;
+      margin-bottom:10px;
+    }
+
+    .date {
+      font-size:13px;
+      color:#bbb;
+      margin-bottom:12px;
+    }
+
+    .content { line-height:1.9; color:#eaeaea; }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <a href="index.html" class="logo">SmartBot</a>
+    <nav>
+      <a href="dashboard.html">الرئيسية</a>
+      <a href="analysis.html" class="active">التحليلات</a>
+      <a href="blog.html">المدونة</a>
+      <a href="affiliate.html">الشركاء</a>
+      <a href="profile.html">حسابي</a>
+    </nav>
+  </header>
+
+  <!-- Page Content -->
+  <div class="container">
+    <h1>التحليلات</h1>
+
+    <!-- يتم ملؤها تلقائياً من الباكند -->
+    <div id="analysis-list"></div>
+  </div>
+
+<script>
+  // جلب التحليلات من الباكند
+  fetch("/api/analysis")
+    .then(res => res.json())
+    .then(data => {
+      const list = document.getElementById("analysis-list");
+      if (!data || data.length === 0) {
+        list.innerHTML = "<p>لا توجد تحليلات متوفرة حالياً.</p>";
+        return;
+      }
+
+      data.forEach(item => {
+        list.innerHTML += `
+          <div class="analysis-card">
+            <div class="category">${item.category}</div>
+            <div class="title">${item.title}</div>
+            <div class="date">🕒 ${item.date}</div>
+            <div class="content">${item.content}</div>
+          </div>
+        `;
+      });
+    })
+    .catch(err => {
+      document.getElementById("analysis-list").innerHTML =
+        "<p>⚠ حدث خطأ أثناء جلب التحليلات.</p>";
+    });
+</script>
+
+</body>
+</html>

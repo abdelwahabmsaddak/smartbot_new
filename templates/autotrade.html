@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>التداول الآلي</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🤖 التداول الآلي</h2>
+
+    <div class="box">
+        <label>زوج التداول / السهم:</label>
+        <input type="text" id="symbol" placeholder="BTCUSDT أو AAPL">
+    </div>
+
+    <div class="box">
+        <label>اختيار الإستراتيجية:</label>
+        <select id="strategy">
+            <option value="ma">Moving Average (MA)</option>
+            <option value="rsi">RSI</option>
+            <option value="macd">MACD</option>
+            <option value="bollinger">Bollinger Bands</option>
+            <option value="smart">Smart AI Signal</option>
+        </select>
+    </div>
+
+    <div class="box">
+        <label>قيمة الشراء عندما ينخفض السعر (%)</label>
+        <input type="number" id="buy_drop" value="2">
+    </div>
+
+    <div class="box">
+        <label>جني الربح (%)</label>
+        <input type="number" id="take_profit" value="3">
+    </div>
+
+    <div class="box">
+        <label>إيقاف الخسارة (%)</label>
+        <input type="number" id="stop_loss" value="1">
+    </div>
+
+    <button onclick="startBot()">تشغيل التداول الآلي 🚀</button>
+    <button onclick="stopBot()">إيقاف التداول ✋</button>
+
+    <hr>
+
+    <h3>📈 حالة النظام:</h3>
+    <div id="status">غير مفعّل</div>
+
+</div>
+
+<script>
+function startBot() {
+    fetch("/start_bot", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            symbol: document.getElementById("symbol").value,
+            strategy: document.getElementById("strategy").value,
+            buy_drop: document.getElementById("buy_drop").value,
+            take_profit: document.getElementById("take_profit").value,
+            stop_loss: document.getElementById("stop_loss").value
+        })
+    }).then(r => r.json()).then(data => {
+        document.getElementById("status").innerHTML = data.message;
+    });
+}
+
+function stopBot() {
+    fetch("/stop_bot")
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("status").innerHTML = data.message;
+        });
+}
+</script>
+
+</body>
+</html>

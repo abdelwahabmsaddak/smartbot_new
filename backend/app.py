@@ -10,16 +10,58 @@ from routes.affiliate import affiliate_bp      # صفحة الافلييت
 from flask import Flask, render_template, request, redirect
 import sqlite3
 from datetime import datetime
+from flask import Blueprint, request, jsonify
+import requests
+import talib
+import numpy as np
 
+analysis_bp = Blueprint("analysis_bp", __name__)
+
+@analysis_bp.route("/analysis_api", methods=["POST"])
+def analysis_api():
+    data = request.json
+    symbol = data["symbol"]
+    indicators = data["indicators"]
+
+    # مثال: نجيب البيانات من Binance
+    url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval=1h&limit=200"
+    candles = requests.get(url).json()
+
+    close_prices = np.array([float(c[4]) for c in candles])
+    volume = np.array([float(c[5]) for c in candles])
+
+    result = {}
+
+    if "ma" in indicators:
+        result["MA20"] = float(talib.SMA(close_prices, 20)[-1])
+
+    if "ema" in indicators:
+        result["EMA12"] = float(talib.EMA(close_prices, 12)[-1])
+
+    if "macd" in indicators:
+        macd, signal, hist = talib.MACD(close_prices)
+        result["MACD"] = {
+            "macd": float(macd[-1]),
+            "signal": float(signal[-1]),
+            "histogram": float(hist[-1])
+        }
+
+    if "rsi" in indicators:
+        result["RSI"] = float(talib.RSI(close_prices, 14)[-1])
+
+    if "volume" in indicators:
+        result["Volume"] = float(volume[-1])
+
+    if "support" in indicators:
+        result["Support"] = float(min(close_prices[-20:]))
+        result["Resistance"] = float(max(close_prices[-20:]))
+
+    if "whales" in indicators:
+        result["Whale_Alert"] = "🚨 سيتم إضافة API لاحقًا للحيتان"
+
+    return jsonify(result)
 app = Flask(__name__)
 
-CREATE TABLE IF NOT EXISTS analysis (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    symbol TEXT,
-    result TEXT,
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
 # === عرض إدارة المدونة ===
 @app.route("/admin/blog")
 def admin_blog():

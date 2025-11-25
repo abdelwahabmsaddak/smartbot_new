@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تتبّع الحيتان | SmartBot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dark-theme">
+
+  <!-- Navigation -->
+  <header>
+    <a href="index.html" class="logo">SmartBot</a>
+    <nav>
+      <a href="dashboard.html">لوحة التحكم</a>
+      <a href="auto-trading.html">التداول الآلي</a>
+      <a href="analysis.html">التحليلات</a>
+      <a href="whales.html" class="active">تتبّع الحيتان</a>
+      <a href="whale-alerts.html">تنبيهات الحيتان</a>
+      <a href="profile.html">حسابي</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>تتبّع الحيتان والمحافظ الكبيرة</h1>
+      <p>راقب أكبر التحركات في السوق: تحويلات ضخمة، شراء، بيع، انتقال أموال بين المنصات.</p>
+    </section>
+
+    <section class="container">
+      <h2>آخر عمليات الحيتان</h2>
+
+      <div id="whale-feed" class="whale-list">
+        <p>يتم تحميل البيانات...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 SmartBot – جميع الحقوق محفوظة</p>
+  </footer>
+
+  <script>
+    async function loadWhales() {
+      const feed = document.getElementById("whale-feed");
+      try {
+        const res = await fetch("/api/whales"); // باك اند
+        const data = await res.json();
+
+        feed.innerHTML = "";
+
+        data.forEach(item => {
+          feed.innerHTML += `
+            <div class="whale-card">
+              <h3>${item.asset}</h3>
+              <p>الكمية: ${item.amount}</p>
+              <p>القيمة: ${item.usd_value} $</p>
+              <p>من: ${item.from}</p>
+              <p>إلى: ${item.to}</p>
+              <p class="time">${item.time}</p>
+            </div>
+          `;
+        });
+
+      } catch(e) {
+        feed.innerHTML = "<p>فشل تحميل البيانات.</p>";
+      }
+    }
+    loadWhales();
+  </script>
+
+</body>
+</html>

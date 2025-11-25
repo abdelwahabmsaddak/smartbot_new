@@ -1,100 +1,128 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>لوحة التحكم | الأدمن</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <style>
-        body{
-            margin:0;
-            padding:0;
-            font-family:'Cairo', sans-serif;
-            background:#0e0e11;
-            color:#fff;
-        }
-        .sidebar{
-            width:250px;
-            height:100vh;
-            background:#1a1a1e;
-            padding:20px;
-            position:fixed;
-        }
-        .sidebar h2{
-            margin-bottom:25px;
-            text-align:center;
-        }
-        .sidebar a{
-            display:block;
-            padding:12px;
-            background:#222;
-            margin-bottom:10px;
-            color:#fff;
-            text-decoration:none;
-            border-radius:8px;
-        }
-        .sidebar a:hover{
-            background:#333;
-        }
-
-        .content{
-            margin-right:270px;
-            padding:20px;
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:20px;
-        }
-        table th, table td{
-            border:1px solid #333;
-            padding:10px;
-            text-align:center;
-        }
-        table th{
-            background:#222;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <title>لوحة الإدارة | SmartBot</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
+<body class="dark-theme">
 
-    <div class="sidebar">
-        <h2>الأدمن</h2>
-        <a href="/admin">لوحة التحكم</a>
-        <a href="/admin/users">المستخدمين</a>
-        <a href="/dashboard">العودة للمستخدم</a>
-    </div>
+    <header class="admin-header">
+        <h2>لوحة الإدارة</h2>
+        <nav>
+            <a href="#overview">الإحصائيات</a>
+            <a href="#users">المستخدمين</a>
+            <a href="#affiliate">الشركاء</a>
+            <a href="#withdraw">سحب الأرباح</a>
+            <a href="#settings">الإعدادات</a>
+        </nav>
+    </header>
 
-    <div class="content">
-        <h1>مرحبا بك في لوحة تحكم الأدمن</h1>
-        <p>إحصائيات عامة:</p>
+    <main class="admin-container">
 
-        <ul>
-            <li>عدد المستخدمين: {{ users_count }}</li>
-            <li>عدد الاشتراكات: {{ plans_count }}</li>
-        </ul>
+        <!-- ====================== 1. Overview ====================== -->
+        <section id="overview" class="admin-section">
+            <h3>الإحصائيات العامة</h3>
 
-        <h2>قائمة المستخدمين</h2>
+            <div class="stats-grid">
 
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>البريد</th>
-                <th>اسم المستخدم</th>
-                <th>تاريخ الإنشاء</th>
-            </tr>
-            {% for u in users %}
-            <tr>
-                <td>{{ u.id }}</td>
-                <td>{{ u.email }}</td>
-                <td>{{ u.username }}</td>
-                <td>{{ u.created_at }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
+                <div class="stat-box">
+                    <h4>عدد المستخدمين</h4>
+                    <p id="total_users">0</p>
+                </div>
 
+                <div class="stat-box">
+                    <h4>عدد الشركاء</h4>
+                    <p id="total_affiliates">0</p>
+                </div>
+
+                <div class="stat-box">
+                    <h4>أرباح الاشتراكات</h4>
+                    <p id="sub_earnings">$0</p>
+                </div>
+
+                <div class="stat-box">
+                    <h4>أرباح الأفيلييت</h4>
+                    <p id="aff_earnings">$0</p>
+                </div>
+
+                <div class="stat-box">
+                    <h4>اشتراكات هذا الشهر</h4>
+                    <p id="monthly_subs">0</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ====================== 2. Users ====================== -->
+        <section id="users" class="admin-section">
+            <h3>إدارة المستخدمين</h3>
+            <table class="admin-table" id="users_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>الإيميل</th>
+                        <th>الخطة</th>
+                        <th>الحالة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ====================== 3. Affiliate ====================== -->
+        <section id="affiliate" class="admin-section">
+            <h3>إدارة الشركاء</h3>
+
+            <table class="admin-table" id="aff_table">
+                <thead>
+                    <tr>
+                        <th>الشريك</th>
+                        <th>الكود</th>
+                        <th>عدد الإحالات</th>
+                        <th>الأرباح</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </section>
+
+        <!-- ====================== 4. Withdraw Requests ====================== -->
+        <section id="withdraw" class="admin-section">
+            <h3>طلبات سحب الأرباح</h3>
+
+            <table class="admin-table" id="withdraw_table">
+                <thead>
+                    <tr>
+                        <th>المستخدم</th>
+                        <th>المبلغ</th>
+                        <th>المحفظة / بايبال</th>
+                        <th>الحالة</th>
+                        <th>تأكيد</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <!-- ====================== 5. Settings ====================== -->
+        <section id="settings" class="admin-section">
+            <h3>إعدادات الموقع</h3>
+
+            <div class="settings-box">
+                <label>سعر الاشتراك الشهري:</label>
+                <input type="number" id="sub_price" value="29" />
+                <button onclick="saveSettings()">حفظ</button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="admin.js"></script>
 </body>
 </html>

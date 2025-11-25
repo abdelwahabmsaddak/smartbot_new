@@ -1,40 +1,38 @@
-from flask import Blueprint, render_template, session, redirect
-import sqlite3
+from flask import Blueprint, render_template, request, jsonify
+from backend.db import get_db
 
-admin_bp = Blueprint('admin_bp', __name__)
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
-def get_db():
-    conn = sqlite3.connect("database.db")
-    conn.row_factory = sqlite3.Row
-    return conn
+# لوحة الادارة
+@admin_bp.route('/')
+def admin_dashboard():
+    db = get_db()
+    users = db.execute("SELECT * FROM users ORDER BY id DESC").fetchall()
+    affiliates = db.execute("SELECT * FROM affiliates ORDER BY id DESC").fetchall()
+    withdrawals = db.execute("SELECT * FROM withdrawals ORDER BY id DESC").fetchall()
 
-@admin_bp.route('/admin/users')
-def users_page():
-    if 'user_id' not in session or session.get("is_admin") != 1:
-        return redirect('/login')
+    return render_template(
+        'admin/dashboard.html',
+        users=users,
+        affiliates=affiliates,
+        withdrawals=withdrawals
+    )
 
-    conn = get_db()
-    cursor = conn.cursor()
+# تحديث حالة الاشتراك
+@admin_bp.route('/update_plan', methods=['POST'])
+def update_plan():
+    db = get_db()
+    user_id = request.json['user_id']
+    plan = request.json['plan']
+    db.execute("UPDATE users SET plan=? WHERE id=?", (plan, user_id))
+    db.commit()
+    return jsonify({"success": True})
 
-    cursor.execute("SELECT * FROM users ORDER BY id DESC")
-    users = cursor.fetchall()
-
-    return render_template("users.html", users=users)
-@admin_bp.route('/admin')
-def admin_home():
-    if 'user_id' not in session or session.get("is_admin") != 1:
-        return redirect('/login')
-
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT COUNT(*) as c FROM users")
-    users_count = cursor.fetchone()['c']
-
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
-
-    return render_template("admin_dashboard.html",
-                           users=users,
-                           users_count=users_count,
-                           plans_count=0)
+# تأكيد سحب أفيليت
+@admin_bp.route('/approve_withdraw', methods=['POST'])
+def approve_withdraw():
+    db = get_db()
+    wid = request.json["withdraw_id"]
+    db.execute("UPDATE withdrawals SET status='approved' WHERE id=?", (wid,))
+    db.commit()
+    return jsonify({"success": True})

@@ -14,7 +14,8 @@ from flask import Blueprint, request, jsonify
 import requests
 import talib
 import numpy as np
-
+from routes.autotrade import autotrade_bp
+app.register_blueprint(autotrade_bp)
 analysis_bp = Blueprint("analysis_bp", __name__)
 
 @analysis_bp.route("/analysis_api", methods=["POST"])

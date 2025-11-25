@@ -15,7 +15,35 @@ import requests
 import talib
 import numpy as np
 from backend.auto_trading import AutoTradingEngine, StrategyConfig, TradingMode, DummyExchange
+from flask import Flask, jsonify
+import requests
+import time
 
+app = Flask(__name__)
+
+# مثال API واحد – ويمكن تغييرها لأي منصة
+WHALE_API = "https://api.whale-alert.io/v1/transactions?api_key=YOUR_KEY"
+
+@app.get("/api/whales")
+def whales():
+    # مثال (بيانات وهمية بدون API Key)
+    sample = [
+        {
+            "symbol": "BTC",
+            "amount": "350 BTC",
+            "from": "محفظة غير معروفة",
+            "to": "Binance",
+            "time": time.strftime("%Y-%m-%d %H:%M")
+        },
+        {
+            "symbol": "ETH",
+            "amount": "12,000 ETH",
+            "from": "Coinbase",
+            "to": "محفظة حوت",
+            "time": time.strftime("%Y-%m-%d %H:%M")
+        }
+    ]
+    return jsonify(sample)
 engine = AutoTradingEngine()
 
 # مثال: تسجيل منصة عامة (تستبدل DummyExchange لاحقاً بـ BinanceClient أو BybitClient إلخ)

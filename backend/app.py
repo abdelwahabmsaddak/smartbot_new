@@ -18,7 +18,8 @@ from backend.auto_trading import AutoTradingEngine, StrategyConfig, TradingMode,
 from flask import Flask, jsonify
 import requests
 import time
-
+from routes.auto_trading_pro import auto_trading_pro_bp
+app.register_blueprint(auto_trading_pro_bp)
 app = Flask(__name__)
 
 # مثال API واحد – ويمكن تغييرها لأي منصة

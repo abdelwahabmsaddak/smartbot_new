@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto Trading PRO</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        .container {
+            width: 90%;
+            margin: auto;
+            margin-top: 40px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 { text-align: center; }
+
+        .box {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px;
+            width: 100%;
+            background: #0a84ff;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover { background:#006be6; }
+
+        .status-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f9ff;
+            border-left: 4px solid #0a84ff;
+            border-radius: 6px;
+        }
+
+        .signal-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff7e6;
+            border-left: 4px solid #ff9800;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>🤖 Auto Trading PRO</h2>
+    <p style="text-align:center;">نظام تداول آلي احترافي — متعدد المنصات — ذكاء اصطناعي</p>
+
+    <div class="box">
+        <label>اختَر المنصة:</label>
+        <select id="platform">
+            <option value="binance">Binance</option>
+            <option value="kucoin">KuCoin</option>
+            <option value="bybit">ByBit</option>
+            <option value="okx">OKX</option>
+            <option value="coinbase">Coinbase</option>
+        </select>
+
+        <label>زوج التداول:</label>
+        <input id="symbol" type="text" placeholder="مثال: BTCUSDT">
+
+        <label>رأس المال (USDT):</label>
+        <input id="balance" type="number" placeholder="100">
+
+        <label>نسبة المخاطرة %:</label>
+        <input id="risk" type="number" placeholder="3">
+
+        <label>إستراتيجية التداول:</label>
+        <select id="strategy">
+            <option value="ai">ذكاء اصطناعي (SMART AI)</option>
+            <option value="scalping">Scalping</option>
+            <option value="swing">Swing Trading</option>
+            <option value="trend">Trend Following</option>
+            <option value="grid">Grid Trading</option>
+        </select>
+
+        <button onclick="startBot()">🚀 تشغيل البوت</button>
+        <button onclick="stopBot()" style="background:#ff3b30;">⛔ إيقاف البوت</button>
+    </div>
+
+    <div id="statusBox" class="status-box" style="display:none;"></div>
+    <div id="signals" class="signal-box" style="display:none;"></div>
+
+</div>
+
+<script>
+function startBot() {
+
+    let obj = {
+        symbol: document.getElementById("symbol").value,
+        platform: document.getElementById("platform").value,
+        balance: document.getElementById("balance").value,
+        risk: document.getElementById("risk").value,
+        strategy: document.getElementById("strategy").value
+    };
+
+    fetch("/api/autotrade_pro/start", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(obj)
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("statusBox").style.display = "block";
+        document.getElementById("statusBox").innerHTML =
+            "<b>⚡ الحالة:</b> " + data.status;
+
+        if(data.signal){
+            document.getElementById("signals").style.display = "block";
+            document.getElementById("signals").innerHTML =
+                "<b>📈 آخر إشارة:</b> " + data.signal;
+        }
+    });
+}
+
+function stopBot() {
+    fetch("/api/autotrade_pro/stop")
+    .then(res => res.json())
+    .then(data => {
+        alert("تم إيقاف البوت");
+    });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>Market Screener PRO</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        body {padding:20px; font-family:Arial;}
+        .box {background:#fff; padding:20px; border-radius:10px; margin-bottom:20px; box-shadow:0 0 8px #ddd;}
+        label {font-weight:bold;}
+        .filters {display:grid; grid-template-columns:repeat(3,1fr); gap:15px;}
+        table {width:100%; border-collapse:collapse; margin-top:20px;}
+        th,td {padding:10px; border-bottom:1px solid #ddd; text-align:center;}
+        th {background:#f4f4f4;}
+        button {background:#007bff; color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer;}
+        button:hover {background:#0059d1;}
+    </style>
+</head>
+
+<body>
+
+<h2>📊 Market Screener PRO</h2>
+
+<div class="box">
+    <h3>🔍 الفلاتر المتقدمة</h3>
+
+    <div class="filters">
+        <div>
+            <label>النوع</label>
+            <select id="assetType">
+                <option value="crypto">Crypto</option>
+                <option value="stocks">Stocks</option>
+                <option value="gold">Gold</option>
+            </select>
+        </div>
+
+        <div>
+            <label>نسبة التغير 24h</label>
+            <select id="change24">
+                <option value="any">أي</option>
+                <option value="up">⬆ صعود</option>
+                <option value="down">⬇ هبوط</option>
+            </select>
+        </div>
+
+        <div>
+            <label>الحجم Volume</label>
+            <select id="volume">
+                <option value="any">أي</option>
+                <option value="high">مرتفع</option>
+                <option value="medium">متوسط</option>
+                <option value="low">ضعيف</option>
+            </select>
+        </div>
+
+        <div>
+            <label>مؤشر RSI</label>
+            <select id="rsi">
+                <option value="any">أي</option>
+                <option value="oversold">🔵 Oversold (RSI < 30)</option>
+                <option value="overbought">🔴 Overbought (RSI > 70)</option>
+            </select>
+        </div>
+
+        <div>
+            <label>MACD</label>
+            <select id="macd">
+                <option value="any">أي</option>
+                <option value="bullish">📈 Bullish</option>
+                <option value="bearish">📉 Bearish</option>
+            </select>
+        </div>
+
+        <div>
+            <label>EMA</label>
+            <select id="ema">
+                <option value="any">أي</option>
+                <option value="ema50">EMA50 Break</option>
+                <option value="ema200">EMA200 Break</option>
+            </select>
+        </div>
+    </div>
+
+    <br>
+    <button onclick="loadScreener()">عرض النتائج</button>
+</div>
+
+<h3>📋 النتائج</h3>
+
+<table id="resultsTable">
+    <thead>
+        <tr>
+            <th>الرمز</th>
+            <th>السعر</th>
+            <th>التغير</th>
+            <th>الحجم</th>
+            <th>RSI</th>
+            <th>MACD</th>
+            <th>الإشارة النهائية</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+function loadScreener() {
+
+    let filters = {
+        assetType: document.getElementById("assetType").value,
+        change24: document.getElementById("change24").value,
+        volume: document.getElementById("volume").value,
+        rsi: document.getElementById("rsi").value,
+        macd: document.getElementById("macd").value,
+        ema: document.getElementById("ema").value
+    };
+
+    fetch("/api/screener", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(filters)
+    })
+    .then(res => res.json())
+    .then(data => {
+        let tbody = document.querySelector("#resultsTable tbody");
+        tbody.innerHTML = "";
+
+        data.forEach(row => {
+            let tr = `
+            <tr>
+                <td>${row.symbol}</td>
+                <td>${row.price}</td>
+                <td>${row.change24}</td>
+                <td>${row.volume}</td>
+                <td>${row.rsi}</td>
+                <td>${row.macd}</td>
+                <td>${row.final_signal}</td>
+            </tr>`;
+            tbody.innerHTML += tr;
+        });
+    });
+}
+</script>
+
+</body>
+</html>

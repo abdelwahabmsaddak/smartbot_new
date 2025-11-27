@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>🔔 الإشعارات</h2>
+
+    <div id="notif-box">
+        {% for n in notifications %}
+            <div class="notif {{ 'unread' if n['is_read'] == 0 }}">
+                <p>{{ n['message'] }}</p>
+                <small>{{ n['created_at'] }}</small>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.notif {
+    background: #222;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 6px;
+}
+.unread { border-left: 4px solid #ffcc00; }
+</style>
+
+{% endblock %}

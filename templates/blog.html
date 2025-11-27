@@ -48,7 +48,13 @@
             border-radius:6px;
             text-decoration:none;
         }
+{% extends "base.html" %}
 
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
         .btn-read:hover { background:#1e56db; }
     </style>
 </head>
@@ -61,7 +67,8 @@
         <nav>
             <a href="dashboard.html">لوحة التحكم</a>
             <a href="pricing.html">الأسعار</a>
-            <a href="affiliate.html">الشراكة</a>
+            <a href="affiliate.html">ال
+                شراكة</a>
             <a href="blog.html" class="active">المدونة</a>
             <a href="profile.html">الملف الشخصي</a>
             <a href="logout">خروج</a>

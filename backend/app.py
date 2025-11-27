@@ -23,6 +23,9 @@ from routes.screener import screener_bp
 from routes.multi_trading import multi_bp
 from routes.api_keys import api_keys_bp
 
+@app.get("/api_keys")
+def api_keys_page():
+    return render_template("api_keys.html")
 app.register_blueprint(api_keys_bp)
 app.register_blueprint(multi_bp)
 app.register_blueprint(screener_bp)

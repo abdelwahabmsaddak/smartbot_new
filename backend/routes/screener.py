@@ -8,6 +8,12 @@ import numpy as np
 
 screener_bp = Blueprint("screener", __name__)
 
+@bp.route("/screener_ai")
+def screener_ai():
+    coins = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+    results = {c: SmartAI.analyze(c) for c in coins}
+    return jsonify(results)
+    
 # قوائم جاهزة (تنجم تبدّلهم من بعد من الـ DB)
 WATCHLIST = {
     "crypto": [

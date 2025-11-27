@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings – API Keys</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h2>⚙️ الإعدادات – مفاتيح API</h2>
+
+<form action="/save_api_keys" method="POST" class="settings-box">
+
+    <label>🔥 Binance API Key</label>
+    <input type="text" name="binance_key" value="{{ api.binance_key if api else '' }}">
+
+    <label>🔑 Binance Secret Key</label>
+    <input type="password" name="binance_secret" value="{{ api.binance_secret if api else '' }}">
+
+    <hr>
+
+    <label>📈 Bybit API Key</label>
+    <input type="text" name="bybit_key" value="{{ api.bybit_key if api else '' }}">
+
+    <label>🔑 Bybit Secret</label>
+    <input type="password" name="bybit_secret" value="{{ api.bybit_secret if api else '' }}">
+
+    <hr>
+
+    <label>🐳 Whale Alert API Key</label>
+    <input type="text" name="whale_key" value="{{ api.whale_key if api else '' }}">
+
+    <label>🤖 Telegram Bot Token</label>
+    <input type="text" name="telegram_token" value="{{ api.telegram_token if api else '' }}">
+
+    <label>🆔 Telegram Chat ID</label>
+    <input type="text" name="telegram_chat" value="{{ api.telegram_chat if api else '' }}">
+
+    <button type="submit">💾 حفظ الإعدادات</button>
+
+</form>
+
+</body>
+</html>

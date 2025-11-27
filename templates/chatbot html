@@ -5,6 +5,14 @@
     <title>الدردشة الذكية</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+{% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+
     <style>
         body{
             margin:0;

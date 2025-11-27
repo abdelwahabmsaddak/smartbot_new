@@ -2,6 +2,14 @@
 
 <div id="paypal-button-container"></div>
 
+{% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+
 <script>
 paypal.Buttons({
     createOrder: function() {

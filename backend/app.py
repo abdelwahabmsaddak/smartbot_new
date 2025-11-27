@@ -22,6 +22,13 @@ from routes.auto_trading_pro import auto_trading_pro_bp
 from routes.screener import screener_bp
 from routes.multi_trading import multi_bp
 from routes.api_keys import api_keys_bp
+from flask import session
+from backend.languages import translate
+
+@app.context_processor
+def inject_translator():
+    lang = session.get("lang", "en")
+    return {"t": lambda key: translate(lang, key)}
 
 @app.get("/api_keys")
 def api_keys_page():

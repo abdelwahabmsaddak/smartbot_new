@@ -8,6 +8,14 @@
 
 <body>
 
+    {% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+    
 <div class="container">
 
     <h2>📊 إحصاءات الأفيلييت</h2>

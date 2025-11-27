@@ -6,6 +6,14 @@
 </head>
 <body>
 
+    {% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+    
 <h2>إنشاء حساب</h2>
 
 {% if error %}

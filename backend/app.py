@@ -20,7 +20,9 @@ import requests
 import time
 from routes.auto_trading_pro import auto_trading_pro_bp
 from routes.screener import screener_bp
+from routes.multi_trading import multi_bp
 
+app.register_blueprint(multi_bp)
 app.register_blueprint(screener_bp)
 app.register_blueprint(auto_trading_pro_bp)
 app = Flask(__name__)

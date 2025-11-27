@@ -15,6 +15,13 @@
             background:#111; color:#fff; border-radius:8px; margin-top:8px;
         }
 
+        {% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
         button {
             background:#3a7afe; border:none; padding:10px 20px;
             color:#fff; font-size:16px; border-radius:8px; cursor:pointer; margin-top:10px;

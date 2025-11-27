@@ -16,6 +16,14 @@
         <input type="text" id="symbol" placeholder="BTCUSDT أو AAPL">
     </div>
 
+    {% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+    
     <div class="box">
         <label>اختيار الإستراتيجية:</label>
         <select id="strategy">

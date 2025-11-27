@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>API Keys</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>🔑 إعدادات API Keys</h2>
+    <p>أضف مفاتيح منصات التداول لإستعمال التداول الآلي و الـ AI Signals.</p>
+
+    <form id="apiForm">
+        <label>Binance API Key</label>
+        <input type="text" id="binance_key" placeholder="ادخل Binance API Key">
+
+        <label>Binance Secret</label>
+        <input type="text" id="binance_secret" placeholder="ادخل Binance API Secret">
+
+        <label>OKX API Key</label>
+        <input type="text" id="okx_key">
+
+        <label>OKX Secret</label>
+        <input type="text" id="okx_secret">
+
+        <label>KuCoin API Key</label>
+        <input type="text" id="kucoin_key">
+
+        <label>KuCoin Secret</label>
+        <input type="text" id="kucoin_secret">
+
+        <button type="button" onclick="saveKeys()">💾 حفظ المفاتيح</button>
+    </form>
+
+    <div id="msg"></div>
+</div>
+
+<script>
+function saveKeys() {
+    let data = {
+        binance_key: document.getElementById("binance_key").value,
+        binance_secret: document.getElementById("binance_secret").value,
+        okx_key: document.getElementById("okx_key").value,
+        okx_secret: document.getElementById("okx_secret").value,
+        kucoin_key: document.getElementById("kucoin_key").value,
+        kucoin_secret: document.getElementById("kucoin_secret").value
+    };
+
+    fetch("/api/save_keys", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("msg").innerHTML =
+            `<p style="color:green;">✔ تم حفظ المفاتيح بنجاح</p>`;
+    });
+}
+</script>
+
+</body>
+</html>

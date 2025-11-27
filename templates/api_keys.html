@@ -7,6 +7,14 @@
 </head>
 <body>
 
+    {% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+    
 <div class="container">
     <h2>🔑 إعدادات API Keys</h2>
     <p>أضف مفاتيح منصات التداول لإستعمال التداول الآلي و الـ AI Signals.</p>

@@ -5,6 +5,14 @@
     <title>Auto Trading PRO</title>
     <link rel="stylesheet" href="/static/style.css">
 
+    {% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+    
     <style>
         .container {
             width: 90%;

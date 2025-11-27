@@ -28,6 +28,18 @@ def init_db():
         )
     """)
 
+    cur.execute("""
+CREATE TABLE IF NOT EXISTS api_keys (
+    user_id INTEGER PRIMARY KEY,
+    binance_key TEXT,
+    binance_secret TEXT,
+    okx_key TEXT,
+    okx_secret TEXT,
+    kucoin_key TEXT,
+    kucoin_secret TEXT
+)
+""")
+    
     # جدول الأرباح
     c.execute("""
         CREATE TABLE IF NOT EXISTS transactions (

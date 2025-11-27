@@ -62,6 +62,23 @@ CREATE TABLE IF NOT EXISTS api_keys (
         )
     """)
 
+    def create_notifications_table():
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        type TEXT,
+        message TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_read INTEGER DEFAULT 0
+    );
+    """)
+
+    conn.commit()
+    conn.close()
     conn.commit()
     conn.close()
 conn = sqlite3.connect("database.db", check_same_thread=False)
@@ -74,7 +91,8 @@ def create_users_table():
             username TEXT UNIQUE,
             email TEXT UNIQUE,
             password TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTA
+            MP DEFAULT CURRENT_TIMESTAMP
         )
     """)
     conn.commit()

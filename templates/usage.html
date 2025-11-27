@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>استهلاك API | SmartTrade+</title>
+{% extends "base.html" %}
 
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+    
     <style>
         body{
             margin:0;

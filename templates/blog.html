@@ -1,118 +1,47 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>المدونة | SmartBot</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body { background:#0f0f11; color:#eaeaea; font-family:'Cairo', sans-serif; }
-        .container { width:90%; margin:auto; padding:30px 0; }
-
-        h1 { text-align:center; margin-bottom:25px; }
-
-        .blog-grid {
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-            gap:20px;
-        }
-
-        .post-card {
-            background:#1a1a1d;
-            padding:20px;
-            border-radius:12px;
-            box-shadow:0 0 10px #0005;
-            transition:0.3s;
-            cursor:pointer;
-        }
-
-        .post-card:hover {
-            transform:translateY(-5px);
-            box-shadow:0 0 15px #0007;
-        }
-
-        .post-card h3 {
-            color:#3a7afe;
-            margin-bottom:10px;
-        }
-
-        .post-card p {
-            color:#bbbbbb;
-        }
-
-        .btn-read {
-            display:inline-block;
-            margin-top:10px;
-            padding:8px 15px;
-            background:#3a7afe;
-            color:white;
-            border-radius:6px;
-            text-decoration:none;
-        }
 {% extends "base.html" %}
-
 {% block content %}
-<h2>🔥 Dashboard</h2>
 
-<p>مرحبا بك {{ user.username }} 👋</p>
+<h2 class="title">📚 المدونة</h2>
+
+<div class="new-post">
+    <h3>✍️ كتابة تدوينة جديدة</h3>
+
+    <form method="POST" action="/blog/new">
+        <input type="text" name="title" placeholder="عنوان التدوينة" required class="input">
+        <textarea name="content" placeholder="المحتوى" class="textarea"></textarea>
+        <button class="btn">نشر التدوينة</button>
+    </form>
+
+    <h4>🤖 توليد تدوينة بالذكاء الاصطناعي</h4>
+    <input type="text" id="topic" placeholder="أدخل موضوع المقال" class="input">
+    <button onclick="generateAI()" class="btn-secondary">توليد تلقائي</button>
+
+    <textarea id="ai_result" class="textarea" placeholder="النص الناتج"></textarea>
+</div>
+
+<hr>
+
+<h3>📄 آخر التدوينات</h3>
+{% for p in posts %}
+<div class="post">
+    <h3>{{ p[1] }}</h3>
+    <p>{{ p[2] }}</p>
+    <small>📅 {{ p[3] }}</small>
+</div>
+<hr>
+{% endfor %}
+
+<script>
+function generateAI() {
+    let topic = document.getElementById("topic").value;
+    fetch("/blog/ai_generate", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "topic=" + topic
+    })
+    .then(res => res.text())
+    .then(txt => document.getElementById("ai_result").value = txt);
+}
+</script>
+
 {% endblock %}
-        .btn-read:hover { background:#1e56db; }
-    </style>
-</head>
-
-<body>
-
-    <!-- Header -->
-    <header>
-        <a href="index.html" class="logo">SmartBot</a>
-        <nav>
-            <a href="dashboard.html">لوحة التحكم</a>
-            <a href="pricing.html">الأسعار</a>
-            <a href="affiliate.html">ال
-                شراكة</a>
-            <a href="blog.html" class="active">المدونة</a>
-            <a href="profile.html">الملف الشخصي</a>
-            <a href="logout">خروج</a>
-        </nav>
-    </header>
-
-    <div class="container">
-        <h1>التدوينات</h1>
-
-        <div id="posts" class="blog-grid">
-            <!-- يتم تعبئة التدوينات من الباكند -->
-        </div>
-    </div>
-
-    <script>
-        async function fetchPosts() {
-            try {
-                const res = await fetch("/api/blog/list");
-                const data = await res.json();
-
-                const box = document.getElementById("posts");
-                box.innerHTML = "";
-
-                data.posts.forEach(post => {
-                    box.innerHTML += `
-                        <div class="post-card" onclick="openPost(${post.id})">
-                            <h3>${post.title}</h3>
-                            <p>${post.summary}</p>
-                            <a class="btn-read" href="post.html?id=${post.id}">قراءة المزيد</a>
-                        </div>
-                    `;
-                });
-
-            } catch (err) {
-                console.log("خطأ:", err);
-            }
-        }
-
-        fetchPosts();
-
-        function openPost(id) {
-            window.location.href = "post.html?id=" + id;
-        }
-    </script>
-
-</body>
-</html>

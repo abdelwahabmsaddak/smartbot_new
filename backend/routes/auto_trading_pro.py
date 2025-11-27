@@ -10,6 +10,14 @@ AutoTradingPro - محرك التداول الآلي الاحترافي للمش�
 
 from backend.auto_trading import AutoTradingPro
 
+@bp.route("/autotrade_pro_ai", methods=["POST"])
+def autotrade_pro_ai():
+    symbol = request.json["symbol"]
+    balance = request.json["balance"]
+
+    decision = SmartAI.auto_trade_decision(symbol, balance)
+    return jsonify({"decision": decision})
+    
 bot = AutoTradingPro(
     exchange_name="binance",
     api_key="YOUR_KEY",

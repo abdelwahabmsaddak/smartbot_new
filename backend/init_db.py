@@ -3,6 +3,19 @@ import sqlite3
 conn = sqlite3.connect("database.db")
 cur = conn.cursor()
 
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS api_keys (
+    user_id INTEGER PRIMARY KEY,
+    binance_key TEXT,
+    binance_secret TEXT,
+    bybit_key TEXT,
+    bybit_secret TEXT,
+    whale_key TEXT,
+    telegram_token TEXT,
+    telegram_chat TEXT
+)
+""")
+
 # جدول المستخدمين
 cur.execute("""
 CREATE TABLE IF NOT EXISTS users (

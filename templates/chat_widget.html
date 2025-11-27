@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chat Widget</title>
 
+   {% extends "base.html" %}
+
+{% block content %}
+<h2>🔥 Dashboard</h2>
+
+<p>مرحبا بك {{ user.username }} 👋</p>
+{% endblock %}
+    
 <style>
 /* الزر العائم */
 #chat-btn {

@@ -24,6 +24,8 @@ from routes.multi_trading import multi_bp
 from routes.api_keys import api_keys_bp
 from flask import session
 from backend.languages import translate
+from routes.settings import settings_bp
+app.register_blueprint(settings_bp)
 
 @app.context_processor
 def inject_translator():

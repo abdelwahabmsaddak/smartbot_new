@@ -38,7 +38,11 @@ app.register_blueprint(multi_bp)
 app.register_blueprint(screener_bp)
 app.register_blueprint(auto_trading_pro_bp)
 app = Flask(__name__)
-
+@app.get("/set_lang/<lang>")
+def set_lang(lang):
+    session["lang"] = lang
+    return redirect(request.headers.get("Referer", "/dashboard"))
+    
 # مثال API واحد – ويمكن تغييرها لأي منصة
 WHALE_API = "https://api.whale-alert.io/v1/transactions?api_key=YOUR_KEY"
 

@@ -6,6 +6,17 @@ from datetime import datetime, timedelta
 
 analysis_bp = Blueprint("analysis_bp", __name__)
 
+from ai_core import SmartAI
+
+@bp.route("/analysis_ai", methods=["POST"])
+def analysis_ai():
+    data = request.json
+    symbol = data["symbol"]
+    tf = data.get("tf", "1h")
+
+    result = SmartAI.analyze(symbol, tf)
+    return jsonify({"ai_analysis": result})
+    
 # ---------- Helpers ----------
 
 def normalize_symbol(symbol: str) -> str:

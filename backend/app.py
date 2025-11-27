@@ -21,7 +21,9 @@ import time
 from routes.auto_trading_pro import auto_trading_pro_bp
 from routes.screener import screener_bp
 from routes.multi_trading import multi_bp
+from routes.api_keys import api_keys_bp
 
+app.register_blueprint(api_keys_bp)
 app.register_blueprint(multi_bp)
 app.register_blueprint(screener_bp)
 app.register_blueprint(auto_trading_pro_bp)

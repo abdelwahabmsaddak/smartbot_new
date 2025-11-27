@@ -15,6 +15,11 @@ logger = logging.getLogger(__name__)
 # ----------------------
 engine = create_engine("mysql+pymysql://root:password@localhost/smartbot")
 
+from ai_core import SmartAI
+
+def handle_user_message(msg):
+    return SmartAI.chat(msg)
+    
 # ----------------------
 # خيارات اللغات
 # ----------------------

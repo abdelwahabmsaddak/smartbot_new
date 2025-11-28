@@ -1,0 +1,56 @@
+:root {
+    --main: {{ theme.main }};
+    --second: {{ theme.second }};
+    --text: {{ theme.text }};
+    --bg: {{ theme.bg }};
+}
+
+/* تنسيق الهيدر */
+.hero {
+    display: flex;
+    align-items: center;
+    padding: 70px 5%;
+    background: var(--bg);
+}
+
+.hero h1 {
+    font-size: 40px;
+    color: var(--text);
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.main-btn {
+    background: var(--main);
+    color: #fff;
+}
+
+.second-btn {
+    border: 2px solid var(--main);
+    color: var(--main);
+}
+
+/* BLOG CARDS */
+.post-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* CHAT WIDGET */
+#chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 330px;
+    height: 430px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}

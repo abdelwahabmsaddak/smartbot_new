@@ -1,6 +1,6 @@
 PAYPAL_CLIENT_ID = "AarCp3bOi8dxdhk46lTloPQNQlte2Pmmkbu1LpLQ71NB1ySsabbNzPTptrAmEldzTS2fLgc7QIQF9Ja5"
 PAYPAL_CLIENT_SECRET = "EEwlQPjsT_ti3WeXNzmOyfJZOEFqpUkj86dMH6Tc5aWN1t6Wv3Z8befhiSC33UuUe9MlvYo8ygaBYKFe"
 
-PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com"
+PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com
 
-‎sk-proj-QHvAR5uh5P-aE4VnzJQgNRAnBAkQk0x6r3mQLpMVFJFscWoQb_UqOwpSigmCPweRJzEpaSUlhmT3BlbkFJfotefakd0CGqL08PpmxqkfHmVQDnHS2tgznOTK7mUPcra4WhogiNWsXeqwy3YSxdfowpS-
+OPENAI_API_KEY = ‎sk-proj-QHvAR5uh5P-aE4VnzJQgNRAnBAkQk0x6r3mQLpMVFJFscWoQb_UqOwpSigmCPweRJzEpaSUlhmT3BlbkFJfotefakd0CGqL08PpmxqkfHmVQDnHS2tgznOTK7mUPcra4WhogiNWsXeqwy3YSxdfowpS-

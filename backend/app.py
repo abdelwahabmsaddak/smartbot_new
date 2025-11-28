@@ -83,7 +83,17 @@ engine.register_exchange_client(
     "binance",
     DummyExchange(api_key="XXX", api_secret="YYY", name="binance")
 )
+@app.route("/")
+def home():
+    from blog_db import get_latest_posts
+    posts = get_latest_posts(5)
 
+    return render_template(
+        "index.html",
+        posts=posts,
+        lang=get_current_language()
+)
+    
 # عند التسجيل أو من لوحة الإعدادات:
 config = StrategyConfig(
     user_id=1,

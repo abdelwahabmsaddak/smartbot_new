@@ -27,6 +27,10 @@ from backend.languages import translate
 from routes.settings import settings_bp
 from routes.ai_trader import ai_trader_bp
 from routes.whales import whales_bp
+from config import OPENAI_API_KEY
+from openai import OpenAI
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 app.register_blueprint(whales_bp)
 app.register_blueprint(ai_trader_bp)
 app.register_blueprint(settings_bp)

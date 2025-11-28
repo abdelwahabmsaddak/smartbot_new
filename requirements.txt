@@ -1,7 +1,9 @@
-Flask
-Flask-Cors
+flask
 requests
 openai
-python-dotenv
-sqlite3-binary
+ccxt
+yfinance
+pandas
+numpy
+python-telegram-bot
 gunicorn

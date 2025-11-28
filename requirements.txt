@@ -1,10 +1,7 @@
-Flask==3.0.3
-gunicorn==22.0.0
-itsdangerous==2.2.0
-Jinja2==3.1.4
-Werkzeug==3.0.3
-requests==2.32.3
-python-dotenv==1.0.1
-yfinance
-pandas
-numpy
+Flask
+Flask-Cors
+requests
+openai
+python-dotenv
+sqlite3-binary
+gunicorn

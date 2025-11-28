@@ -1,60 +1,102 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBot – منصة التداول الذكية</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+{% extends "base.html" %}
+{% block content %}
 
-<body>
+<header class="hero-section py-5 text-white text-center">
+    <div class="container">
+        <h1 class="fw-bold">منصّة الذكاء الاصطناعي للتداول والتحليل</h1>
+        <p class="lead mt-3">
+            تحليل – تنبيهات – تداول آلي – تتبع الحيتان – مدونة – دردشة ذكية  
+        </p>
+        <a href="/dashboard" class="btn btn-primary btn-lg mt-3">ابدأ الآن 🚀</a>
+    </div>
+</header>
 
-<!-- ===== Navigation ===== -->
-<nav class="navbar">
-    <div class="logo">SmartBot</div>
-    <ul class="nav-links">
-        <li><a href="/dashboard">لوحة التحكم</a></li>
-        <li><a href="/affiliate">الأفيليت</a></li>
-        <li><a href="/pricing">الباقة</a></li>
-        <li><a href="/login" class="btn-login">تسجيل الدخول</a></li>
-    </ul>
-</nav>
+<section class="container my-5">
+    <div class="row g-4">
 
-<!-- ===== Hero Section ===== -->
-<section class="hero">
-    <h1>منصّة تداول احترافية بذكاء متقدم</h1>
-    <p>تحليل عملات – تحليل ذهب – أسهم – تتبع الحيتان – تداول آلي – دردشة فورية</p>
-    <a href="/signup" class="cta-btn">ابدأ الشهر المجاني الآن</a>
+        <div class="col-md-4">
+            <div class="feature-box p-4 shadow-sm">
+                <h4>📊 التحليل الذكي AI</h4>
+                <p>تحليل فوري للأسهم و العملات و الذهب.</p>
+                <a href="/analysis" class="btn btn-outline-primary btn-sm">فتح</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-box p-4 shadow-sm">
+                <h4>🤖 التداول الآلي PRO</h4>
+                <p>روبوت تداول كامل يدير الصفقة وحده.</p>
+                <a href="/auto_trading_pro" class="btn btn-outline-primary btn-sm">تشغيل</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-box p-4 shadow-sm">
+                <h4>🐳 تتبع الحيتان</h4>
+                <p>مراقبة تحويلات الكبار + تنبيهات لحظية.</p>
+                <a href="/whales" class="btn btn-outline-primary btn-sm">عرض</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-box p-4 shadow-sm">
+                <h4>🔔 تنبيهات الذكاء الاصطناعي</h4>
+                <p>تنبيهات بيع/شراء عبر تليغرام.</p>
+                <a href="/notifications" class="btn btn-outline-primary btn-sm">تنبيهات</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-box p-4 shadow-sm">
+                <h4>📰 المدونة</h4>
+                <p>مقالات يتم إنشاؤها بالذكاء الاصطناعي.</p>
+                <a href="/blog" class="btn btn-outline-primary btn-sm">قراءة</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-box p-4 shadow-sm">
+                <h4>💬 الدردشة الذكية</h4>
+                <p>AI Chat — مساعد التداول الخاص بك.</p>
+                <a href="/chatbot_trader" class="btn btn-outline-primary btn-sm">فتح</a>
+            </div>
+        </div>
+
+    </div>
 </section>
 
-<!-- ===== Features ===== -->
-<section class="features">
-    <div class="feature-card">
-        <h3>تحليل العملات</h3>
-        <p>تحليل لحظي واتجاهات السوق مع توصيات دقيقة.</p>
-    </div>
+<footer class="text-center mt-5 py-3 text-muted">
+    © {{ year }} منصّتك — كل الحقوق محفوظة
+</footer>
 
-    <div class="feature-card">
-        <h3>تتبع الحيتان</h3>
-        <p>راقب تحركات المحافظ الكبرى واكشف فرص الانفجار السعري.</p>
-    </div>
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    border-radius: 0 0 30px 30px;
+}
 
-    <div class="feature-card">
-        <h3>التداول الآلي</h3>
-        <p>استراتيجيات جاهزة تُنفّذ تلقائياً حسب اختيارك.</p>
-    </div>
+.feature-box {
+    background: var(--card-bg);
+    border-radius: 12px;
+    transition: 0.3s;
+}
+.feature-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
 
-    <div class="feature-card">
-        <h3>قسم الدردشة</h3>
-        <p>دردشة سريعة داخل الموقع تشبه الماسنجر.</p>
-    </div>
-</section>
+/* الوضع الليلي */
+:root {
+    --card-bg: #ffffff;
+}
+body.dark-mode {
+    background: #0d1117;
+    color: #d0d0d0;
+}
+body.dark-mode .feature-box {
+    background: #161b22;
+    color: #d0d0d0;
+}
+</style>
 
-<!-- ===== Tiny Chat Widget ===== -->
-<div class="chat-widget">
-    <div class="chat-header">الدردشة</div>
-    <div class="chat-body">مرحبًا! كيف يمكنني مساعدتك؟</div>
-</div>
-
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}اتصل بنا{% endblock %}
+{% block content %}
+
+<section class="section-container">
+    <h1 class="page-title">اتصل بنا</h1>
+    <p class="page-desc">يسعدنا تواصلك معنا لأي استفسار أو طلب دعم.</p>
+
+    <div class="card">
+        <form method="POST" action="/contact">
+            <label>الاسم الكامل</label>
+            <input type="text" name="name" required>
+
+            <label>البريد الإلكتروني</label>
+            <input type="email" name="email" required>
+
+            <label>رسالتك</label>
+            <textarea name="message" rows="5" required></textarea>
+
+            <button class="btn-primary" type="submit">إرسال</button>
+        </form>
+
+        <p style="margin-top:20px; text-align:center;">
+            أو راسلنا عبر البريد:
+            <br>
+            <strong>support@smartbot.com</strong>
+        </p>
+    </div>
+</section>
+
+{% endblock %}

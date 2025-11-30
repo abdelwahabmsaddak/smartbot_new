@@ -2,10 +2,8 @@ services:
   - type: web
     name: smartbot_new
     env: python
-    region: frankfurt
-    branch: main
-    buildCommand: |
-      pip install -r requirements.txt
-      chmod +x start.sh
-    startCommand: ./start.sh
-    autoDeploy: true
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "bash start.sh"
+    envVars:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}

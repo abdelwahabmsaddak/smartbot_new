@@ -2,8 +2,11 @@ services:
   - type: web
     name: smartbot_new
     env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      chmod +x start.sh
+    startCommand: ./start.sh
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "bash start.sh"
     envVars:
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      - key: OPENAI_API_KEY
+        sync: false

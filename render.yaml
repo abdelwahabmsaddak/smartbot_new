@@ -2,8 +2,10 @@ services:
   - type: web
     name: smartbot_new
     env: python
-    runtime: python3
     region: frankfurt
-    buildCommand: pip install -r requirements.txt
+    branch: main
+    buildCommand: |
+      pip install -r requirements.txt
+      chmod +x start.sh
     startCommand: ./start.sh
     autoDeploy: true

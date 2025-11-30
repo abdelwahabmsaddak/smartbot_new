@@ -1,3 +1,4 @@
 #!/bin/bash
-chmod +x start.sh
-gunicorn backend.app:app --bind 0.0.0.0:$PORT
+echo "Starting SmartBot Flask Server..."
+cd backend
+python3 app.py

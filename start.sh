@@ -1,4 +1,5 @@
 #!/bin/bash
 export PYTHONPATH=.
 
-python backend/app.py
+cd backend
+python app.py

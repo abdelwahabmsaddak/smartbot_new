@@ -1,8 +1,4 @@
 #!/bin/bash
-echo "Starting SmartBot Flask Server..."
+export PYTHONPATH=.
 
-# دخول مجلد backend
-cd backend
-
-# تشغيل السيرفر Flask
-exec python3 app.py
+python backend/app.py

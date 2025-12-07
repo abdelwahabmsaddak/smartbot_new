@@ -1,3 +1,3 @@
 #!/bin/bash
-cd backend
-python3 app.py
+chmod +x backend/app.py
+gunicorn backend.app:app --bind 0.0.0.0:$PORT

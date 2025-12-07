@@ -2,9 +2,9 @@ services:
   - type: web
     name: smartbot_new
     env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python backend/app.py
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python backend/app.py"
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.10
+      - key: OPENAI_API_KEY
+        sync: false

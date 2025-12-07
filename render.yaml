@@ -2,5 +2,7 @@ services:
   - type: web
     name: smartbot_new
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "./start.sh"
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: ./start.sh
+    autoDeploy: true

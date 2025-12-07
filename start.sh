@@ -1,5 +1,3 @@
 #!/bin/bash
-export PYTHONPATH=.
-
 cd backend
-python app.py
+python3 app.py

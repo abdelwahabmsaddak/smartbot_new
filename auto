@@ -1,4 +1,0 @@
-chmod +x start.sh
-git add .
-git commit -m "fix start script"
-git push

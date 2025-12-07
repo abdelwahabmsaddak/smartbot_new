@@ -2,7 +2,9 @@ services:
   - type: web
     name: smartbot_new
     env: python
-    region: frankfurt
-    buildCommand: pip install -r requirements.txt
-    startCommand: ./start.sh
-    autoDeploy: true
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python backend/app.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10

@@ -2,6 +2,5 @@ services:
   - type: web
     name: smartbot_new
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: bash start.sh
-    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "./start.sh"

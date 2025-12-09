@@ -1,9 +1,6 @@
 #!/bin/bash
+export PORT=${PORT:-5000}
+export PYTHONPATH=.
 
-echo "Starting SmartBot Flask Server..."
-
-# الدخول إلى مجلد الباكند
-cd backend
-
-# تشغيل التطبيق
-python3 app.py
+# تشغيل Flask عبر gunicorn
+gunicorn -w 4 -b 0.0.0.0:$PORT backend.app:app

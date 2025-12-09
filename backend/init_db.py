@@ -83,10 +83,9 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     created_at TEXT
 )
 """)
-conn.close()
 
-print("Admin user created.")
-conn.commit()
+# جدول السحوبات
+cur.execute("""
 CREATE TABLE IF NOT EXISTS withdrawals (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -94,7 +93,10 @@ CREATE TABLE IF NOT EXISTS withdrawals (
     wallet TEXT,
     status TEXT,
     created_at TEXT
-);
+)
+""")
+
+conn.commit()
 conn.close()
 
-print("Database initialized.")
+print("Admin user created.")

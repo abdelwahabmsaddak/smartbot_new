@@ -2,7 +2,7 @@ services:
   - type: web
     name: smartbot_new
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: bash start.sh
-    envVars:
-      PYTHON_VERSION: 3.10
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "bash start.sh"
+    autoDeploy: true

@@ -1,7 +1,14 @@
 import sqlite3
 
+# =======================
+# CONNECT TO DATABASE
+# =======================
 conn = sqlite3.connect("database.db")
-cur = conn.cursor()
+cursor = conn.cursor()
+
+# =======================
+# CREATE TABLES
+# =======================
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS api_keys (
@@ -16,54 +23,17 @@ CREATE TABLE IF NOT EXISTS api_keys (
 )
 """)
 
-# جدول المستخدمين
-cur.execute("""
+cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT UNIQUE,
+    username TEXT,
+    email TEXT,
     password TEXT,
-    plan TEXT DEFAULT 'free',
-    created_at TEXT,
-    expired_at TEXT,
-    is_admin INTEGER DEFAULT 0
+    created_at TEXT
 )
 """)
-
-# جدول تسجيل الدخول
-cur.execute("""
-CREATE TABLE IF NOT EXISTS login_logs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    ip TEXT,
-    device TEXT,
-    date TEXT
-)
-""")
-
-# جدول العمليات (للموقع)
-cur.execute("""
-CREATE TABLE IF NOT EXISTS activity_logs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    action TEXT,
-    date TEXT
-)
-""")
-import sqlite3
-
-conn = sqlite3.connect("database.db")
-cursor = conn.cursor()
-
-cursor.execute("DELETE FROM admin")  # optional
 
 cursor.execute("""
-INSERT INTO admin (username, password)
-VALUES ('admin', 'admin123')
-""")
-
-conn.commit()
-# جدول أرباح الأفلييت
-cur.execute("""
 CREATE TABLE IF NOT EXISTS affiliate_earnings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -73,8 +43,7 @@ CREATE TABLE IF NOT EXISTS affiliate_earnings (
 )
 """)
 
-# جدول الاشتراكات
-cur.execute("""
+cursor.execute("""
 CREATE TABLE IF NOT EXISTS subscriptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -84,8 +53,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 )
 """)
 
-# جدول السحوبات
-cur.execute("""
+cursor.execute("""
 CREATE TABLE IF NOT EXISTS withdrawals (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -99,4 +67,4 @@ CREATE TABLE IF NOT EXISTS withdrawals (
 conn.commit()
 conn.close()
 
-print("Admin user created.")
+print("Database initialized successfully.")

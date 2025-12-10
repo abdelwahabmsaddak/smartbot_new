@@ -64,6 +64,9 @@ CREATE TABLE IF NOT EXISTS withdrawals (
 )
 """)
 
+# =======================
+# SAVE AND CLOSE
+# =======================
 conn.commit()
 conn.close()
 

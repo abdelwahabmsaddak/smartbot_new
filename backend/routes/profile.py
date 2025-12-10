@@ -1,12 +1,7 @@
-from flask import Blueprint, render_template, request, session, redirect
-import sqlite3
+from flask import Blueprint, render_template, request, redirect, session
+from backend.db import get_db
 
 profile_bp = Blueprint('profile_bp', __name__)
-
-def get_db():
-    conn = sqlite3.connect("database.db")
-    conn.row_factory = sqlite3.Row
-    return conn
 
 @profile_bp.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -15,7 +10,6 @@ def profile():
 
     conn = get_db()
     cursor = conn.cursor()
-
     user_id = session['user_id']
 
     if request.method == 'POST':

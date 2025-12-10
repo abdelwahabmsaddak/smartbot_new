@@ -66,3 +66,7 @@ def create_users_table():
 create_posts_table()
 create_notifications_table()
 create_users_table()    
+
+def get_db():
+    conn = sqlite3.connect("database.db", check_same_thread=False)
+    return conn

@@ -1,14 +1,11 @@
-
 import sqlite3
 
-# ==========================
-# INITIAL DATABASE CREATION
-# ==========================
-
+# ============================
+# CREATE POSTS TABLE
+# ============================
 def create_posts_table():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("database.db", check_same_thread=False)
     cur = conn.cursor()
-
     cur.execute("""
         CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,15 +15,15 @@ def create_posts_table():
             updated_at TEXT
         )
     """)
-
     conn.commit()
     conn.close()
 
-
+# ============================
+# CREATE NOTIFICATIONS TABLE
+# ============================
 def create_notifications_table():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("database.db", check_same_thread=False)
     cur = conn.cursor()
-
     cur.execute("""
         CREATE TABLE IF NOT EXISTS notifications (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,17 +32,17 @@ def create_notifications_table():
             message TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             is_read INTEGER DEFAULT 0
-        );
+        )
     """)
-
     conn.commit()
     conn.close()
 
-
+# ============================
+# CREATE USERS TABLE
+# ============================
 def create_users_table():
     conn = sqlite3.connect("database.db", check_same_thread=False)
     cur = conn.cursor()
-
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,18 +52,26 @@ def create_users_table():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-
     conn.commit()
     conn.close()
 
-
-# ==========================
-# RUN ALL TABLE CREATIONS
-# ==========================
-create_posts_table()
-create_notifications_table()
-create_users_table()    
-
+# ============================
+# UNIFIED DATABASE CONNECTION
+# ============================
 def get_db():
     conn = sqlite3.connect("database.db", check_same_thread=False)
+    conn.row_factory = sqlite3.Row
     return conn
+
+
+# ============================
+# INITIALIZE ALL TABLES
+# ============================
+def init_db():
+    create_posts_table()
+    create_notifications_table()
+    create_users_table()
+
+
+# Create tables at import time
+init_db()

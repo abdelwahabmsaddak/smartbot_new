@@ -1,37 +1,56 @@
 import os
 import importlib
-from flask import Flask
+from flask import Flask, Blueprint
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-ROUTES_FOLDER = "backend/routes"
+# المسار الفعلي لمجلد الروتات
+ROUTES_FOLDER = os.path.join(os.path.dirname(__file__), "routes")
 
-def register_all_routes():
+
+def register_all_blueprints():
+    """
+    يبحث في backend/routes عن أي Blueprint حقيقي
+    ويسجّله في التطبيق. يتجاهل أي خطأ في الاستيراد.
+    """
     for filename in os.listdir(ROUTES_FOLDER):
-        if filename.endswith(".py") and filename != "__init__.py":
-            module_name = filename[:-3]
-            module_path = f"backend.routes.{module_name}"
+        # نتجاهل الملفات الغير بايثون أو __init__.py
+        if not filename.endswith(".py") or filename == "__init__.py":
+            continue
 
-            try:
-                module = importlib.import_module(module_path)
+        module_name = filename[:-3]
+        module_path = f"backend.routes.{module_name}"
 
-                # تسجيل كل Blueprints تلقائيًا
-                for attr in dir(module):
-                    obj = getattr(module, attr)
-                    if hasattr(obj, "route") and hasattr(obj, "register"):
-                        app.register_blueprint(obj, url_prefix="/api")
-                        print(f"🔵 Registered: {module_name}.{attr}")
+        try:
+            module = importlib.import_module(module_path)
+        except Exception as e:
+            # هنا فقط نطبع الخطأ، لكن ما نوقفش التطبيق
+            print(f"❌ Skipping {module_path}: {e}")
+            continue
 
-            except Exception as e:
-                print(f"❌ Error importing {module_path}: {e}")
+        # نبحث عن المتغيّرات اللي هي Blueprint
+        for attr_name in dir(module):
+            attr = getattr(module, attr_name)
+            if isinstance(attr, Blueprint):
+                try:
+                    app.register_blueprint(attr, url_prefix="/api")
+                    print(f"✅ Registered {module_path}.{attr_name}")
+                except Exception as e:
+                    print(
+                        f"❌ Could not register {module_path}.{attr_name}: {e}"
+                    )
 
-register_all_routes()
+
+# تسجيل كل الـ Blueprints
+register_all_blueprints()
+
 
 @app.route("/")
 def home():
-    return "🚀 Backend running with auto route loader!"
+    return "🚀 Backend running successfully (auto blueprints)!"
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)     
+    app.run(host="0.0.0.0", port=5000)

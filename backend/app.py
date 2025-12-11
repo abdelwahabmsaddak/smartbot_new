@@ -1,77 +1,37 @@
+import os
+import importlib
 from flask import Flask
 from flask_cors import CORS
-import os
 
-# ============================
-# IMPORT BLUEPRINTS
-# ============================
-from backend.routes.auth import auth_bp
-from backend.routes.admin import admin_bp
-from backend.routes.profile import profile_bp
-from backend.routes.chatbot import chatbot_bp
-from backend.routes.usage import usage_bp
-from backend.routes.payments import payments_bp
-from backend.routes.billing import billing_bp
-from backend.routes.affiliate import affiliate_bp
-from backend.routes.settings import settings_bp
-from backend.routes.api_keys import api_keys_bp
-from backend.routes.ai_trader import ai_trader_bp
-from backend.routes.whales import whales_bp
-from backend.routes.screener import screener_bp
-from backend.routes.auto_trading import auto_trading_bp
-from backend.routes.auto_trading_pro import auto_trading_pro_bp
-from backend.routes.withdraw import withdraw_bp
-from backend.routes.blog import blog_bp
-from backend.routes.notifications import notifications_bp
-from backend.routes.multi_trading import multi_trading_bp
-from backend.routes.analysis import analysis_bp
+app = Flask(__name__)
+CORS(app)
 
+ROUTES_FOLDER = "backend/routes"
 
-def create_app():
-    app = Flask(__name__)
-    CORS(app)
+def register_all_routes():
+    for filename in os.listdir(ROUTES_FOLDER):
+        if filename.endswith(".py") and filename != "__init__.py":
+            module_name = filename[:-3]
+            module_path = f"backend.routes.{module_name}"
 
-    app.secret_key = os.getenv("SECRET_KEY", "SMARTBOT_SUPER_SECRET")
+            try:
+                module = importlib.import_module(module_path)
 
-    # ============================
-    # REGISTER BLUEPRINTS
-    # ============================
-    blueprints = [
-        auth_bp,
-        admin_bp,
-        profile_bp,
-        chatbot_bp,
-        usage_bp,
-        payments_bp,
-        billing_bp,
-        affiliate_bp,
-        settings_bp,
-        api_keys_bp,
-        ai_trader_bp,
-        whales_bp,
-        screener_bp,
-        auto_trading_bp,
-        auto_trading_pro_bp,
-        withdraw_bp,
-        blog_bp,
-        notifications_bp,
-        multi_trading_bp,
-        analysis_bp,
-    ]
+                # تسجيل كل Blueprints تلقائيًا
+                for attr in dir(module):
+                    obj = getattr(module, attr)
+                    if hasattr(obj, "route") and hasattr(obj, "register"):
+                        app.register_blueprint(obj, url_prefix="/api")
+                        print(f"🔵 Registered: {module_name}.{attr}")
 
-    for bp in blueprints:
-        app.register_blueprint(bp)
+            except Exception as e:
+                print(f"❌ Error importing {module_path}: {e}")
 
-    @app.route("/")
-    def home():
-        return "SmartBot Backend Running Successfully"
+register_all_routes()
 
-    return app
+@app.route("/")
+def home():
+    return "🚀 Backend running with auto route loader!"
 
-
-# ============================
-# RUN APP (Render)
-# ============================
 if __name__ == "__main__":
-    app = create_app()
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)     

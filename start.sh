@@ -1,3 +1,6 @@
 #!/bin/bash
+echo "Running initialization..."
 python3 backend/init_db.py
-gunicorn -w 4 -b 0.0.0.0:10000 backend.app:app
+
+echo "Starting Gunicorn server..."
+gunicorn backend.app:app --bind 0.0.0.0:$PORT --timeout 200

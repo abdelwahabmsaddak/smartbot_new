@@ -1,91 +1,65 @@
 from flask import Blueprint, request, jsonify
-import yfinance as yf
-import numpy as np
+from backend.ai_core import ai_chat
 
-ai_signals_bp = Blueprint("ai_signals", __name__)
+ai_signals_bp = Blueprint("ai_signals_bp", __name__)
 
-# =========================
-# 🔥 ذكاء اصطناعي بسيط يعطي:
-# BUY / SELL / HOLD
-# + درجة ثقة smart_score
-# =========================
+@ai_signals_bp.route("/signals", methods=["POST"])
+def ai_signals():
+    """
+    إشارات تداول ذكية موحّدة:
+    - Crypto
+    - Gold
+    - Halal Stocks
+    """
+    data = request.get_json() or {}
 
-def calculate_ai_signal(df):
-    df["MA20"] = df["Close"].rolling(window=20).mean()
-    df["MA50"] = df["Close"].rolling(window=50).mean()
-    df["RSI"] = compute_rsi(df["Close"])
+    asset = data.get("asset", "")              # مثال: BTC, ETH, GOLD, ARAMCO
+    market = data.get("market", "auto")        # crypto / gold / stock / auto
+    timeframe = data.get("timeframe", "4H")    # 15m / 1H / 4H / 1D
+    risk_profile = data.get("risk", "medium")  # low / medium / high
 
-    last = df.iloc[-1]
+    system_message = """
+    You are SmartBot Unified AI — a professional trading signals engine.
 
-    score = 0
+    You generate actionable trading signals for:
+    - Cryptocurrencies
+    - Gold
+    - Halal (Sharia-compliant) stocks
 
-    # MA Crossover
-    if last["MA20"] > last["MA50"]:
-        score += 40
-    else:
-        score -= 40
+    Rules:
+    - Identify the asset type automatically if not specified.
+    - For stocks: ensure Sharia compliance.
+    - Provide clear Buy/Sell/Hold signals.
+    - Always include:
+        Entry price
+        Take-profit targets (TP1, TP2)
+        Stop-loss
+        Risk level
+        Timeframe
+    - Be conservative and realistic.
+    """
 
-    # RSI
-    if last["RSI"] < 30:
-        score += 40
-    elif last["RSI"] > 70:
-        score -= 40
+    prompt = f"""
+    Generate a trading signal with the following parameters:
 
-    # Trend using last 10 candles
-    trend = df["Close"].iloc[-10:].pct_change().sum()
-    if trend > 0:
-        score += 30
-    else:
-        score -= 30
+    Asset: {asset or "Not specified"}
+    Market: {market}
+    Timeframe: {timeframe}
+    Risk profile: {risk_profile}
 
-    # Normalize to 0–100
-    smart_score = int(np.interp(score, [-100, 100], [0, 100]))
+    Please provide:
+    1) Signal (Buy / Sell / Hold)
+    2) Entry price or zone
+    3) Take-profit targets (TP1, TP2)
+    4) Stop-loss
+    5) Risk level
+    6) Probability of success (%)
+    7) Short explanation
+    """
 
-    if smart_score >= 66:
-        final_signal = "BUY"
-    elif smart_score <= 33:
-        final_signal = "SELL"
-    else:
-        final_signal = "HOLD"
+    ai_reply = ai_chat(prompt, system_msg=system_message)
 
-    return final_signal, smart_score, float(last["RSI"])
-
-
-# =========================
-# 📌 RSI Function
-# =========================
-def compute_rsi(series, period=14):
-    delta = series.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(period).mean()
-    rs = gain / loss
-    return 100 - (100 / (1 + rs))
-
-
-# =========================
-# 📌 API ENDPOINT
-# =========================
-
-@ai_signals_bp.route("/api/ai_signal", methods=["POST"])
-def ai_signal_api():
-    data = request.json
-    symbol = data.get("symbol")
-
-    try:
-        df = yf.download(symbol, period="3mo", interval="1d")
-
-        if df.empty:
-            return jsonify({"error": "رمز غير صالح"}), 400
-
-        df = df.dropna()
-        signal, score, rsi = calculate_ai_signal(df)
-
-        return jsonify({
-            "symbol": symbol,
-            "signal": signal,
-            "smart_score": score,
-            "rsi": round(rsi, 2)
-        })
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify({
+        "status": "success",
+        "signal": ai_reply
+    })

@@ -1,59 +1,71 @@
 from flask import Blueprint, request, jsonify
-import yfinance as yf
-import talib
-import numpy as np
+from backend.ai_core import ai_chat
 
-ai_trader_bp = Blueprint("ai_trader", __name__)
+ai_trader_bp = Blueprint("ai_trader_bp", __name__)
 
-def analyze_symbol(symbol):
-    data = yf.download(symbol, period="3mo", interval="1d")
-    if data.empty:
-        return "❌ رمز غير صحيح"
+@ai_trader_bp.route("/trader", methods=["POST"])
+def ai_trader():
+    """
+    خطة تداول ذكية موحّدة:
+    - Crypto
+    - Gold
+    - Halal Stocks
+    """
+    data = request.get_json() or {}
 
-    close = data["Close"]
+    asset = data.get("asset", "")                 # BTC, ETH, GOLD, ARAMCO
+    market = data.get("market", "auto")           # crypto / gold / stock / auto
+    capital = data.get("capital", 1000)           # رأس المال
+    risk_per_trade = data.get("risk_per_trade", 1)# % المخاطرة في الصفقة
+    timeframe = data.get("timeframe", "4H")       # الإطار الزمني
+    style = data.get("style", "swing")            # scalp / day / swing / position
 
-    # Indicators
-    rsi = talib.RSI(close, timeperiod=14)[-1]
-    ma = talib.SMA(close, timeperiod=20)[-1]
+    system_message = """
+    You are SmartBot Unified AI — a professional trading strategist.
 
-    trend = "📈 صاعد" if close.iloc[-1] > ma else "📉 هابط"
+    You build complete trading plans for:
+    - Cryptocurrencies
+    - Gold & precious metals
+    - Halal (Sharia-compliant) stocks
 
-    # Simple AI logic
-    if rsi < 30:
-        ai = "العملة في منطقة شراء قوية (Oversold)"
-    elif rsi > 70:
-        ai = "تحذير: منطقة بيع (Overbought)"
-    else:
-        ai = "الاتجاه طبيعي حالياً."
+    Rules:
+    - Identify asset type automatically if not specified.
+    - For stocks: ensure Sharia compliance.
+    - Build a full trading plan including:
+        * Market bias
+        * Strategy description
+        * Entry logic
+        * Take-profit targets
+        * Stop-loss
+        * Position sizing based on capital and risk
+        * Risk management rules
+    - Be realistic and conservative.
+    """
 
-    return f"""
-🔍 تحليل: {symbol}
-💹 الاتجاه: {trend}
-📊 RSI: {round(rsi, 2)}
-📏 MA20: {round(ma, 2)}
+    prompt = f"""
+    Build a complete trading plan with the following parameters:
 
-🤖 الذكاء الاصطناعي:
-{ai}
+    Asset: {asset or "Not specified"}
+    Market: {market}
+    Capital: {capital}
+    Risk per trade (%): {risk_per_trade}
+    Timeframe: {timeframe}
+    Trading style: {style}
 
-🎯 الرأي النهائي:
-{ 'ينصح بالشراء' if rsi < 30 else 'ينصح بالانتظار' }
-"""
+    Please include:
+    1) Market bias (Bullish / Bearish / Range)
+    2) Strategy overview
+    3) Entry rules
+    4) Take-profit targets
+    5) Stop-loss
+    6) Position size calculation
+    7) Risk-reward ratio
+    8) Alternative scenario
+    """
 
-@ai_trader_bp.post("/api/ai_trader")
-def ai_trader_api():
-    msg = request.json.get("message", "")
+    ai_reply = ai_chat(prompt, system_msg=system_message)
 
-    # Detect symbol from message
-    words = msg.upper().split()
-    symbol = None
-    for w in words:
-        if len(w) >= 3:
-            symbol = w
-            break
-
-    if symbol:
-        reply = analyze_symbol(symbol)
-    else:
-        reply = "اكتب اسم عملة أو سهم مثل: BTC-USD أو AAPL"
-
-    return jsonify({"reply": reply})
+    return jsonify({
+        "status": "success",
+        "trading_plan": ai_reply
+    })

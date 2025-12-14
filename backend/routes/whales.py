@@ -1,44 +1,60 @@
-from flask import Blueprint, jsonify
-import requests
-import random
-from backend.ai_trader import smart_ai  # الذكاء الاصطناعي الموحد
+from flask import Blueprint, request, jsonify
+from backend.ai_core import ai_chat
 
-whales_bp = Blueprint("whales", __name__)
+whales_bp = Blueprint("whales_bp", __name__)
 
-# API وهمي – يمكنك تغيير الرابط لأي منصة Whale Alert حقيقية
-WHALE_API = "https://api.whale-alert.io/v1/transactions?api_key=demo"
+@whales_bp.route("/whales", methods=["POST"])
+def whales_analysis():
+    """
+    تحليل الحيتان والسيولة:
+    - Crypto
+    - Gold
+    - Halal Stocks
+    """
+    data = request.get_json() or {}
 
+    asset = data.get("asset", "")                 # BTC, ETH, GOLD, ARAMCO
+    market = data.get("market", "auto")           # crypto / gold / stock / auto
+    timeframe = data.get("timeframe", "1D")       # 15m / 1H / 4H / 1D / 1W
+    depth = data.get("depth", "medium")           # shallow / medium / deep
 
-@whales_bp.get("/api/whales")
-def whales():
-    """جلب تحويلات الحيتان"""
-    # بيانات وهمية – حتى يعمل الموقع دون API حقيقية
-    sample = [
-        {
-            "amount": round(random.uniform(1000000, 8000000), 2),
-            "from": "Unknown Wallet",
-            "to": "Binance",
-            "time": "Just Now"
-        },
-        {
-            "amount": round(random.uniform(500000, 2000000), 2),
-            "from": "Coinbase",
-            "to": "Private Wallet",
-            "time": "2 min ago"
-        }
-    ]
-    return jsonify(sample)
+    system_message = """
+    You are SmartBot Unified AI — a smart money & whales analysis engine.
 
+    You analyze:
+    - Whale accumulation and distribution
+    - Liquidity zones
+    - Order flow behavior (conceptual)
+    - Market manipulation patterns
+    - Smart money footprints
 
-@whales_bp.get("/api/whales/ai_analyze")
-def whales_ai_analyze():
-    """تحليل ذكي باستعمال نفس AI المستخدم في كل الصفحات"""
-    text = """
-    هذه بيانات تحويلات الحيتان. استخرج الاتجاهات المحتملة
-    - هل السوق صاعد أم هابط؟
-    - هل هناك تراكم أم توزيع؟
-    - تأثير ذلك على البيتكوين والعملات البديلة؟
+    Rules:
+    - Identify asset type automatically if not specified.
+    - Provide realistic, conservative insights.
+    - Explain how whales could impact price.
+    - Always include risk warnings.
     """
 
-    result = smart_ai(text)  # نموذج الذكاء الاصطناعي الموحد
-    return result
+    prompt = f"""
+    Perform a whales / smart money analysis with the following parameters:
+
+    Asset: {asset or "Not specified"}
+    Market: {market}
+    Timeframe: {timeframe}
+    Analysis depth: {depth}
+
+    Please provide:
+    1) Current whale activity (Accumulation / Distribution / Neutral)
+    2) Liquidity zones (buy-side / sell-side)
+    3) Likely manipulation scenarios (if any)
+    4) Impact on short-term and medium-term price
+    5) Retail trader risk
+    6) Suggested action (Buy / Hold / Sell / Wait)
+    """
+
+    ai_reply = ai_chat(prompt, system_msg=system_message)
+
+    return jsonify({
+        "status": "success",
+        "whales_analysis": ai_reply
+    })

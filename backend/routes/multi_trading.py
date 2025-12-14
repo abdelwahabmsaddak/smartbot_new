@@ -1,106 +1,58 @@
 from flask import Blueprint, request, jsonify
-import ccxt
-import time
+from backend.ai_core import ai_chat
 
-multi_bp = Blueprint("multi_trading", __name__)
+multi_trading_bp = Blueprint("multi_trading_bp", __name__)
 
-# ---------------------------
-#  Helper: إنشاء الإكسشانج
-# ---------------------------
-def create_exchange(platform, api_key, api_secret):
-    platform = platform.lower()
+@multi_trading_bp.route("/multi_trading", methods=["POST"])
+def multi_trading():
+    """
+    محفظة متعددة الأصول (Crypto + Gold + Halal Stocks) بالذكاء الاصطناعي.
+    """
+    data = request.get_json() or {}
 
-    exchanges = {
-        "binance": ccxt.binance,
-        "kucoin": ccxt.kucoin,
-        "bybit": ccxt.bybit,
-        "okx": ccxt.okx,
-        "coinbase": ccxt.coinbasepro
-    }
+    capital = data.get("capital", 1000)
+    risk_profile = data.get("risk", "medium")         # low / medium / high
+    horizon = data.get("horizon", "medium")           # short / medium / long
+    preferences = data.get("preferences", [])         # مثال: ["meme_coins", "gold_safe", "dividend_stocks"]
+    halal_strict = data.get("halal_strict", True)     # فلترة الأسهم الحلال
 
-    if platform not in exchanges:
-        raise Exception("❌ منصة غير مدعومة")
+    system_message = """
+    You are SmartBot Unified AI — a portfolio & multi-asset allocation engine.
 
-    exchange_class = exchanges[platform]
+    You build investment portfolios across:
+    - Cryptocurrency
+    - Gold & precious metals
+    - Halal (Sharia-compliant) stocks
 
-    return exchange_class({
-        "apiKey": api_key,
-        "secret": api_secret,
-        "enableRateLimit": True
-    })
+    Rules:
+    - If halal_strict is true, only include Sharia-compliant stocks.
+    - Provide a clear allocation plan (percentages + amounts).
+    - Include risk controls and rebalancing schedule.
+    - Provide reasoning for each allocation.
+    - Be realistic and conservative.
+    """
 
+    prompt = f"""
+    Build a multi-asset portfolio plan with:
 
-# ---------------------------
-# 1️⃣  الحصول على السعر
-# ---------------------------
-@multi_bp.route("/multi/price", methods=["POST"])
-def multi_price():
-    data = request.json
-    platform = data.get("platform")
-    symbol = data.get("symbol")  # مثال BTC/USDT
+    Capital: {capital}
+    Risk profile: {risk_profile}
+    Investment horizon: {horizon}
+    Preferences: {preferences}
+    Halal strict: {halal_strict}
 
-    ex = create_exchange(platform, "", "")
-    ticker = ex.fetch_ticker(symbol)
+    Provide:
+    1) Allocation between Crypto / Gold / Halal Stocks (percent + amount)
+    2) Suggested assets in each category (examples)
+    3) Strategy for each category (entry style)
+    4) Risk management rules
+    5) Rebalancing schedule (weekly/monthly/quarterly)
+    6) What to avoid (common mistakes)
+    """
+
+    ai_reply = ai_chat(prompt, system_msg=system_message)
 
     return jsonify({
-        "symbol": symbol,
-        "price": ticker["last"]
+        "status": "success",
+        "portfolio_plan": ai_reply
     })
-
-
-# ---------------------------
-# 2️⃣  الحصول على الرصيد
-# ---------------------------
-@multi_bp.route("/multi/balance", methods=["POST"])
-def multi_balance():
-    data = request.json
-    platform = data["platform"]
-    api_key = data["api_key"]
-    api_secret = data["api_secret"]
-
-    ex = create_exchange(platform, api_key, api_secret)
-    balance = ex.fetch_balance()
-
-    return jsonify(balance)
-
-
-# ---------------------------
-# 3️⃣  تنفيذ صفقة (buy/sell)
-# ---------------------------
-@multi_bp.route("/multi/order", methods=["POST"])
-def multi_order():
-    data = request.json
-    platform = data["platform"]
-    api_key = data["api_key"]
-    api_secret = data["api_secret"]
-    symbol = data["symbol"]
-    side = data["side"]          # buy أو sell
-    amount = data["amount"]      # الكمية
-    price = data.get("price")    # للسوق نقولو None
-
-    ex = create_exchange(platform, api_key, api_secret)
-
-    if price:
-        order = ex.create_limit_order(symbol, side, amount, price)
-    else:
-        order = ex.create_market_order(symbol, side, amount)
-
-    return jsonify(order)
-
-
-# ---------------------------
-# 4️⃣  إلغاء صفقة
-# ---------------------------
-@multi_bp.route("/multi/cancel", methods=["POST"])
-def multi_cancel():
-    data = request.json
-    platform = data["platform"]
-    api_key = data["api_key"]
-    api_secret = data["api_secret"]
-    symbol = data["symbol"]
-    order_id = data["order_id"]
-
-    ex = create_exchange(platform, api_key, api_secret)
-    result = ex.cancel_order(order_id, symbol)
-
-    return jsonify(result)

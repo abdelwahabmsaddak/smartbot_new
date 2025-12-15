@@ -1,38 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard | SmartTrade{% endblock %}
-
 {% block content %}
+<h2>🔥 Dashboard</h2>
+<p>مرحبا {{ user.username }} 👋</p>
 
-<h2>🔥 لوحة التحكم</h2>
+<div id="dashboard-data">
+  <p>Balance: <span id="balance">--</span></p>
+  <p>Open Trades: <span id="openTrades">--</span></p>
+  <p>Status: <span id="aiStatus">--</span></p>
+  <p>Daily Profit: <span id="dailyProfit">--</span></p>
 
-<div class="cards">
-    <div class="card">
-        <h3>💰 الرصيد</h3>
-        <p id="balance">--</p>
-    </div>
-
-    <div class="card">
-        <h3>📊 الصفقات المفتوحة</h3>
-        <p id="openTrades">--</p>
-    </div>
-
-    <div class="card">
-        <h3>🤖 حالة الذكاء الاصطناعي</h3>
-        <p id="aiStatus">--</p>
-    </div>
-
-    <div class="card">
-        <h3>📈 الربح اليومي</h3>
-        <p id="dailyProfit">--</p>
-    </div>
+  <ul id="aiLogs"></ul>
 </div>
 
-<section class="activity">
-    <h3>🧠 آخر قرارات AI</h3>
-    <ul id="aiLogs">
-        <li>جار التحميل...</li>
-    </ul>
-</section>
-
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}

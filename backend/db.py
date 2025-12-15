@@ -52,6 +52,15 @@ def create_users_table():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    
+    CREATE TABLE api_keys (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    exchange TEXT NOT NULL,
+    api_key_encrypted TEXT NOT NULL,
+    api_secret_encrypted TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
     conn.commit()
     conn.close()
 

@@ -1,20 +1,24 @@
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("balance").innerText = "$12,450";
-    document.getElementById("openTrades").innerText = "3";
-    document.getElementById("aiStatus").innerText = "🟢 Active";
-    document.getElementById("dailyProfit").innerText = "+$320";
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const res = await fetch("/api/dashboard");
+        const data = await res.json();
 
-    const logs = [
-        "📌 BUY BTC/USDT @ 43200",
-        "📌 SELL ETH/USDT @ 2450",
-        "📌 HOLD GOLD"
-    ];
+        document.getElementById("balance").innerText = `$${data.balance}`;
+        document.getElementById("openTrades").innerText = data.open_trades;
+        document.getElementById("aiStatus").innerText =
+            data.ai_status === "active" ? "🟢 Active" : "🔴 Offline";
+        document.getElementById("dailyProfit").innerText = `+$${data.daily_profit}`;
 
-    const list = document.getElementById("aiLogs");
-    list.innerHTML = "";
-    logs.forEach(log => {
-        const li = document.createElement("li");
-        li.textContent = log;
-        list.appendChild(li);
-    });
+        const list = document.getElementById("aiLogs");
+        list.innerHTML = "";
+
+        data.ai_logs.forEach(log => {
+            const li = document.createElement("li");
+            li.textContent = log;
+            list.appendChild(li);
+        });
+
+    } catch (err) {
+        console.error("Dashboard API error", err);
+    }
 });

@@ -1,36 +1,23 @@
-from flask import Blueprint, request, jsonify, session
-import sqlite3
+from flask import Blueprint, request, jsonify
+from utils.crypto import encrypt
+from db import get_db
 
 api_keys_bp = Blueprint("api_keys", __name__)
 
-def get_db():
-    return sqlite3.connect("database.db", check_same_thread=False)
-
-@api_keys_bp.route("/api/save_keys", methods=["POST"])
-def save_keys():
-    if "user_id" not in session:
-        return jsonify({"error": "not logged in"})
-
+@api_keys_bp.route("/api/api_keys", methods=["POST"])
+def save_api_keys():
     data = request.json
-    user = session["user_id"]
+    user_id = data["user_id"]
+    exchange = data["exchange"]
+    api_key = encrypt(data["api_key"])
+    api_secret = encrypt(data["api_secret"])
 
     db = get_db()
     cur = db.cursor()
-
     cur.execute("""
-        INSERT OR REPLACE INTO api_keys(user_id, binance_key, binance_secret,
-                                        okx_key, okx_secret,
-                                        kucoin_key, kucoin_secret)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (
-        user,
-        data.get("binance_key"),
-        data.get("binance_secret"),
-        data.get("okx_key"),
-        data.get("okx_secret"),
-        data.get("kucoin_key"),
-        data.get("kucoin_secret")
-    ))
-
+        INSERT INTO api_keys (user_id, exchange, api_key_encrypted, api_secret_encrypted)
+        VALUES (?, ?, ?, ?)
+    """, (user_id, exchange, api_key, api_secret))
     db.commit()
-    return jsonify({"status": "success"})
+
+    return jsonify({"status": "saved"})

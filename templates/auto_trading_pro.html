@@ -1,160 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Auto Trading PRO</title>
-    <link rel="stylesheet" href="/static/style.css">
+{% extends "base.html" %}
 
-    {% extends "base.html" %}
+{% block title %}Auto Trading PRO{% endblock %}
 
 {% block content %}
-<h2>🔥 Dashboard</h2>
+<h2>⚙️ Auto Trading PRO</h2>
+<p>إشارات AI + تنفيذ Paper (افتراضي) من غير ما يطيّح السيرفر.</p>
 
-<p>مرحبا بك {{ user.username }} 👋</p>
-{% endblock %}
-    
-    <style>
-        .container {
-            width: 90%;
-            margin: auto;
-            margin-top: 40px;
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+<div class="grid-2">
+  <div class="card">
+    <h3>🧠 إعدادات التحليل</h3>
 
-        h2 { text-align: center; }
+    <label>Asset (مثال: BTC/USDT أو XAUUSD أو AAPL)</label>
+    <input id="asset" type="text" placeholder="BTC/USDT" value="BTC/USDT"/>
 
-        .box {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-        }
+    <label>Market</label>
+    <select id="market">
+      <option value="crypto" selected>Crypto</option>
+      <option value="gold">Gold</option>
+      <option value="stock">Stock (Halal)</option>
+    </select>
 
-        select, input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-        }
+    <label>Timeframe</label>
+    <select id="timeframe">
+      <option value="15m">15m</option>
+      <option value="1h" selected>1h</option>
+      <option value="4h">4h</option>
+      <option value="1d">1d</option>
+    </select>
 
-        button {
-            margin-top: 15px;
-            padding: 12px;
-            width: 100%;
-            background: #0a84ff;
-            color: white;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-        }
+    <label>Minimum Confidence (0-100)</label>
+    <input id="min_confidence" type="number" min="0" max="100" value="60"/>
 
-        button:hover { background:#006be6; }
+    <label class="row">
+      <input id="halal_strict" type="checkbox" checked />
+      <span>Halal strict (للأسهم)</span>
+    </label>
+  </div>
 
-        .status-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f1f9ff;
-            border-left: 4px solid #0a84ff;
-            border-radius: 6px;
-        }
+  <div class="card">
+    <h3>💼 إعدادات الحساب / التنفيذ</h3>
 
-        .signal-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: #fff7e6;
-            border-left: 4px solid #ff9800;
-            border-radius: 6px;
-        }
-    </style>
-</head>
+    <label>Balance</label>
+    <input id="balance" type="number" min="0" value="1000"/>
 
-<body>
+    <label>Risk % per trade</label>
+    <input id="risk" type="number" min="0.1" step="0.1" value="1"/>
 
-<div class="container">
+    <label>Mode</label>
+    <select id="mode">
+      <option value="paper" selected>Paper (Simulation)</option>
+      <option value="live" disabled>Live (قريبًا)</option>
+    </select>
 
-    <h2>🤖 Auto Trading PRO</h2>
-    <p style="text-align:center;">نظام تداول آلي احترافي — متعدد المنصات — ذكاء اصطناعي</p>
+    <label>Exchange (اختياري)</label>
+    <input id="exchange" type="text" placeholder="binance" value="binance"/>
 
-    <div class="box">
-        <label>اختَر المنصة:</label>
-        <select id="platform">
-            <option value="binance">Binance</option>
-            <option value="kucoin">KuCoin</option>
-            <option value="bybit">ByBit</option>
-            <option value="okx">OKX</option>
-            <option value="coinbase">Coinbase</option>
-        </select>
+    <label>Order Type</label>
+    <select id="order_type">
+      <option value="MARKET" selected>MARKET</option>
+      <option value="LIMIT">LIMIT</option>
+    </select>
 
-        <label>زوج التداول:</label>
-        <input id="symbol" type="text" placeholder="مثال: BTCUSDT">
-
-        <label>رأس المال (USDT):</label>
-        <input id="balance" type="number" placeholder="100">
-
-        <label>نسبة المخاطرة %:</label>
-        <input id="risk" type="number" placeholder="3">
-
-        <label>إستراتيجية التداول:</label>
-        <select id="strategy">
-            <option value="ai">ذكاء اصطناعي (SMART AI)</option>
-            <option value="scalping">Scalping</option>
-            <option value="swing">Swing Trading</option>
-            <option value="trend">Trend Following</option>
-            <option value="grid">Grid Trading</option>
-        </select>
-
-        <button onclick="startBot()">🚀 تشغيل البوت</button>
-        <button onclick="stopBot()" style="background:#ff3b30;">⛔ إيقاف البوت</button>
-    </div>
-
-    <div id="statusBox" class="status-box" style="display:none;"></div>
-    <div id="signals" class="signal-box" style="display:none;"></div>
-
+    <button id="runBtn" class="btn">🚀 Run Auto Trade</button>
+    <div id="status" class="status"></div>
+  </div>
 </div>
 
-<script>
-function startBot() {
+<div class="grid-2" style="margin-top:16px;">
+  <div class="card">
+    <h3>📌 AI Signal</h3>
+    <pre id="signalOut" class="pre">--</pre>
+  </div>
 
-    let obj = {
-        symbol: document.getElementById("symbol").value,
-        platform: document.getElementById("platform").value,
-        balance: document.getElementById("balance").value,
-        risk: document.getElementById("risk").value,
-        strategy: document.getElementById("strategy").value
-    };
+  <div class="card">
+    <h3>✅ Execution Result</h3>
+    <pre id="execOut" class="pre">--</pre>
+  </div>
+</div>
 
-    fetch("/api/autotrade_pro/start", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify(obj)
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        document.getElementById("statusBox").style.display = "block";
-        document.getElementById("statusBox").innerHTML =
-            "<b>⚡ الحالة:</b> " + data.status;
-
-        if(data.signal){
-            document.getElementById("signals").style.display = "block";
-            document.getElementById("signals").innerHTML =
-                "<b>📈 آخر إشارة:</b> " + data.signal;
-        }
-    });
-}
-
-function stopBot() {
-    fetch("/api/autotrade_pro/stop")
-    .then(res => res.json())
-    .then(data => {
-        alert("تم إيقاف البوت");
-    });
-}
-</script>
-
-</body>
-</html>
+<script src="{{ url_for('static', filename='auto_trading_pro.js') }}"></script>
+{% endblock %}

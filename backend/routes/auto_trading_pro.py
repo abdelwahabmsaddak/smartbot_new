@@ -1,44 +1,65 @@
-import ccxt
 from flask import Blueprint, request, jsonify
-from utils.crypto import decrypt
-from db import get_db
+from backend.services.ai_signals_service import generate_signal
+from backend.services.trading_engine import run_auto_trade
 
-auto_trading_pro_bp = Blueprint("auto_trading_pro", __name__)
+auto_trading_pro_bp = Blueprint("auto_trading_pro", __name__, url_prefix="/api/auto-trading-pro")
 
-@auto_trading_pro_bp.route("/api/auto_trading_pro", methods=["POST"])
-def auto_trading_pro():
-    data = request.json
+@auto_trading_pro_bp.route("/run", methods=["POST"])
+def run():
+    """
+    Body مثال:
+    {
+      "asset": "BTC/USDT",
+      "timeframe": "1h",
+      "market": "crypto",
+      "halal_strict": true,
+      "account": {
+        "symbol": "BTC/USDT",
+        "balance": 1000,
+        "risk": 1,
+        "mode": "paper",
+        "exchange": "binance",
+        "type": "MARKET"
+      }
+    }
+    """
+    try:
+        data = request.get_json() or {}
 
-    if data["mode"] != "live":
-        return jsonify({"error": "Only live mode here"}), 400
+        asset = data.get("asset")
+        timeframe = data.get("timeframe", "1h")
+        market = data.get("market", "crypto")
+        halal_strict = bool(data.get("halal_strict", True))
 
-    db = get_db()
-    cur = db.cursor()
-    cur.execute("SELECT exchange, api_key_encrypted, api_secret_encrypted FROM api_keys WHERE id = ?",
-                (data["api_key_id"],))
-    row = cur.fetchone()
+        account = data.get("account") or {}
+        # لو ما بعثش symbol نستعمل asset
+        account.setdefault("symbol", asset)
+        account.setdefault("timeframe", timeframe)
+        account.setdefault("mode", "paper")
 
-    if not row:
-        return jsonify({"error": "API key not found"}), 404
+        if not asset:
+            return jsonify({"error": "asset is required"}), 400
 
-    exchange_name, enc_key, enc_secret = row
-    api_key = decrypt(enc_key)
-    api_secret = decrypt(enc_secret)
+        # 1) AI يولّد Signal
+        signal = generate_signal(asset, timeframe, market, halal_strict=halal_strict)
 
-    exchange = getattr(ccxt, exchange_name)({
-        "apiKey": api_key,
-        "secret": api_secret,
-        "enableRateLimit": True
-    })
+        # حماية بسيطة: إذا الثقة ضعيفة، ما ننفّذوش
+        min_conf = int(data.get("min_confidence", 60))
+        if signal.get("confidence", 0) < min_conf:
+            return jsonify({
+                "status": "SKIPPED",
+                "reason": f"Low confidence < {min_conf}",
+                "signal": signal
+            })
 
-    order = exchange.create_order(
-        symbol=data["symbol"],
-        type=data["type"],
-        side=data["side"],
-        amount=data["quantity"]
-    )
+        # 2) Engine ينفّذ (Paper افتراضي)
+        result = run_auto_trade(signal, account)
 
-    return jsonify({
-        "status": "executed",
-        "order": order
-    })
+        return jsonify({
+            "status": "OK",
+            "signal": signal,
+            "execution": result
+        })
+
+    except Exception as e:
+        return jsonify({"status": "ERROR", "message": str(e)}), 500

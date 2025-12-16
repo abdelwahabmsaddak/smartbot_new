@@ -1,21 +1,22 @@
 def ai_signal_prompt(asset, timeframe, market_type):
     return f"""
-أنت محلل تداول محترف.
+حلّل الأصل التالي وارجع النتيجة بصيغة JSON فقط:
 
-حلل الأصل التالي:
-- الأصل: {asset}
-- الإطار الزمني: {timeframe}
-- السوق: {market_type}
+- asset: {asset}
+- timeframe: {timeframe}
+- market: {market_type}  (crypto | gold | stock)
 
-شروط:
-- إذا كان سهم: يكون حلال (تجنّب البنوك، الكحول، القمار).
-- أعطِ إشارة واضحة: BUY / SELL / HOLD
-- حدّد:
-  - Entry
-  - Stop Loss
-  - Take Profit
-  - Confidence (0-100%)
-- اختصر بدون حشو.
+JSON المطلوب بالضبط:
+{{
+  "action": "BUY|SELL|HOLD",
+  "entry": number,
+  "stop_loss": number,
+  "take_profit": [number, number],
+  "confidence": 0-100,
+  "notes": "short reason"
+}}
 
-أجب بصيغة JSON فقط.
+قواعد:
+- إذا ما عندكش ثقة أو الداتا غير كافية → HOLD
+- خليك واقعي ومحافظ.
 """

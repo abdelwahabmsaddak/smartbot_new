@@ -1,21 +1,13 @@
-# backend/app.py
 import os
 import importlib
-from flask import Flask, Blueprint
+from flask import Flask
 from flask_cors import CORS
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
-STATIC_DIR = os.path.join(BASE_DIR, "static")
-
-app = Flask(
-    __name__,
-    template_folder=TEMPLATES_DIR,
-    static_folder=STATIC_DIR,
-    static_url_path="/static"
-)
+app = Flask(__name__)
+app.secret_key = "super-secret-key"
 CORS(app)
 
+# مسار routes
 ROUTES_FOLDER = os.path.join(os.path.dirname(__file__), "routes")
 
 def register_all_blueprints():
@@ -34,18 +26,19 @@ def register_all_blueprints():
 
         for attr_name in dir(module):
             attr = getattr(module, attr_name)
-            if isinstance(attr, Blueprint):
-                try:
+            try:
+                from flask import Blueprint
+                if isinstance(attr, Blueprint):
                     app.register_blueprint(attr)
-                    print(f"✅ Registered {module_path}.{attr_name}")
-                except Exception as e:
-                    print(f"❌ Could not register {module_path}.{attr_name}: {e}")
+                    print(f"✅ Registered {attr.name}")
+            except Exception as e:
+                print(f"❌ Blueprint error: {e}")
 
 register_all_blueprints()
 
-@app.route("/health")
-def health():
-    return "OK"
+@app.route("/")
+def home():
+    return "🚀 SmartTrade AI Backend Running"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

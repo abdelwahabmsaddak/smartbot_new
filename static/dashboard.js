@@ -31,6 +31,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 .then(data => {
   console.log(data.reply);
 });
+
+        fetch("/api/ai-signals/analyze", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    asset: "XAUUSD",
+    timeframe: "4h",
+    market: "gold"
+  })
+})
+.then(r => r.json())
+.then(d => console.log(d.signal));
         
     } catch (err) {
         console.error("Dashboard API error", err);

@@ -1,24 +1,23 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, render_template
 
-dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/api")
+dashboard_bp = Blueprint("dashboard", __name__)
 
-@dashboard_bp.route("/dashboard", methods=["GET"])
-def dashboard_data():
-    """
-    API ترجع بيانات Dashboard
-    (توّا mock – بعد نربطها بالـ AI و DB)
-    """
-
-    data = {
-        "balance": 12450,
-        "open_trades": 3,
-        "ai_status": "active",
-        "daily_profit": 320,
-        "ai_logs": [
-            "BUY BTC/USDT @ 43200",
-            "SELL ETH/USDT @ 2450",
-            "HOLD GOLD"
-        ]
+@dashboard_bp.route("/dashboard")
+def dashboard():
+    # user وهمي (تو)
+    user = {
+        "username": "Abdelwahab"
     }
 
-    return jsonify(data)
+    dashboard_data = {
+        "balance": "1250 USDT",
+        "open_trades": 2,
+        "status": "AI Running",
+        "daily_profit": "+3.4%"
+    }
+
+    return render_template(
+        "dashboard.html",
+        user=user,
+        data=dashboard_data
+    )

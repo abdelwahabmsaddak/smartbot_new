@@ -18,6 +18,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             list.appendChild(li);
         });
 
+      fetch("/api/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    message: "حلل BTC/USDT"
+  })
+})
+.then(res => res.json())
+.then(data => {
+  console.log(data.reply);
+});
+        
     } catch (err) {
         console.error("Dashboard API error", err);
     }

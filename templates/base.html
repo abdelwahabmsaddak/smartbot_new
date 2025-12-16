@@ -2,23 +2,22 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}SmartTrade AI{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>SmartTrade AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <nav>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/ai_signals">AI Signals</a>
-    <a href="/autotrade">Auto Trading</a>
-    <a href="/settings">Settings</a>
+    <a href="/dashboard">📊 Dashboard</a> |
+    <a href="/ai-signals">🤖 AI Signals</a> |
+    <a href="/autotrade">⚡ Auto Trading</a>
 </nav>
 
-<main>
-    {% block content %}{% endblock %}
-</main>
+<hr>
 
-<footer>
+{% block content %}{% endblock %}
+
+<footer style="margin-top:40px;text-align:center">
     © SmartTrade AI 2025
 </footer>
 

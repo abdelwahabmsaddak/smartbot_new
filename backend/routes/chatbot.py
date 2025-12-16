@@ -1,47 +1,29 @@
 from flask import Blueprint, request, jsonify
-from backend.ai_core import ai_chat
+from backend.services.ai_client import get_ai_client
 
-chatbot_bp = Blueprint("chatbot_bp", __name__)
+chatbot_bp = Blueprint("chatbot", __name__, url_prefix="/api")
 
 @chatbot_bp.route("/chat", methods=["POST"])
-def smart_chatbot():
-    """
-    شات بوت كامل يعتمد على الذكاء الاصطناعي.
-    يفهم أي سؤال: تداول، برمجة، تحليل مشاريع، نصائح، ذكاء اصطناعي...
-    """
+def chat():
+    try:
+        data = request.get_json()
+        message = data.get("message")
 
-    data = request.get_json()
+        if not message:
+            return jsonify({"error": "Message required"}), 400
 
-    # التحقق من وجود الرسالة
-    if not data or "message" not in data:
-        return jsonify({"error": "Message field is required"}), 400
+        client = get_ai_client()
 
-    user_msg = data["message"]
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "user", "content": message}
+            ]
+        )
 
-    # صياغة برومبت احترافي يضمن أقصى ذكاء ممكن
-    system_message = """
-    You are SmartBot AI.
-    You specialize in:
-    - Crypto trading
-    - Market analysis
-    - Project evaluation
-    - Investment recommendations
-    - Technical analysis
-    - Meme coins predictions
-    - Python code writing
-    - Debugging
-    - Personal finance
-    - General knowledge
+        return jsonify({
+            "reply": response.choices[0].message.content
+        })
 
-    Respond clearly and powerfully.
-    If the user asks for analysis, give numbers.
-    If the user asks for trading advice, give strategies.
-    If the user asks programming, return clean code.
-    """
-
-    ai_reply = ai_chat(user_msg, system_msg=system_message)
-
-    return jsonify({
-        "status": "success",
-        "reply": ai_reply
-    })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

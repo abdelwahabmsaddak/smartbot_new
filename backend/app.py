@@ -1,23 +1,26 @@
+# backend/app.py
 import os
 import importlib
 from flask import Flask, Blueprint
 from flask_cors import CORS
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+app = Flask(
+    __name__,
+    template_folder=TEMPLATES_DIR,
+    static_folder=STATIC_DIR,
+    static_url_path="/static"
+)
 CORS(app)
 
-# المسار الفعلي لمجلد الروتات
 ROUTES_FOLDER = os.path.join(os.path.dirname(__file__), "routes")
 
-
 def register_all_blueprints():
-    """
-    يبحث في backend/routes عن أي Blueprint حقيقي
-    ويسجّله في التطبيق. يتجاهل أي خطأ في الاستيراد.
-    """
     for filename in os.listdir(ROUTES_FOLDER):
-        # نتجاهل الملفات الغير بايثون أو __init__.py
-        if not filename.endswith(".py") or filename == "__init__.py":
+        if not filename.endswith(".py") or filename.startswith("__"):
             continue
 
         module_name = filename[:-3]
@@ -26,31 +29,23 @@ def register_all_blueprints():
         try:
             module = importlib.import_module(module_path)
         except Exception as e:
-            # هنا فقط نطبع الخطأ، لكن ما نوقفش التطبيق
             print(f"❌ Skipping {module_path}: {e}")
             continue
 
-        # نبحث عن المتغيّرات اللي هي Blueprint
         for attr_name in dir(module):
             attr = getattr(module, attr_name)
             if isinstance(attr, Blueprint):
                 try:
-                    app.register_blueprint(attr, url_prefix="/api")
+                    app.register_blueprint(attr)
                     print(f"✅ Registered {module_path}.{attr_name}")
                 except Exception as e:
-                    print(
-                        f"❌ Could not register {module_path}.{attr_name}: {e}"
-                    )
+                    print(f"❌ Could not register {module_path}.{attr_name}: {e}")
 
-
-# تسجيل كل الـ Blueprints
 register_all_blueprints()
 
-
-@app.route("/")
-def home():
-    return "🚀 Backend running successfully (auto blueprints)!"
-
+@app.route("/health")
+def health():
+    return "OK"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

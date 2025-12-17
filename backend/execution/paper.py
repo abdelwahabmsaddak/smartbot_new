@@ -1,35 +1,50 @@
 import time
 import uuid
+from backend.execution.trade_store import save_trade
 
-# “محفظة” بسيطة في الذاكرة (تنجم لاحقًا تربطها بSQLite)
+# حالة Paper Account
 PAPER_STATE = {
-    "balances": {"USD": 10000.0},
-    "positions": {},  # مثال: {"BTCUSDT": {"qty": 0.01, "avg": 40000}}
-    "trades": []
+    "balance": 10000.0
 }
 
-def paper_place_order(symbol: str, side: str, order_type: str, quantity: float, price: float | None = None):
-    trade_id = str(uuid.uuid4())
-    ts = int(time.time())
+def paper_execute_trade(user_id: str, signal: dict):
+    """
+    signal مثال:
+    {
+        "asset": "BTC/USDT",
+        "side": "BUY",
+        "entry": 42000,
+        "exit": 42300,
+        "confidence": 82
+    }
+    """
 
-    # ملاحظة: بدون أسعار حقيقية — إذا ما عطيتش price نخليها 0 كـ placeholder
-    exec_price = float(price) if price is not None else 0.0
+    trade_id = str(uuid.uuid4())
+
+    entry = float(signal["entry"])
+    exit_price = float(signal["exit"])
+    side = signal["side"]
+
+    # حساب PnL
+    if side == "BUY":
+        pnl = exit_price - entry
+    else:
+        pnl = entry - exit_price
 
     trade = {
         "id": trade_id,
-        "timestamp": ts,
-        "symbol": symbol,
-        "side": side.upper(),
-        "type": order_type.upper(),
-        "quantity": float(quantity),
-        "price": exec_price,
-        "mode": "paper",
-        "status": "filled"
+        "asset": signal["asset"],
+        "side": side,
+        "entry": entry,
+        "exit": exit_price,
+        "pnl": round(pnl, 2),
+        "mode": "paper"
     }
 
-    PAPER_STATE["trades"].append(trade)
-    return trade
+    # 🔥 أهم سطر في المشروع
+    save_trade(user_id, trade)
 
-
-def paper_state():
-    return PAPER_STATE
+    return {
+        "status": "EXECUTED",
+        "trade": trade
+    }

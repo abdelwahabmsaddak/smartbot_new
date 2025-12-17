@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Trade History{% endblock %}
+
+{% block content %}
+<h2>📜 Trade History</h2>
+<pre id="historyOut">Loading...</pre>
+
+<script>
+fetch("/api/history?user=demo")
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById("historyOut").textContent =
+      JSON.stringify(d.trades, null, 2);
+  });
+</script>
+{% endblock %}

@@ -1,50 +1,23 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const res = await fetch("/api/dashboard");
-        const data = await res.json();
+async function loadDashboard() {
+  try {
+    const res = await fetch("/api/dashboard/live");
+    const data = await res.json();
 
-        document.getElementById("balance").innerText = `$${data.balance}`;
-        document.getElementById("openTrades").innerText = data.open_trades;
-        document.getElementById("aiStatus").innerText =
-            data.ai_status === "active" ? "🟢 Active" : "🔴 Offline";
-        document.getElementById("dailyProfit").innerText = `+$${data.daily_profit}`;
+    if (data.status !== "OK") throw new Error();
 
-        const list = document.getElementById("aiLogs");
-        list.innerHTML = "";
+    document.getElementById("totalTrades").textContent = data.stats.total_trades;
+    document.getElementById("wins").textContent = data.stats.wins;
+    document.getElementById("losses").textContent = data.stats.losses;
+    document.getElementById("pnl").textContent = data.stats.pnl;
 
-        data.ai_logs.forEach(log => {
-            const li = document.createElement("li");
-            li.textContent = log;
-            list.appendChild(li);
-        });
+    document.getElementById("tradesOut").textContent =
+      JSON.stringify(data.trades, null, 2);
 
-      fetch("/api/chat", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    message: "حلل BTC/USDT"
-  })
-})
-.then(res => res.json())
-.then(data => {
-  console.log(data.reply);
-});
+  } catch {
+    document.getElementById("tradesOut").textContent = "Error loading data";
+  }
+}
 
-        fetch("/api/ai-signals/analyze", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    asset: "XAUUSD",
-    timeframe: "4h",
-    market: "gold"
-  })
-})
-.then(r => r.json())
-.then(d => console.log(d.signal));
-        
-    } catch (err) {
-        console.error("Dashboard API error", err);
-    }
-});
+// تحديث كل 5 ثواني
+setInterval(loadDashboard, 5000);
+loadDashboard();

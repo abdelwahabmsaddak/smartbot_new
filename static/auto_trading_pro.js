@@ -1,25 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const runBtn = document.getElementById("runAutoTradingPro");
-  const statusBox = document.getElementById("runStatus");
-  const outputBox = document.getElementById("runOutput");
+  const runBtn = document.getElementById("runBtn");
+  const status = document.getElementById("status");
+  const signalOut = document.getElementById("signalOut");
+  const execOut = document.getElementById("execOut");
 
   if (!runBtn) return;
 
   runBtn.addEventListener("click", async () => {
-    statusBox.textContent = "⏳ جاري التنفيذ...";
-    statusBox.className = "status loading";
-    outputBox.textContent = "";
+    status.textContent = "⏳ Running...";
+    signalOut.textContent = "";
+    execOut.textContent = "";
 
     const payload = {
       asset: document.getElementById("asset").value,
       timeframe: document.getElementById("timeframe").value,
       market: document.getElementById("market").value,
-      halal_strict: document.getElementById("halal_strict")?.checked || false,
+      min_confidence: 60,
       account: {
-        balance: parseFloat(document.getElementById("balance").value || 1000),
-        risk: parseFloat(document.getElementById("risk").value || 1),
-        mode: document.getElementById("mode").value, // paper | live
-        exchange: document.getElementById("exchange").value
+        balance: 1000,
+        risk: 1,
+        mode: document.getElementById("mode").value,
+        exchange: document.getElementById("exchange").value,
+        order_type: document.getElementById("order_type").value
       }
     };
 
@@ -32,19 +34,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await res.json();
 
-      if (!res.ok || data.status === "error") {
+      if (!res.ok || data.status === "ERROR") {
         throw new Error(data.message || "Execution failed");
       }
 
-      statusBox.textContent = "✅ تم التنفيذ بنجاح";
-      statusBox.className = "status success";
+      status.textContent = "✅ Done";
+      signalOut.textContent = JSON.stringify(data.signal, null, 2);
+      execOut.textContent = JSON.stringify(data.execution, null, 2);
 
-      outputBox.textContent = JSON.stringify(data.result, null, 2);
-
-    } catch (err) {
-      statusBox.textContent = "❌ خطأ في التنفيذ";
-      statusBox.className = "status error";
-      outputBox.textContent = err.message;
+    } catch (e) {
+      status.textContent = "❌ Error";
+      execOut.textContent = e.message;
     }
   });
 });

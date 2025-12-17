@@ -1,9 +1,11 @@
-def risk_check(balance, risk_percent, entry, stop_loss):
-    risk_amount = balance * (risk_percent / 100)
-    loss_per_unit = abs(entry - stop_loss)
+def validate_signal(signal, min_confidence=60):
+    if not signal:
+        return False, "NO_SIGNAL"
 
-    if loss_per_unit <= 0:
-        return None
+    if signal["confidence"] < min_confidence:
+        return False, "LOW_CONFIDENCE"
 
-    quantity = risk_amount / loss_per_unit
-    return round(quantity, 4)
+    if signal["sl"] >= signal["entry"]:
+        return False, "INVALID_SL"
+
+    return True, "OK"

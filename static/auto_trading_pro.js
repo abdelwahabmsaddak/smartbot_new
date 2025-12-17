@@ -1,62 +1,25 @@
-function setStatus(text, ok = true) {
-  const el = document.getElementById("status");
-  el.textContent = text;
-  el.style.borderColor = ok ? "#22c55e" : "#ef4444";
-  el.style.color = ok ? "#22c55e" : "#ef4444";
-}
-
-function pretty(obj) {
-  try { return JSON.stringify(obj, null, 2); }
-  catch { return String(obj); }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  const runBtn = document.getElementById("runBtn");
+  const runBtn = document.getElementById("runAutoTradingPro");
+  const statusBox = document.getElementById("runStatus");
+  const outputBox = document.getElementById("runOutput");
+
+  if (!runBtn) return;
 
   runBtn.addEventListener("click", async () => {
-    const asset = document.getElementById("asset").value.trim();
-    const market = document.getElementById("market").value;
-    const timeframe = document.getElementById("timeframe").value;
-    const halal_strict = document.getElementById("halal_strict").checked;
-    const min_confidence = Number(document.getElementById("min_confidence").value || 0);
-
-    const balance = Number(document.getElementById("balance").value || 0);
-    const risk = Number(document.getElementById("risk").value || 1);
-    const mode = document.getElementById("mode").value;
-    const exchange = document.getElementById("exchange").value.trim() || "binance";
-    const type = document.getElementById("order_type").value;
-
-    const signalOut = document.getElementById("signalOut");
-    const execOut = document.getElementById("execOut");
-
-    signalOut.textContent = "--";
-    execOut.textContent = "--";
-
-    if (!asset) {
-      setStatus("❌ لازم Asset", false);
-      return;
-    }
-    if (balance <= 0) {
-      setStatus("❌ Balance لازم يكون > 0", false);
-      return;
-    }
-
-    setStatus("⏳ Running...", true);
-    runBtn.disabled = true;
+    statusBox.textContent = "⏳ جاري التنفيذ...";
+    statusBox.className = "status loading";
+    outputBox.textContent = "";
 
     const payload = {
-      asset,
-      timeframe,
-      market,
-      halal_strict,
-      min_confidence,
+      asset: document.getElementById("asset").value,
+      timeframe: document.getElementById("timeframe").value,
+      market: document.getElementById("market").value,
+      halal_strict: document.getElementById("halal_strict")?.checked || false,
       account: {
-        symbol: asset,
-        balance,
-        risk,
-        mode,
-        exchange,
-        type
+        balance: parseFloat(document.getElementById("balance").value || 1000),
+        risk: parseFloat(document.getElementById("risk").value || 1),
+        mode: document.getElementById("mode").value, // paper | live
+        exchange: document.getElementById("exchange").value
       }
     };
 
@@ -69,26 +32,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await res.json();
 
-      if (!res.ok || data.status === "ERROR") {
-        setStatus("❌ Error: " + (data.message || data.error || "Unknown"), false);
-        signalOut.textContent = pretty(data);
-        return;
+      if (!res.ok || data.status === "error") {
+        throw new Error(data.message || "Execution failed");
       }
 
-      // حالات: OK / SKIPPED
-      if (data.status === "SKIPPED") {
-        setStatus("⚠️ Skipped: " + (data.reason || "Low confidence"), false);
-      } else {
-        setStatus("✅ Done", true);
-      }
+      statusBox.textContent = "✅ تم التنفيذ بنجاح";
+      statusBox.className = "status success";
 
-      signalOut.textContent = pretty(data.signal || data);
-      execOut.textContent = pretty(data.execution || data);
+      outputBox.textContent = JSON.stringify(data.result, null, 2);
 
-    } catch (e) {
-      setStatus("❌ Network/Server error: " + e.message, false);
-    } finally {
-      runBtn.disabled = false;
+    } catch (err) {
+      statusBox.textContent = "❌ خطأ في التنفيذ";
+      statusBox.className = "status error";
+      outputBox.textContent = err.message;
     }
   });
 });

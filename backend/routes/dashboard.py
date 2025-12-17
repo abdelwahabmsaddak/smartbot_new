@@ -1,23 +1,26 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, jsonify
+from backend.execution.engine import get_live_trades, get_stats
 
-dashboard_bp = Blueprint("dashboard", __name__)
+dashboard_bp = Blueprint(
+    "dashboard",
+    __name__,
+    url_prefix="/api/dashboard"
+)
 
-@dashboard_bp.route("/dashboard")
-def dashboard():
-    # user وهمي (تو)
-    user = {
-        "username": "Abdelwahab"
-    }
+@dashboard_bp.route("/live", methods=["GET"])
+def live_dashboard():
+    try:
+        trades = get_live_trades()
+        stats = get_stats(trades)
 
-    dashboard_data = {
-        "balance": "1250 USDT",
-        "open_trades": 2,
-        "status": "AI Running",
-        "daily_profit": "+3.4%"
-    }
+        return jsonify({
+            "status": "OK",
+            "stats": stats,
+            "trades": trades
+        })
 
-    return render_template(
-        "dashboard.html",
-        user=user,
-        data=dashboard_data
-    )
+    except Exception as e:
+        return jsonify({
+            "status": "ERROR",
+            "message": str(e)
+        }), 500

@@ -1,15 +1,25 @@
-from backend.execution.trade_store import save_trade
+from backend.execution.paper import paper_execute_trade
+# لاحقًا: from backend.execution.live_ccxt import live_execute_trade
 
-def run_auto_trade(signal, account, user_id="demo"):
-    # مثال تنفيذ
-    result = {
-        "asset": signal["asset"],
-        "side": signal["side"],
-        "entry": signal["entry"],
-        "confidence": signal["confidence"],
-        "mode": account.get("mode", "paper"),
-        "pnl": round(signal.get("expected_pnl", 0), 2)
+def run_trade(user_id: str, signal: dict, account: dict):
+    """
+    account:
+    {
+        "mode": "paper" | "live"
     }
+    """
 
-    save_trade(user_id, result)
-    return result
+    mode = account.get("mode", "paper")
+
+    if mode == "paper":
+        return paper_execute_trade(user_id, signal)
+
+    elif mode == "live":
+        # 🔒 مقفولة مؤقتًا
+        return {
+            "status": "DISABLED",
+            "reason": "Live trading not enabled yet"
+        }
+
+    else:
+        raise ValueError("Invalid trading mode")

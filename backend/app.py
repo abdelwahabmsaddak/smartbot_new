@@ -1,7 +1,11 @@
 import os
 from flask import Flask
 from flask_cors import CORS
+from flask import render_template
 
+@app.route("/")
+def home():
+    return render_template("dashboard.html")
 # Flask App
 app = Flask(__name__)
 app.secret_key = "super-secret-key"

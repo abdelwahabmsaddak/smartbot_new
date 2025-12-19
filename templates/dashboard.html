@@ -3,27 +3,29 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h2>📊 Live Dashboard</h2>
+  <h2>📊 Live Dashboard</h2>
+  <p class="muted">API: <span class="badge">/api/dashboard/live</span></p>
 
-<div class="grid-2">
-  <div class="card">
-    <h3>📈 Stats</h3>
-    <p>Total Trades: <span id="totalTrades">-</span></p>
-    <p>Wins: <span id="wins">-</span></p>
-    <p>Losses: <span id="losses">-</span></p>
-    <p>PnL: <span id="pnl">-</span></p>
+  <div class="grid-2" style="margin-top:14px;">
+    <div class="card">
+      <h3>📈 Stats</h3>
+      <p>Total Trades: <span id="totalTrades">-</span></p>
+      <p>Wins: <span id="wins">-</span></p>
+      <p>Losses: <span id="losses">-</span></p>
+      <p>PnL: <span id="pnl">-</span></p>
+    </div>
+
+    <div class="card">
+      <h3>🟢 Status</h3>
+      <p id="botStatus" class="badge">Loading...</p>
+      <p class="muted" id="lastUpdate">-</p>
+    </div>
   </div>
 
-  <div class="card">
-    <h3>🟢 Status</h3>
-    <p id="botStatus">Running</p>
+  <div class="card" style="margin-top:14px;">
+    <h3>🧾 Recent Trades</h3>
+    <pre id="tradesOut">Loading...</pre>
   </div>
-</div>
 
-<div class="card" style="margin-top:16px;">
-  <h3>🧾 Recent Trades</h3>
-  <pre id="tradesOut">Loading...</pre>
-</div>
-
-<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+  <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}

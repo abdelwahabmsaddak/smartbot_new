@@ -3,29 +3,63 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-  <h2>📊 Live Dashboard</h2>
-  <p class="muted">API: <span class="badge">/api/dashboard/live</span></p>
+<section class="page-header">
+  <div>
+    <h1>📊 Live Dashboard</h1>
+    <p class="muted">هنا نشوفو الإحصائيات وآخر الصفقات.</p>
+  </div>
 
-  <div class="grid-2" style="margin-top:14px;">
-    <div class="card">
-      <h3>📈 Stats</h3>
-      <p>Total Trades: <span id="totalTrades">-</span></p>
-      <p>Wins: <span id="wins">-</span></p>
-      <p>Losses: <span id="losses">-</span></p>
-      <p>PnL: <span id="pnl">-</span></p>
+  <div class="header-cards">
+    <div class="mini-card">
+      <div class="mini-title">Bot Status</div>
+      <div class="mini-value" id="botStatus">—</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-title">PnL</div>
+      <div class="mini-value" id="pnl">—</div>
+    </div>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="card">
+    <div class="card-head">
+      <h2>📈 Stats</h2>
+      <span class="tag">Metrics</span>
     </div>
 
-    <div class="card">
-      <h3>🟢 Status</h3>
-      <p id="botStatus" class="badge">Loading...</p>
-      <p class="muted" id="lastUpdate">-</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-name">Total Trades</div>
+        <div class="stat-value" id="totalTrades">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-name">Wins</div>
+        <div class="stat-value" id="wins">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-name">Losses</div>
+        <div class="stat-value" id="losses">—</div>
+      </div>
+    </div>
+
+    <div class="hint">
+      <span class="hint-icon">ℹ️</span>
+      <span>إذا ما فماش صفقات، جرّب Run في Auto Trading PRO.</span>
     </div>
   </div>
 
-  <div class="card" style="margin-top:14px;">
-    <h3>🧾 Recent Trades</h3>
-    <pre id="tradesOut">Loading...</pre>
-  </div>
+  <div class="card">
+    <div class="card-head">
+      <h2>🧾 Recent Trades</h2>
+      <span class="tag">Logs</span>
+    </div>
 
-  <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <pre id="tradesOut" class="prebox prebox-tall">Loading…</pre>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}

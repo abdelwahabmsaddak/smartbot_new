@@ -1,102 +1,172 @@
 {% extends "base.html" %}
+
+{% block title %}Auto Trading PRO{% endblock %}
+
 {% block content %}
+<section class="page-header">
+  <div>
+    <h1>🤖 Auto Trading PRO</h1>
+    <p class="muted">
+      شغّل Paper الأول. وقتها نشوفو الـLogs والـDashboard.
+    </p>
+  </div>
 
-<header class="hero-section py-5 text-white text-center">
-    <div class="container">
-        <h1 class="fw-bold">منصّة الذكاء الاصطناعي للتداول والتحليل</h1>
-        <p class="lead mt-3">
-            تحليل – تنبيهات – تداول آلي – تتبع الحيتان – مدونة – دردشة ذكية  
-        </p>
-        <a href="/dashboard" class="btn btn-primary btn-lg mt-3">ابدأ الآن 🚀</a>
+  <div class="header-cards">
+    <div class="mini-card">
+      <div class="mini-title">Mode</div>
+      <div class="mini-value" id="modeBadge">Paper</div>
     </div>
-</header>
-
-<section class="container my-5">
-    <div class="row g-4">
-
-        <div class="col-md-4">
-            <div class="feature-box p-4 shadow-sm">
-                <h4>📊 التحليل الذكي AI</h4>
-                <p>تحليل فوري للأسهم و العملات و الذهب.</p>
-                <a href="/analysis" class="btn btn-outline-primary btn-sm">فتح</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="feature-box p-4 shadow-sm">
-                <h4>🤖 التداول الآلي PRO</h4>
-                <p>روبوت تداول كامل يدير الصفقة وحده.</p>
-                <a href="/auto_trading_pro" class="btn btn-outline-primary btn-sm">تشغيل</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="feature-box p-4 shadow-sm">
-                <h4>🐳 تتبع الحيتان</h4>
-                <p>مراقبة تحويلات الكبار + تنبيهات لحظية.</p>
-                <a href="/whales" class="btn btn-outline-primary btn-sm">عرض</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="feature-box p-4 shadow-sm">
-                <h4>🔔 تنبيهات الذكاء الاصطناعي</h4>
-                <p>تنبيهات بيع/شراء عبر تليغرام.</p>
-                <a href="/notifications" class="btn btn-outline-primary btn-sm">تنبيهات</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="feature-box p-4 shadow-sm">
-                <h4>📰 المدونة</h4>
-                <p>مقالات يتم إنشاؤها بالذكاء الاصطناعي.</p>
-                <a href="/blog" class="btn btn-outline-primary btn-sm">قراءة</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="feature-box p-4 shadow-sm">
-                <h4>💬 الدردشة الذكية</h4>
-                <p>AI Chat — مساعد التداول الخاص بك.</p>
-                <a href="/chatbot_trader" class="btn btn-outline-primary btn-sm">فتح</a>
-            </div>
-        </div>
-
+    <div class="mini-card">
+      <div class="mini-title">Exchange</div>
+      <div class="mini-value" id="exchangeBadge">—</div>
     </div>
+  </div>
 </section>
 
-<footer class="text-center mt-5 py-3 text-muted">
-    © {{ year }} منصّتك — كل الحقوق محفوظة
-</footer>
+<section class="grid">
+  <!-- LEFT: Strategy -->
+  <div class="card">
+    <div class="card-head">
+      <h2>🧠 إعدادات التحليل</h2>
+      <span class="tag">Strategy</span>
+    </div>
 
-<style>
-.hero-section {
-    background: linear-gradient(135deg, #007bff, #6610f2);
-    border-radius: 0 0 30px 30px;
-}
+    <div class="form">
+      <label>Asset</label>
+      <input id="asset" type="text" placeholder="مثال: BTC/USDT أو XAUUSD أو AAPL" />
 
-.feature-box {
-    background: var(--card-bg);
-    border-radius: 12px;
-    transition: 0.3s;
-}
-.feature-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
+      <div class="two">
+        <div>
+          <label>Market</label>
+          <select id="market">
+            <option value="crypto" selected>Crypto</option>
+            <option value="forex">Forex</option>
+            <option value="stocks">Stocks</option>
+          </select>
+        </div>
 
-/* الوضع الليلي */
-:root {
-    --card-bg: #ffffff;
-}
-body.dark-mode {
-    background: #0d1117;
-    color: #d0d0d0;
-}
-body.dark-mode .feature-box {
-    background: #161b22;
-    color: #d0d0d0;
-}
-</style>
+        <div>
+          <label>Timeframe</label>
+          <select id="timeframe">
+            <option value="1m">1m</option>
+            <option value="5m">5m</option>
+            <option value="15m">15m</option>
+            <option value="1h" selected>1h</option>
+            <option value="4h">4h</option>
+            <option value="1d">1d</option>
+          </select>
+        </div>
+      </div>
 
+      <label>Minimum Confidence (0-100)</label>
+      <input id="min_confidence" type="number" min="0" max="100" value="60" />
+
+      <div class="checkline">
+        <input id="halal_strict" type="checkbox" />
+        <label for="halal_strict" class="checklabel">Halal strict (اختياري)</label>
+      </div>
+
+      <div class="hint">
+        <span class="hint-icon">💡</span>
+        <span>كل ما ترفع الـConfidence، يقلّ عدد الصفقات لكن تزيد الجودة.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Account/Execution -->
+  <div class="card">
+    <div class="card-head">
+      <h2>🧾 إعدادات الحساب / التنفيذ</h2>
+      <span class="tag">Execution</span>
+    </div>
+
+    <div class="form">
+      <div class="two">
+        <div>
+          <label>Balance</label>
+          <input id="balance" type="number" value="1000" />
+        </div>
+        <div>
+          <label>Risk % per trade</label>
+          <input id="risk" type="number" value="1" step="0.1" />
+        </div>
+      </div>
+
+      <label>Mode</label>
+      <select id="mode">
+        <option value="paper" selected>Paper (Simulation)</option>
+        <option value="live" disabled>Live (قريبًا)</option>
+      </select>
+
+      <label>Exchange (اختياري)</label>
+      <input id="exchange" type="text" placeholder="مثال: binance" />
+
+      <label>Order Type</label>
+      <select id="order_type">
+        <option value="MARKET" selected>MARKET</option>
+        <option value="LIMIT">LIMIT</option>
+      </select>
+
+      <button id="runBtn" class="btn-primary">
+        🚀 Run Auto Trade
+      </button>
+
+      <div id="status" class="statusbox">
+        <span class="dot dot-warn"></span>
+        <span>جاهز</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="two">
+        <div class="info">
+          <div class="info-title">AI Signal</div>
+          <div class="info-sub">القرار + confidence + السبب</div>
+        </div>
+        <div class="info">
+          <div class="info-title">Execution Result</div>
+          <div class="info-sub">نتيجة التنفيذ (Paper)</div>
+        </div>
+      </div>
+
+      <div class="two">
+        <pre id="signalOut" class="prebox">—</pre>
+        <pre id="execOut" class="prebox">—</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wide card">
+  <div class="card-head">
+    <h2>📌 ملاحظات سريعة</h2>
+    <span class="tag">Tips</span>
+  </div>
+  <div class="tips">
+    <div class="tip">✅ استعمل BTC/USDT في البداية</div>
+    <div class="tip">✅ خليه Paper، وشوف Dashboard بعد Run</div>
+    <div class="tip">⚠️ Live ما يتفتحش حتى نكمّلو الأمان</div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // UI sync صغيرة (ما تمسّش backend)
+  const modeEl = document.getElementById("mode");
+  const exchangeEl = document.getElementById("exchange");
+  const modeBadge = document.getElementById("modeBadge");
+  const exchangeBadge = document.getElementById("exchangeBadge");
+
+  function syncBadges(){
+    modeBadge.textContent = (modeEl?.value || "paper").toUpperCase();
+    exchangeBadge.textContent = exchangeEl?.value?.trim() || "—";
+  }
+  modeEl?.addEventListener("change", syncBadges);
+  exchangeEl?.addEventListener("input", syncBadges);
+  syncBadges();
+</script>
+
+<!-- خلي سكريبتك الأصلي يخدم -->
+<script src="{{ url_for('static', filename='app.js') }}"></script>
 {% endblock %}

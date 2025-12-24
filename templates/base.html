@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,45 +7,58 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   {% block head %}{% endblock %}
 </head>
-<body>
-
-  <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">⚡</div>
-        <div class="brand-text">
-          <div class="brand-title">Auto Trading PRO</div>
-          <div class="brand-sub">Paper / Live dashboard — واجهة احترافية</div>
-        </div>
+<body class="ltr">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">⚡</div>
+      <div class="brand-text">
+        <div class="brand-title">SmartBot</div>
+        <div class="brand-sub">Auto Trading PRO — Paper first, Live later</div>
       </div>
+    </div>
 
-      <nav class="nav">
-        <a class="nav-link" href="/">Auto Trade</a>
-        <a class="nav-link" href="/dashboard">Dashboard</a>
-      </nav>
+    <nav class="nav">
+      <a class="nav-link" href="/">Auto Trade</a>
+      <a class="nav-link" href="/dashboard">Dashboard</a>
+    </nav>
 
-      <div class="top-actions">
-        <div class="pill" id="topStatusPill">
-          <span class="dot dot-warn"></span>
-          <span id="topStatusText">Ready</span>
-        </div>
+    <div class="top-actions">
+      <button class="btn-ghost" id="langToggleBtn" type="button" title="Toggle Arabic (RTL)">
+        AR
+      </button>
+      <div class="pill" id="topStatusPill">
+        <span class="dot dot-warn"></span>
+        <span id="topStatusText">Ready</span>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <main class="content">
-      {% block content %}{% endblock %}
-    </main>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
 
-    <footer class="footer">
-      <span>© SmartBot</span>
-      <span class="muted">واجهة تجريبية — ركّز على Paper قبل Live</span>
-    </footer>
-  </div>
+  <footer class="footer">
+    <span>© SmartBot</span>
+    <span class="muted">UI is responsive (mobile + desktop)</span>
+  </footer>
+
+  <script>
+    // RTL support (front-only, optional)
+    const btn = document.getElementById("langToggleBtn");
+    btn?.addEventListener("click", () => {
+      const body = document.body;
+      const isRTL = body.classList.toggle("rtl");
+      body.classList.toggle("ltr", !isRTL);
+      document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+      document.documentElement.setAttribute("lang", isRTL ? "ar" : "en");
+      btn.textContent = isRTL ? "EN" : "AR";
+    });
+  </script>
 
   {% block scripts %}{% endblock %}
 </body>

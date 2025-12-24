@@ -1,22 +1,21 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<section class="page-header">
+<section class="page-head">
   <div>
-    <h1>📊 Live Dashboard</h1>
-    <p class="muted">هنا نشوفو الإحصائيات وآخر الصفقات.</p>
+    <h1>Live Dashboard</h1>
+    <p class="muted">Stats and recent trades from your Paper execution.</p>
   </div>
 
-  <div class="header-cards">
-    <div class="mini-card">
-      <div class="mini-title">Bot Status</div>
-      <div class="mini-value" id="botStatus">—</div>
+  <div class="head-cards">
+    <div class="mini">
+      <div class="mini-k">Bot Status</div>
+      <div class="mini-v" id="botStatus">—</div>
     </div>
-    <div class="mini-card">
-      <div class="mini-title">PnL</div>
-      <div class="mini-value" id="pnl">—</div>
+    <div class="mini">
+      <div class="mini-k">PnL</div>
+      <div class="mini-v" id="pnl">—</div>
     </div>
   </div>
 </section>
@@ -24,38 +23,38 @@
 <section class="grid">
   <div class="card">
     <div class="card-head">
-      <h2>📈 Stats</h2>
-      <span class="tag">Metrics</span>
+      <h2>Metrics</h2>
+      <span class="tag">Stats</span>
     </div>
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-name">Total Trades</div>
-        <div class="stat-value" id="totalTrades">—</div>
+        <div class="stat-k">Total Trades</div>
+        <div class="stat-v" id="totalTrades">—</div>
       </div>
       <div class="stat">
-        <div class="stat-name">Wins</div>
-        <div class="stat-value" id="wins">—</div>
+        <div class="stat-k">Wins</div>
+        <div class="stat-v" id="wins">—</div>
       </div>
       <div class="stat">
-        <div class="stat-name">Losses</div>
-        <div class="stat-value" id="losses">—</div>
+        <div class="stat-k">Losses</div>
+        <div class="stat-v" id="losses">—</div>
       </div>
     </div>
 
-    <div class="hint">
-      <span class="hint-icon">ℹ️</span>
-      <span>إذا ما فماش صفقات، جرّب Run في Auto Trading PRO.</span>
+    <div class="note">
+      <span class="note-ic">ℹ️</span>
+      <span>If trades are empty, go to Auto Trade and press “Run”.</span>
     </div>
   </div>
 
   <div class="card">
     <div class="card-head">
-      <h2>🧾 Recent Trades</h2>
+      <h2>Recent Trades</h2>
       <span class="tag">Logs</span>
     </div>
 
-    <pre id="tradesOut" class="prebox prebox-tall">Loading…</pre>
+    <pre id="tradesOut" class="pre tall">Loading…</pre>
   </div>
 </section>
 {% endblock %}

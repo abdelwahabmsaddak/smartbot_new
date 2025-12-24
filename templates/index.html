@@ -1,50 +1,45 @@
 {% extends "base.html" %}
-
 {% block title %}Auto Trading PRO{% endblock %}
 
 {% block content %}
-<section class="page-header">
+<section class="page-head">
   <div>
-    <h1>🤖 Auto Trading PRO</h1>
-    <p class="muted">
-      شغّل Paper الأول. وقتها نشوفو الـLogs والـDashboard.
-    </p>
+    <h1>Auto Trading PRO</h1>
+    <p class="muted">Professional UI. Start with Paper mode. Check Dashboard for trades & PnL.</p>
   </div>
 
-  <div class="header-cards">
-    <div class="mini-card">
-      <div class="mini-title">Mode</div>
-      <div class="mini-value" id="modeBadge">Paper</div>
+  <div class="head-cards">
+    <div class="mini">
+      <div class="mini-k">Mode</div>
+      <div class="mini-v" id="modeBadge">PAPER</div>
     </div>
-    <div class="mini-card">
-      <div class="mini-title">Exchange</div>
-      <div class="mini-value" id="exchangeBadge">—</div>
+    <div class="mini">
+      <div class="mini-k">Exchange</div>
+      <div class="mini-v" id="exchangeBadge">—</div>
     </div>
   </div>
 </section>
 
 <section class="grid">
-  <!-- LEFT: Strategy -->
   <div class="card">
     <div class="card-head">
-      <h2>🧠 إعدادات التحليل</h2>
-      <span class="tag">Strategy</span>
+      <h2>Strategy</h2>
+      <span class="tag">Analysis</span>
     </div>
 
     <div class="form">
       <label>Asset</label>
-      <input id="asset" type="text" placeholder="مثال: BTC/USDT أو XAUUSD أو AAPL" />
+      <input id="asset" type="text" placeholder="Example: BTC/USDT, XAUUSD, AAPL" />
 
-      <div class="two">
+      <div class="row2">
         <div>
           <label>Market</label>
           <select id="market">
             <option value="crypto" selected>Crypto</option>
-            <option value="forex">Forex</option>
             <option value="stocks">Stocks</option>
+            <option value="forex">Forex</option>
           </select>
         </div>
-
         <div>
           <label>Timeframe</label>
           <select id="timeframe">
@@ -58,36 +53,35 @@
         </div>
       </div>
 
-      <label>Minimum Confidence (0-100)</label>
+      <label>Minimum Confidence (0–100)</label>
       <input id="min_confidence" type="number" min="0" max="100" value="60" />
 
       <div class="checkline">
         <input id="halal_strict" type="checkbox" />
-        <label for="halal_strict" class="checklabel">Halal strict (اختياري)</label>
+        <label for="halal_strict">Halal strict (optional)</label>
       </div>
 
-      <div class="hint">
-        <span class="hint-icon">💡</span>
-        <span>كل ما ترفع الـConfidence، يقلّ عدد الصفقات لكن تزيد الجودة.</span>
+      <div class="note">
+        <span class="note-ic">💡</span>
+        <span>Higher confidence = fewer trades, higher quality.</span>
       </div>
     </div>
   </div>
 
-  <!-- RIGHT: Account/Execution -->
   <div class="card">
     <div class="card-head">
-      <h2>🧾 إعدادات الحساب / التنفيذ</h2>
-      <span class="tag">Execution</span>
+      <h2>Execution</h2>
+      <span class="tag">Paper / Live</span>
     </div>
 
     <div class="form">
-      <div class="two">
+      <div class="row2">
         <div>
           <label>Balance</label>
           <input id="balance" type="number" value="1000" />
         </div>
         <div>
-          <label>Risk % per trade</label>
+          <label>Risk %</label>
           <input id="risk" type="number" value="1" step="0.1" />
         </div>
       </div>
@@ -95,11 +89,11 @@
       <label>Mode</label>
       <select id="mode">
         <option value="paper" selected>Paper (Simulation)</option>
-        <option value="live" disabled>Live (قريبًا)</option>
+        <option value="live" disabled>Live (soon)</option>
       </select>
 
-      <label>Exchange (اختياري)</label>
-      <input id="exchange" type="text" placeholder="مثال: binance" />
+      <label>Exchange (optional)</label>
+      <input id="exchange" type="text" placeholder="Example: binance" />
 
       <label>Order Type</label>
       <select id="order_type">
@@ -107,52 +101,51 @@
         <option value="LIMIT">LIMIT</option>
       </select>
 
-      <button id="runBtn" class="btn-primary">
-        🚀 Run Auto Trade
-      </button>
+      <button id="runBtn" class="btn-primary" type="button">🚀 Run Auto Trade</button>
 
-      <div id="status" class="statusbox">
+      <div id="status" class="status">
         <span class="dot dot-warn"></span>
-        <span>جاهز</span>
+        <span>Ready</span>
       </div>
 
       <div class="divider"></div>
 
-      <div class="two">
-        <div class="info">
-          <div class="info-title">AI Signal</div>
-          <div class="info-sub">القرار + confidence + السبب</div>
+      <div class="row2">
+        <div class="subhead">
+          <div class="subhead-t">AI Signal</div>
+          <div class="subhead-s">decision • confidence • reason</div>
         </div>
-        <div class="info">
-          <div class="info-title">Execution Result</div>
-          <div class="info-sub">نتيجة التنفيذ (Paper)</div>
+        <div class="subhead">
+          <div class="subhead-t">Execution Result</div>
+          <div class="subhead-s">paper execution output</div>
         </div>
       </div>
 
-      <div class="two">
-        <pre id="signalOut" class="prebox">—</pre>
-        <pre id="execOut" class="prebox">—</pre>
+      <div class="row2">
+        <pre id="signalOut" class="pre">—</pre>
+        <pre id="execOut" class="pre">—</pre>
       </div>
     </div>
   </div>
 </section>
 
-<section class="wide card">
+<section class="card wide">
   <div class="card-head">
-    <h2>📌 ملاحظات سريعة</h2>
-    <span class="tag">Tips</span>
+    <h2>Quick Tips</h2>
+    <span class="tag">Guide</span>
   </div>
   <div class="tips">
-    <div class="tip">✅ استعمل BTC/USDT في البداية</div>
-    <div class="tip">✅ خليه Paper، وشوف Dashboard بعد Run</div>
-    <div class="tip">⚠️ Live ما يتفتحش حتى نكمّلو الأمان</div>
+    <div class="tip">✅ Start with BTC/USDT</div>
+    <div class="tip">✅ Use Paper mode first</div>
+    <div class="tip">✅ Check Dashboard after Run</div>
+    <div class="tip warn">⚠ Live will stay locked until security checks</div>
   </div>
 </section>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  // UI sync صغيرة (ما تمسّش backend)
+  // UI badges only (doesn't touch backend)
   const modeEl = document.getElementById("mode");
   const exchangeEl = document.getElementById("exchange");
   const modeBadge = document.getElementById("modeBadge");
@@ -167,6 +160,6 @@
   syncBadges();
 </script>
 
-<!-- خلي سكريبتك الأصلي يخدم -->
+<!-- keep your existing logic -->
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 {% endblock %}

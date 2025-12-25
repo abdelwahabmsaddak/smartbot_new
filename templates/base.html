@@ -3,63 +3,96 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
+
   <title>{% block title %}SmartBot{% endblock %}</title>
 
+  <!-- Fonts: EN + AR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  {% block head %}{% endblock %}
+  {% block head_extra %}{% endblock %}
 </head>
-<body class="ltr">
+
+<body class="app">
+  <div class="bg-glow"></div>
+
   <header class="topbar">
-    <div class="brand">
-      <div class="logo">⚡</div>
-      <div class="brand-text">
-        <div class="brand-title">SmartBot</div>
-        <div class="brand-sub">Auto Trading PRO — Paper first, Live later</div>
+    <div class="container topbar__inner">
+      <a class="brand" href="/">
+        <span class="brand__mark">⚡</span>
+        <span class="brand__text">
+          <span class="brand__name">SmartBot</span>
+          <span class="brand__tag" data-i18n="tagline">AI Market Intelligence</span>
+        </span>
+      </a>
+
+      <nav class="nav">
+        <a class="nav__link" href="/" data-i18n="nav_home">Home</a>
+        <a class="nav__link" href="/analysis" data-i18n="nav_analysis">Analyze</a>
+        <a class="nav__link" href="/blog" data-i18n="nav_blog">Blog</a>
+        <a class="nav__link" href="/whales" data-i18n="nav_whales">Whales</a>
+        <a class="nav__link" href="/autotrade" data-i18n="nav_autotrade">Auto Trade</a>
+        <a class="nav__link" href="/dashboard" data-i18n="nav_dashboard">Dashboard</a>
+      </nav>
+
+      <div class="actions">
+        <button id="langBtn" class="btn btn--ghost" type="button" aria-label="Language">
+          <span class="pill">AR</span>
+        </button>
+        <a class="btn btn--primary" href="/analysis" data-i18n="cta_analyze">Analyze</a>
       </div>
+
+      <button class="burger" id="burgerBtn" type="button" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
 
-    <nav class="nav">
-      <a class="nav-link" href="/">Auto Trade</a>
-      <a class="nav-link" href="/dashboard">Dashboard</a>
-    </nav>
+    <!-- Mobile drawer -->
+    <div class="drawer" id="drawer">
+      <div class="drawer__content container">
+        <a class="drawer__link" href="/" data-i18n="nav_home">Home</a>
+        <a class="drawer__link" href="/analysis" data-i18n="nav_analysis">Analyze</a>
+        <a class="drawer__link" href="/blog" data-i18n="nav_blog">Blog</a>
+        <a class="drawer__link" href="/whales" data-i18n="nav_whales">Whales</a>
+        <a class="drawer__link" href="/autotrade" data-i18n="nav_autotrade">Auto Trade</a>
+        <a class="drawer__link" href="/dashboard" data-i18n="nav_dashboard">Dashboard</a>
 
-    <div class="top-actions">
-      <button class="btn-ghost" id="langToggleBtn" type="button" title="Toggle Arabic (RTL)">
-        AR
-      </button>
-      <div class="pill" id="topStatusPill">
-        <span class="dot dot-warn"></span>
-        <span id="topStatusText">Ready</span>
+        <div class="drawer__cta">
+          <button id="langBtn2" class="btn btn--ghost" type="button">
+            <span class="pill">AR</span>
+          </button>
+          <a class="btn btn--primary" href="/analysis" data-i18n="cta_analyze">Analyze</a>
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="container">
+  <main class="main">
     {% block content %}{% endblock %}
   </main>
 
   <footer class="footer">
-    <span>© SmartBot</span>
-    <span class="muted">UI is responsive (mobile + desktop)</span>
+    <div class="container footer__inner">
+      <div class="footer__left">
+        <div class="footer__brand">SmartBot</div>
+        <div class="footer__muted" data-i18n="footer_note">
+          Research-first. Paper mode recommended before live trading.
+        </div>
+      </div>
+
+      <div class="footer__links">
+        <a href="/about" data-i18n="nav_about">About</a>
+        <a href="/contact" data-i18n="nav_contact">Contact</a>
+        <a href="/terms" data-i18n="nav_terms">Terms</a>
+        <a href="/pricing" data-i18n="nav_pricing">Pricing</a>
+      </div>
+    </div>
   </footer>
 
-  <script>
-    // RTL support (front-only, optional)
-    const btn = document.getElementById("langToggleBtn");
-    btn?.addEventListener("click", () => {
-      const body = document.body;
-      const isRTL = body.classList.toggle("rtl");
-      body.classList.toggle("ltr", !isRTL);
-      document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-      document.documentElement.setAttribute("lang", isRTL ? "ar" : "en");
-      btn.textContent = isRTL ? "EN" : "AR";
-    });
-  </script>
-
-  {% block scripts %}{% endblock %}
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  {% block body_extra %}{% endblock %}
 </body>
 </html>

@@ -3,224 +3,57 @@
 
 {% block content %}
 <section class="hero">
-  <div class="container hero__inner">
-    <div class="hero__copy">
-      <div class="badge">
-        <span class="badge__dot"></span>
-        <span data-i18n="hero_badge">Tech AI • Market Intelligence</span>
-      </div>
-
-      <h1 class="hero__title" data-i18n="hero_title">
-        Analyze crypto, gold & halal stocks — with AI clarity.
-      </h1>
-
-      <p class="hero__subtitle" data-i18n="hero_subtitle">
-        One clean place to scan markets, track whales, read insights, and plan smarter entries.
-      </p>
-
-      <div class="hero__cta">
-        <a class="btn btn--primary" href="#analyze" data-i18n="cta_start">Start Analysis</a>
-        <a class="btn btn--ghost" href="/whales" data-i18n="cta_whales">Track Whales</a>
-      </div>
-
-      <div class="hero__meta">
-        <div class="metaCard">
-          <div class="metaCard__k" data-i18n="meta_1k">Paper-first</div>
-          <div class="metaCard__v" data-i18n="meta_1v">Safe testing before live</div>
-        </div>
-        <div class="metaCard">
-          <div class="metaCard__k" data-i18n="meta_2k">Halal focus</div>
-          <div class="metaCard__v" data-i18n="meta_2v">Filters for compliant assets</div>
-        </div>
-        <div class="metaCard">
-          <div class="metaCard__k" data-i18n="meta_3k">Whale tracker</div>
-          <div class="metaCard__v" data-i18n="meta_3v">Follow smart money moves</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="hero__panel">
-      <div class="glassCard">
-        <div class="glassCard__head">
-          <div class="glassCard__title" data-i18n="panel_title">Quick Scan</div>
-          <div class="glassCard__chip" data-i18n="panel_chip">AI Ready</div>
-        </div>
-
-        <div class="statGrid">
-          <div class="stat">
-            <div class="stat__k" data-i18n="stat_1k">Mode</div>
-            <div class="stat__v">PAPER</div>
-          </div>
-          <div class="stat">
-            <div class="stat__k" data-i18n="stat_2k">Signals</div>
-            <div class="stat__v">—</div>
-          </div>
-          <div class="stat">
-            <div class="stat__k" data-i18n="stat_3k">Risk</div>
-            <div class="stat__v">1%</div>
-          </div>
-          <div class="stat">
-            <div class="stat__k" data-i18n="stat_4k">Status</div>
-            <div class="stat__v statusDot"><span></span><span data-i18n="status_ready">Ready</span></div>
-          </div>
-        </div>
-
-        <div class="tips">
-          <div class="tips__title" data-i18n="tips_title">Quick Tips</div>
-          <ul>
-            <li data-i18n="tip_1">Start with BTC/USDT</li>
-            <li data-i18n="tip_2">Use Paper mode first</li>
-            <li data-i18n="tip_3">Check Dashboard after Run</li>
-          </ul>
-          <div class="warningBox" data-i18n="tip_warn">Live stays locked until security checks.</div>
-        </div>
-      </div>
-    </div>
+  <h1>AI Market Intelligence</h1>
+  <p class="muted">Crypto • Gold • Halal Stocks</p>
+  <div class="cta">
+    <a class="primary" href="/analysis">Start Analysis</a>
+    <a class="ghost" href="/whales">Track Whales</a>
   </div>
 </section>
 
-<!-- Analyze section -->
-<section class="section" id="analyze">
-  <div class="container">
-    <div class="section__head">
-      <h2 class="section__title" data-i18n="analyze_title">Analyze anything in seconds</h2>
-      <p class="section__sub" data-i18n="analyze_sub">
-        Crypto • Gold • Halal Stocks — choose market, enter symbol, and open the analysis page.
-      </p>
-    </div>
+<section class="card">
+  <h2>Quick Analyze</h2>
+  <p class="muted">Type a symbol and continue to analysis.</p>
+  <form class="row" action="/analysis" method="GET">
+    <input name="symbol" placeholder="BTC/USDT, XAUUSD, AAPL" required>
+    <select name="market">
+      <option value="crypto">Crypto</option>
+      <option value="gold">Gold</option>
+      <option value="halal_stocks">Halal Stocks</option>
+    </select>
+    <button class="primary">Analyze</button>
+  </form>
+</section>
 
-    <div class="analyzeCard">
-      <form class="analyzeForm" action="/analysis" method="GET">
-        <div class="segmented" role="tablist" aria-label="market">
-          <label class="segmented__item">
-            <input type="radio" name="market" value="crypto" checked>
-            <span data-i18n="m_crypto">Crypto</span>
-          </label>
-          <label class="segmented__item">
-            <input type="radio" name="market" value="gold">
-            <span data-i18n="m_gold">Gold</span>
-          </label>
-          <label class="segmented__item">
-            <input type="radio" name="market" value="halal_stocks">
-            <span data-i18n="m_halal">Halal Stocks</span>
-          </label>
-        </div>
-
-        <div class="fieldRow">
-          <div class="field">
-            <label class="field__label" for="symbol" data-i18n="symbol_label">Symbol</label>
-            <input class="field__input" id="symbol" name="symbol" placeholder="BTC/USDT, XAUUSD, AAPL" required />
-            <div class="field__hint" data-i18n="symbol_hint">
-              Examples: BTC/USDT • XAUUSD • AAPL
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="field__label" for="tf" data-i18n="tf_label">Timeframe</label>
-            <select class="field__input" id="tf" name="timeframe">
-              <option value="15m">15m</option>
-              <option value="1h" selected>1h</option>
-              <option value="4h">4h</option>
-              <option value="1d">1d</option>
-            </select>
-            <div class="field__hint" data-i18n="tf_hint">Used for indicators & signal context.</div>
-          </div>
-
-          <div class="field">
-            <label class="field__label" for="halal" data-i18n="halal_label">Halal filter</label>
-            <select class="field__input" id="halal" name="halal">
-              <option value="auto" selected data-i18n="halal_auto">Auto</option>
-              <option value="strict" data-i18n="halal_strict">Strict</option>
-              <option value="off" data-i18n="halal_off">Off</option>
-            </select>
-            <div class="field__hint" data-i18n="halal_hint">Strict may reduce results but improves compliance.</div>
-          </div>
-
-          <button class="btn btn--primary btn--wide" type="submit" data-i18n="btn_analyze">
-            Analyze
-          </button>
-        </div>
-      </form>
-
-      <div class="microLinks">
-        <a href="/market_screener" data-i18n="link_screener">Open Market Screener</a>
-        <a href="/ai_signals" data-i18n="link_signals">AI Signals</a>
-        <a href="/dashboard" data-i18n="link_dashboard">Dashboard</a>
-      </div>
-    </div>
+<section class="grid3">
+  <div class="mini">
+    <h3>AI Analysis</h3>
+    <p class="muted">Clean signals with context.</p>
+  </div>
+  <div class="mini">
+    <h3>Whale Tracking</h3>
+    <p class="muted">Follow smart money.</p>
+  </div>
+  <div class="mini">
+    <h3>Halal Focus</h3>
+    <p class="muted">Compliant asset filters.</p>
   </div>
 </section>
 
-<!-- Blog preview -->
-<section class="section">
-  <div class="container">
-    <div class="section__head">
-      <h2 class="section__title" data-i18n="blog_title">From the blog</h2>
-      <p class="section__sub" data-i18n="blog_sub">Short, useful insights — no noise.</p>
-    </div>
-
-    <div class="cards3">
-      {% if posts %}
-        {% for p in posts[:3] %}
-        <a class="postCard" href="/blog/{{ p.slug }}">
-          <div class="postCard__meta">
-            <span class="postCard__tag">{{ p.tag or "Insight" }}</span>
-            <span class="postCard__date">{{ p.date or "" }}</span>
-          </div>
-          <div class="postCard__title">{{ p.title }}</div>
-          <div class="postCard__excerpt">{{ p.excerpt }}</div>
-          <div class="postCard__more" data-i18n="read_more">Read</div>
-        </a>
-        {% endfor %}
-      {% else %}
-        <a class="postCard" href="/blog">
-          <div class="postCard__meta">
-            <span class="postCard__tag">AI</span><span class="postCard__date">—</span>
-          </div>
-          <div class="postCard__title" data-i18n="blog_p1t">How to use Paper mode properly</div>
-          <div class="postCard__excerpt" data-i18n="blog_p1e">Avoid classic mistakes before going live.</div>
-          <div class="postCard__more" data-i18n="read_more">Read</div>
-        </a>
-        <a class="postCard" href="/blog">
-          <div class="postCard__meta">
-            <span class="postCard__tag">Halal</span><span class="postCard__date">—</span>
-          </div>
-          <div class="postCard__title" data-i18n="blog_p2t">Halal stock filtering: practical rules</div>
-          <div class="postCard__excerpt" data-i18n="blog_p2e">Simple framework for compliant screening.</div>
-          <div class="postCard__more" data-i18n="read_more">Read</div>
-        </a>
-        <a class="postCard" href="/blog">
-          <div class="postCard__meta">
-            <span class="postCard__tag">Whales</span><span class="postCard__date">—</span>
-          </div>
-          <div class="postCard__title" data-i18n="blog_p3t">Whale moves: what matters, what doesn’t</div>
-          <div class="postCard__excerpt" data-i18n="blog_p3e">Signals vs. noise in on-chain alerts.</div>
-          <div class="postCard__more" data-i18n="read_more">Read</div>
-        </a>
-      {% endif %}
-    </div>
-
-    <div class="center mt16">
-      <a class="btn btn--ghost" href="/blog" data-i18n="btn_all_posts">View all posts</a>
-    </div>
+<section class="card">
+  <h2>From the Blog</h2>
+  <div class="grid3">
+    <a class="post" href="/blog">Paper trading basics</a>
+    <a class="post" href="/blog">Halal screening rules</a>
+    <a class="post" href="/blog">Reading whale moves</a>
   </div>
 </section>
 
-<!-- Whale teaser -->
-<section class="section">
-  <div class="container">
-    <div class="ctaBanner">
-      <div class="ctaBanner__copy">
-        <h3 class="ctaBanner__title" data-i18n="whale_title">Whale Tracker</h3>
-        <p class="ctaBanner__sub" data-i18n="whale_sub">
-          Track big transactions & smart money behavior with clean alerts.
-        </p>
-      </div>
-      <div class="ctaBanner__actions">
-        <a class="btn btn--primary" href="/whales" data-i18n="btn_open_whales">Open Whale Page</a>
-        <a class="btn btn--ghost" href="/whales_alerts" data-i18n="btn_whale_alerts">Whale Alerts</a>
-      </div>
-    </div>
+<section class="banner">
+  <div>
+    <h3>Whale Tracker</h3>
+    <p class="muted">Large transfers & behavior insights.</p>
   </div>
+  <a class="primary" href="/whales">Open</a>
 </section>
 {% endblock %}

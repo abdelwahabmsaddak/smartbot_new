@@ -1,59 +1,68 @@
 {% extends "base.html" %}
-{% block title %}SmartBot — Home{% endblock %}
+{% block title %}SmartBot – AI Market Intelligence{% endblock %}
 
 {% block content %}
+
+<!-- HERO -->
 <section class="hero">
   <h1>AI Market Intelligence</h1>
-  <p class="muted">Crypto • Gold • Halal Stocks</p>
-  <div class="cta">
-    <a class="primary" href="/analysis">Start Analysis</a>
-    <a class="ghost" href="/whales">Track Whales</a>
+  <p class="subtitle">Crypto • Gold • Halal Stocks</p>
+
+  <div class="hero-actions">
+    <a href="/analysis" class="btn primary">Start Analysis</a>
+    <a href="/whales" class="btn ghost">Track Whales</a>
   </div>
 </section>
 
-<section class="card">
-  <h2>Quick Analyze</h2>
-  <p class="muted">Type a symbol and continue to analysis.</p>
-  <form class="row" action="/analysis" method="GET">
+<!-- ANALYZE PREVIEW -->
+<section class="box">
+  <h2>Quick Analysis</h2>
+  <p class="muted">Enter a symbol and continue to analysis page.</p>
+
+  <form class="analyze-form" action="/analysis" method="GET">
     <input name="symbol" placeholder="BTC/USDT, XAUUSD, AAPL" required>
     <select name="market">
       <option value="crypto">Crypto</option>
       <option value="gold">Gold</option>
       <option value="halal_stocks">Halal Stocks</option>
     </select>
-    <button class="primary">Analyze</button>
+    <button class="btn primary">Analyze</button>
   </form>
 </section>
 
-<section class="grid3">
-  <div class="mini">
+<!-- FEATURES -->
+<section class="features">
+  <div class="feature">
     <h3>AI Analysis</h3>
-    <p class="muted">Clean signals with context.</p>
+    <p>Clear signals with context.</p>
   </div>
-  <div class="mini">
+  <div class="feature">
     <h3>Whale Tracking</h3>
-    <p class="muted">Follow smart money.</p>
+    <p>Follow smart money moves.</p>
   </div>
-  <div class="mini">
+  <div class="feature">
     <h3>Halal Focus</h3>
-    <p class="muted">Compliant asset filters.</p>
+    <p>Compliant asset filtering.</p>
   </div>
 </section>
 
-<section class="card">
+<!-- BLOG PREVIEW -->
+<section class="box">
   <h2>From the Blog</h2>
-  <div class="grid3">
-    <a class="post" href="/blog">Paper trading basics</a>
-    <a class="post" href="/blog">Halal screening rules</a>
-    <a class="post" href="/blog">Reading whale moves</a>
+  <div class="blog-preview">
+    <a href="/blog">Paper trading basics</a>
+    <a href="/blog">Halal screening rules</a>
+    <a href="/blog">Understanding whale moves</a>
   </div>
 </section>
 
-<section class="banner">
+<!-- WHALES CTA -->
+<section class="cta">
   <div>
     <h3>Whale Tracker</h3>
-    <p class="muted">Large transfers & behavior insights.</p>
+    <p class="muted">Large transfers & smart money behavior.</p>
   </div>
-  <a class="primary" href="/whales">Open</a>
+  <a href="/whales" class="btn primary">Open</a>
 </section>
+
 {% endblock %}

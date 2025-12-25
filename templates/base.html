@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}SmartBot{% endblock %}</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,33 +11,32 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="app">
-<header class="topbar">
-  <div class="wrap topbar__in">
-    <a class="brand" href="/">
-      <span class="logo">⚡</span>
-      <span class="brand__t">SmartBot</span>
-    </a>
+
+<body>
+<header class="header">
+  <div class="container header-inner">
+    <div class="logo">⚡ SmartBot</div>
+
     <nav class="nav">
       <a href="/">Home</a>
       <a href="/analysis">Analyze</a>
       <a href="/whales">Whales</a>
       <a href="/blog">Blog</a>
-      <a href="/dashboard">Dashboard</a>
     </nav>
-    <div class="actions">
-      <button id="langBtn" class="ghost">AR</button>
-      <a class="primary" href="/analysis">Analyze</a>
+
+    <div class="header-actions">
+      <button id="langBtn" class="btn ghost">AR</button>
+      <a href="/analysis" class="btn primary">Analyze</a>
     </div>
   </div>
 </header>
 
-<main class="wrap">
+<main class="container">
   {% block content %}{% endblock %}
 </main>
 
 <footer class="footer">
-  <div class="wrap foot">
+  <div class="container footer-inner">
     <span>© SmartBot</span>
     <span class="muted">Research first. Paper before live.</span>
   </div>

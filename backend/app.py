@@ -2,6 +2,27 @@ import os
 import importlib
 from flask import Flask
 from flask_cors import CORS
+from flask import request, jsonify, session
+from ai_core import chat_answer
+
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
+    data = request.json or {}
+    question = data.get("q", "").strip()
+
+    if not question:
+        return jsonify({"answer": "Please ask a valid question."})
+
+    user_id = session.get("user_id")  # None = guest
+    is_guest = user_id is None
+
+    answer = chat_answer(
+        question=question,
+        user_id=user_id,
+        guest=is_guest
+    )
+
+    return jsonify({"answer": answer})
 
 # =========================
 # Paths (مهم جدًا)

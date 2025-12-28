@@ -1,16 +1,25 @@
-{% extends "base.html" %}
-{% block title %}Trade History{% endblock %}
-
-{% block content %}
-<h2>📜 Trade History</h2>
-<pre id="historyOut">Loading...</pre>
+<h2>📜 History</h2>
+<div id="history"></div>
 
 <script>
-fetch("/api/history?user=demo")
-  .then(r => r.json())
-  .then(d => {
-    document.getElementById("historyOut").textContent =
-      JSON.stringify(d.trades, null, 2);
+fetch("/api/history")
+.then(r => r.json())
+.then(data => {
+  const box = document.getElementById("history");
+  if (data.length === 0) {
+    box.innerHTML = "<p>No history yet</p>";
+    return;
+  }
+
+  data.forEach(h => {
+    box.innerHTML += `
+      <div class="card">
+        <b>${h.asset}</b> (${h.asset_type})<br>
+        Signal: ${h.signal}<br>
+        Confidence: ${Math.round(h.confidence * 100)}%<br>
+        <small>${h.created_at}</small>
+      </div>
+    `;
   });
+});
 </script>
-{% endblock %}

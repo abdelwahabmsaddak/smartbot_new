@@ -42,6 +42,30 @@
   </div>
 </footer>
 
+  <div id="notifications"></div>
+
+<script>
+fetch("/api/notifications")
+.then(r => r.json())
+.then(data => {
+  const box = document.getElementById("notifications");
+  if (data.length === 0) {
+    box.innerHTML = "<small>No notifications</small>";
+    return;
+  }
+
+  data.forEach(n => {
+    box.innerHTML += `
+      <div class="notif ${n.is_read ? 'read' : 'new'}">
+        <b>${n.title}</b>
+        <p>${n.message}</p>
+        <small>${n.created_at}</small>
+      </div>
+    `;
+  });
+});
+</script>
+  
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

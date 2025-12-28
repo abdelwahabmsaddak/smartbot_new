@@ -234,4 +234,15 @@ def chat_answer(question: str, user_id=None, guest: bool = True) -> str:
     # 5️⃣ تنبيه قانوني
     response += "\n📌 *Educational only – Not financial advice.*"
 
+    from services.history_service import save_history
+
+save_history(
+    user_id=user_id,
+    source="chat",
+    asset=analysis.get("asset"),
+    asset_type=analysis.get("type"),
+    signal=analysis.get("signal"),
+    confidence=analysis.get("confidence"),
+    result=response_text
+)
     return response

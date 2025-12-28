@@ -1,16 +1,18 @@
-from flask import Blueprint, request, jsonify
-from backend.ai_core import chat_answer
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
+    data = request.json or {}
+    question = data.get("message", "").strip()
 
-chat_bp = Blueprint("chat", __name__)
+    if not question:
+        return jsonify({"answer": "❗ Please type a question."})
 
-@chat_bp.route("/api/chat", methods=["POST"])
-def chat():
-    data = request.get_json()
-    message = data.get("message", "").strip()
-    user_id = data.get("user_id")
+    user_id = session.get("user_id")
+    is_guest = user_id is None
 
-    if not message:
-        return jsonify({"reply": "❗ Please type a message."})
+    answer = chat_answer(
+        question=question,
+        user_id=user_id,
+        guest=is_guest
+    )
 
-    reply = chat_answer(message, user_id=user_id)
-    return jsonify({"reply": reply})
+    return jsonify({"answer": answer})

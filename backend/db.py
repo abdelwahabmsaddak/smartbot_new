@@ -81,6 +81,19 @@ def init_db():
     create_notifications_table()
     create_users_table()
 
-
+def init_history_table(conn):
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        source TEXT,            -- chat / analysis / auto / telegram
+        asset TEXT,
+        asset_type TEXT,        -- crypto / gold / stock
+        signal TEXT,
+        confidence REAL,
+        result TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
 # Create tables at import time
 init_db()

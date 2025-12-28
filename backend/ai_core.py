@@ -183,3 +183,55 @@ def analyze_asset(asset_info: dict) -> dict:
         "risk": risk,
         "whale_hint": whale_hint
     }
+
+def chat_answer(question: str, user_id=None, guest: bool = True) -> str:
+    """
+    Main SmartBot chat brain
+    """
+
+    # 1️⃣ فهم الأصل
+    asset_info = detect_asset(question)
+
+    if asset_info["type"] == "unknown":
+        return (
+            "🔍 لم أفهم الأصل المطلوب.\n"
+            "رجاءً اكتب مثال:\n"
+            "- Analyze BTC\n"
+            "- تحليل الذهب\n"
+            "- Is AAPL halal?"
+        )
+
+    # 2️⃣ التحليل
+    analysis = analyze_asset(asset_info)
+
+    if "error" in analysis:
+        return "⚠️ حدث خطأ أثناء التحليل، حاول لاحقًا."
+
+    # 3️⃣ بناء الرد
+    response = (
+        f"📊 **{analysis['asset']} – {analysis['timeframe']}**\n"
+        f"Trend: {analysis['trend']}\n"
+        f"Signal: {analysis['signal']} ({analysis['confidence']}%)\n"
+        f"🐋 Whales: {analysis['whale_hint']}\n"
+        f"⚠️ Risk: {analysis['risk']}\n"
+    )
+
+    # 4️⃣ فرق بين Guest و User
+    if guest:
+        response += (
+            "\n🔐 **تحليل مختصر للزوار**\n"
+            "سجّل مجانًا للحصول على:\n"
+            "• Confidence أدق\n"
+            "• بيانات الحيتان\n"
+            "• تنبيهات فورية\n"
+        )
+    else:
+        response += (
+            "\n✅ **تحليل كامل للمستخدم المسجّل**\n"
+            "👉 انتقل إلى Dashboard للتفاصيل الكاملة.\n"
+        )
+
+    # 5️⃣ تنبيه قانوني
+    response += "\n📌 *Educational only – Not financial advice.*"
+
+    return response

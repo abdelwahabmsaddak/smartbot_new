@@ -1,161 +1,137 @@
-import logging
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, CallbackContext, CallbackQueryHandler
-from sqlalchemy import create_engine
-from ai_engine import smart_analysis, whale_scan, auto_trade_execute
+import os
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
+)
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    CallbackQueryHandler,
+    MessageHandler,
+    ContextTypes,
+    filters
+)
 
-# ----------------------
-# إعداد السجلّات
-# ----------------------
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from ai_core import chat_answer
 
-# ----------------------
-# إعداد قاعدة البيانات
-# ----------------------
-engine = create_engine("mysql+pymysql://root:password@localhost/smartbot")
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN") or "PUT_YOUR_TOKEN_HERE"
 
-from ai_core import SmartAI
 
-def handle_user_message(msg):
-    return SmartAI.chat(msg)
-    
-# ----------------------
-# خيارات اللغات
-# ----------------------
-LANG_TEXTS = {
-    "ar": {
-        "start": "مرحبا بك في SmartBot! اختر الخدمة:",
-        "choose": "اختر الخدمة:",
-        "analysis": "تحليل ذكي 📊",
-        "whales": "تتبع الحيتان 🐋",
-        "auto": "تداول آلي 🤖",
-        "lang": "اللغة 🌐",
-        "send_symbol": "أرسل رمز العملة / الذهب / السهم:",
-        "working": "جار التحليل…",
-        "done": "تم ✔",
-    },
-    "en": {
-        "start": "Welcome to SmartBot! Choose a service:",
-        "choose": "Choose a service:",
-        "analysis": "Smart Analysis 📊",
-        "whales": "Whale Tracking 🐋",
-        "auto": "Auto Trading 🤖",
-        "lang": "Language 🌐",
-        "send_symbol": "Send the symbol (Crypto / Gold / Stock):",
-        "working": "Processing…",
-        "done": "Done ✔",
-    }
-}
-
-# ----------------------
-# حفظ لغة المستخدم
-# ----------------------
-user_lang = {}
-
-def get_lang(user_id):
-    return user_lang.get(user_id, "ar")
-
-# ----------------------
-# زرار البداية
-# ----------------------
-async def start(update: Update, context: CallbackContext):
-    uid = update.effective_user.id
-    
+# =========================
+# DASHBOARD KEYBOARD
+# =========================
+def main_menu():
     keyboard = [
-        [InlineKeyboardButton(LANG_TEXTS[get_lang(uid)]["analysis"], callback_data="analysis")],
-        [InlineKeyboardButton(LANG_TEXTS[get_lang(uid)]["whales"], callback_data="whales")],
-        [InlineKeyboardButton(LANG_TEXTS[get_lang(uid)]["auto"], callback_data="auto")],
-        [InlineKeyboardButton(LANG_TEXTS[get_lang(uid)]["lang"], callback_data="lang")]
+        [InlineKeyboardButton("📊 Market Analysis", callback_data="analysis")],
+        [InlineKeyboardButton("🐋 Whale Alerts", callback_data="whales")],
+        [InlineKeyboardButton("🕌 Halal Screening", callback_data="halal")],
+        [InlineKeyboardButton("🤖 Auto Trading", callback_data="autotrade")],
+        [InlineKeyboardButton("📂 My History", callback_data="history")],
+        [InlineKeyboardButton("⚙️ Settings", callback_data="settings")]
     ]
-    
+    return InlineKeyboardMarkup(keyboard)
+
+
+# =========================
+# /start
+# =========================
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        LANG_TEXTS[get_lang(uid)]["start"],
-        reply_markup=InlineKeyboardMarkup(keyboard)
+        "🤖 *SmartBot Dashboard*\n\n"
+        "Analyze crypto, gold & halal stocks.\n"
+        "Paper first. Live later.\n\n"
+        "اختر من اللوحة 👇",
+        reply_markup=main_menu(),
+        parse_mode="Markdown"
     )
 
-# ----------------------
-# اختيار اللغة
-# ----------------------
-async def choose_language(update, context):
+
+# =========================
+# BUTTON HANDLER
+# =========================
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    keyboard = [
-        [InlineKeyboardButton("العربية 🇸🇦", callback_data="lang_ar")],
-        [InlineKeyboardButton("English 🇬🇧", callback_data="lang_en")]
-    ]
-    await query.edit_message_text(
-        "اختر لغتك / Choose your language:",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+    data = query.data
 
-# ----------------------
-# تطبيق اللغة
-# ----------------------
-async def set_language(update, context):
-    query = update.callback_query
-    uid = query.from_user.id
+    if data == "analysis":
+        await query.edit_message_text(
+            "📊 *Market Analysis*\n\n"
+            "اكتب مثال:\n"
+            "- Analyze BTC\n"
+            "- تحليل الذهب\n"
+            "- AAPL analysis",
+            parse_mode="Markdown"
+        )
 
-    if query.data == "lang_ar":
-        user_lang[uid] = "ar"
-    else:
-        user_lang[uid] = "en"
+    elif data == "whales":
+        answer = chat_answer("Whale alerts today", guest=True)
+        await query.edit_message_text(f"🐋 *Whale Alerts*\n\n{answer}", parse_mode="Markdown")
 
-    await query.answer()
-    await start(update, context)
+    elif data == "halal":
+        await query.edit_message_text(
+            "🕌 *Halal Screening*\n\n"
+            "اكتب:\n"
+            "- Is AAPL halal?\n"
+            "- MSFT halal?",
+            parse_mode="Markdown"
+        )
 
-# ----------------------
-# اختيار خدمة
-# ----------------------
-async def menu_handler(update, context):
-    query = update.callback_query
-    uid = query.from_user.id
-    lang = get_lang(uid)
+    elif data == "autotrade":
+        await query.edit_message_text(
+            "🤖 *Auto Trading*\n\n"
+            "Mode: Paper\n"
+            "Status: 🟢 Ready\n\n"
+            "Live trading 🔒 (soon)",
+            parse_mode="Markdown"
+        )
 
-    await query.answer()
+    elif data == "history":
+        await query.edit_message_text(
+            "📂 *History*\n\n"
+            "آخر التحاليل ستظهر هنا قريبًا.",
+            parse_mode="Markdown"
+        )
 
-    if query.data == "analysis":
-        context.user_data["mode"] = "analysis"
-        await query.edit_message_text(LANG_TEXTS[lang]["send_symbol"])
+    elif data == "settings":
+        await query.edit_message_text(
+            "⚙️ *Settings*\n\n"
+            "Language: AR / EN\n"
+            "Notifications: ON",
+            parse_mode="Markdown"
+        )
 
-    elif query.data == "whales":
-        result = whale_scan()
-        await query.edit_message_text(result)
 
-    elif query.data == "auto":
-        result = auto_trade_execute()
-        await query.edit_message_text(result)
-
-    elif query.data == "lang":
-        await choose_language(update, context)
-
-# ----------------------
-# استقبال الرسائل
-# ----------------------
-async def handle_message(update, context):
-    uid = update.effective_user.id
-    lang = get_lang(uid)
+# =========================
+# MESSAGE HANDLER (AI)
+# =========================
+async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
-    if context.user_data.get("mode") == "analysis":
-        await update.message.reply_text(LANG_TEXTS[lang]["working"])
-        result = smart_analysis(text)
-        await update.message.reply_text(result)
-        context.user_data["mode"] = None
+    answer = chat_answer(
+        question=text,
+        user_id=str(update.message.from_user.id),
+        guest=True
+    )
 
-# ----------------------
-# تشغيل البوت
-# ----------------------
-def main():
-    app = ApplicationBuilder().token("YOUR_TELEGRAM_TOKEN").build()
+    await update.message.reply_text(answer)
+
+
+# =========================
+# RUN BOT
+# =========================
+def run_bot():
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(menu_handler, pattern="^(analysis|whales|auto|lang)$"))
-    app.add_handler(CallbackQueryHandler(set_language, pattern="^(lang_ar|lang_en)$"))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.add_handler(CallbackQueryHandler(button_handler))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
 
+    print("🤖 Telegram Bot running...")
     app.run_polling()
 
+
 if __name__ == "__main__":
-    main()
+    run_bot()

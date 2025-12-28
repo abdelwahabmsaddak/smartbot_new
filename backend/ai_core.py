@@ -257,19 +257,16 @@ if confidence >= 0.7:
         type="signal"
     )
 
-from flask import Blueprint, jsonify
-from db import get_db
+if "whale" in question.lower():
+    from services.whale_service import detect_whale
 
-bp = Blueprint("whales", __name__, url_prefix="/api/whales")
+    whale = detect_whale(asset=asset_info["symbol"], user_id=user_id)
+    if not whale:
+        return "🐋 لا توجد تحركات حيتان كبيرة حالياً."
 
-@bp.route("", methods=["GET"])
-def get_whales():
-    db = get_db()
-    rows = db.execute("""
-        SELECT asset, amount, direction, exchange, created_at
-        FROM whale_alerts
-        ORDER BY created_at DESC
-        LIMIT 20
-    """).fetchall()
-
-    return jsonify([dict(row) for row in rows])
+    return (
+        f"🐋 Whale Alert!\n"
+        f"{whale['asset']} {whale['direction']}\n"
+        f"Amount: {whale['amount']:,.0f}$\n"
+        f"Exchange: {whale['exchange']}"
+    )

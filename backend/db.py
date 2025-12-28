@@ -110,3 +110,16 @@ def init_notifications_table(conn):
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
+
+def init_whales_table(conn):
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS whale_alerts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        asset TEXT,
+        amount REAL,
+        direction TEXT,      -- IN / OUT
+        exchange TEXT,
+        tx_hash TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)

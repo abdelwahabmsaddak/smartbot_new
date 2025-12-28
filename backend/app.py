@@ -8,7 +8,7 @@ from ai_core import chat_answer
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
     data = request.json or {}
-    question = data.get("q", "").strip()
+    question = data.get("message", "").strip()
 
     if not question:
         return jsonify({"answer": "Please ask a valid question."})

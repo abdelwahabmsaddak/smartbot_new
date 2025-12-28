@@ -1,49 +1,25 @@
-from openai import OpenAI
-
-client = OpenAI()
-
-def ai_chat(user_message: str):
+def chat_answer(question, user_id=None, guest=True):
     """
-    النظام الموحد لتحليل:
-    - العملات الرقمية
-    - الذهب
-    - الأسهم الحلال
+    SmartBot AI Chat logic
     """
 
-    system_prompt = """
-    You are SmartBot Unified AI — an advanced financial analysis assistant.
+    # 1) Detect asset
+    asset = detect_asset(question)  # BTC, ETH, GOLD, AAPL ...
 
-    You specialize in:
-    - Cryptocurrency (Bitcoin, Ethereum, meme coins)
-    - Halal stocks (Sharia-compliant companies)
-    - Gold and precious metals
+    # 2) Base analysis (always)
+    base = analyze_asset(asset)
 
-    Your abilities:
-    - Market screening
-    - Technical analysis
-    - Fundamental analysis
-    - Buy/Sell/Hold recommendations
-    - Risk scoring (Low / Medium / High)
-    - Detect overbought/oversold conditions
-    - Predict short-term and long-term trends
+    # 3) Build response
+    response = f"**{asset} Outlook**\n"
+    response += f"Trend: {base['trend']}\n"
 
-    Rules:
-    - If asked about a stock, determine if it is Halal or Haram based on industry.
-    - If asked about gold, provide trend + targets.
-    - If asked about crypto, provide levels + scenarios.
-    - Always explain your reasoning clearly.
-    - Provide practical, professional insights.
-    """
+    if guest:
+        response += "Summary: Market shows mixed signals.\n"
+        response += "\n🔐 Register to unlock full analysis, whale data & risk levels."
+    else:
+        response += f"Signal: {base['signal']} ({base['confidence']}%)\n"
+        response += f"Risk: {base['risk']}\n"
+        response += f"Whales: {base['whales']}\n"
+        response += "\n👉 Open dashboard for full view."
 
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ]
-        )
-        return response.choices[0].message.content
-
-    except Exception as e:
-        return f"⚠️ AI Error: {e}"
+    return response

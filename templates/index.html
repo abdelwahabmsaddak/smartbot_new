@@ -1,68 +1,284 @@
-{% extends "base.html" %}
-{% block title %}SmartBot – AI Market Intelligence{% endblock %}
+{% set lang = lang or request.args.get('lang','en') %}
+{% set is_ar = (lang == 'ar') %}
+<!doctype html>
+<html lang="{{ 'ar' if is_ar else 'en' }}" dir="{{ 'rtl' if is_ar else 'ltr' }}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartBot — AI Market Intelligence</title>
 
-{% block content %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='chat_widget.css') }}">
 
-<!-- HERO -->
-<section class="hero">
-  <h1>AI Market Intelligence</h1>
-  <p class="subtitle">Crypto • Gold • Halal Stocks</p>
+  <!-- Optional: Google font (safe fallback if blocked) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
 
-  <div class="hero-actions">
-    <a href="/analysis" class="btn primary">Start Analysis</a>
-    <a href="/whales" class="btn ghost">Track Whales</a>
-  </div>
-</section>
+<body class="sb-body {{ 'rtl' if is_ar else '' }}">
 
-<!-- ANALYZE PREVIEW -->
-<section class="box">
-  <h2>Quick Analysis</h2>
-  <p class="muted">Enter a symbol and continue to analysis page.</p>
+  <!-- Top Nav -->
+  <header class="sb-nav">
+    <div class="sb-container sb-nav-inner">
+      <a class="sb-brand" href="/">
+        <span class="sb-badge">⚡</span>
+        <span class="sb-brand-text">SmartBot</span>
+      </a>
 
-  <form class="analyze-form" action="/analysis" method="GET">
-    <input name="symbol" placeholder="BTC/USDT, XAUUSD, AAPL" required>
-    <select name="market">
-      <option value="crypto">Crypto</option>
-      <option value="gold">Gold</option>
-      <option value="halal_stocks">Halal Stocks</option>
-    </select>
-    <button class="btn primary">Analyze</button>
-  </form>
-</section>
+      <nav class="sb-links">
+        <a href="/analysis">{{ 'تحليل' if is_ar else 'Analysis' }}</a>
+        <a href="/whales">{{ 'الحيتان' if is_ar else 'Whales' }}</a>
+        <a href="/auto-trade">{{ 'التداول الآلي' if is_ar else 'Auto Trade' }}</a>
+        <a href="/blog">{{ 'المدونة' if is_ar else 'Blog' }}</a>
+        <a href="/pricing">{{ 'الأسعار' if is_ar else 'Pricing' }}</a>
+      </nav>
 
-<!-- FEATURES -->
-<section class="features">
-  <div class="feature">
-    <h3>AI Analysis</h3>
-    <p>Clear signals with context.</p>
-  </div>
-  <div class="feature">
-    <h3>Whale Tracking</h3>
-    <p>Follow smart money moves.</p>
-  </div>
-  <div class="feature">
-    <h3>Halal Focus</h3>
-    <p>Compliant asset filtering.</p>
-  </div>
-</section>
+      <div class="sb-nav-actions">
+        <!-- Lang toggle keeps current path -->
+        {% if is_ar %}
+          <a class="sb-chip" href="{{ request.path }}?lang=en">EN</a>
+        {% else %}
+          <a class="sb-chip" href="{{ request.path }}?lang=ar">AR</a>
+        {% endif %}
+        <a class="sb-btn sb-btn-ghost" href="/login">{{ 'تسجيل الدخول' if is_ar else 'Sign in' }}</a>
+        <a class="sb-btn sb-btn-primary" href="/register">{{ 'ابدأ مجانًا' if is_ar else 'Start free' }}</a>
+      </div>
 
-<!-- BLOG PREVIEW -->
-<section class="box">
-  <h2>From the Blog</h2>
-  <div class="blog-preview">
-    <a href="/blog">Paper trading basics</a>
-    <a href="/blog">Halal screening rules</a>
-    <a href="/blog">Understanding whale moves</a>
-  </div>
-</section>
+      <button class="sb-burger" id="sbBurger" aria-label="Menu">☰</button>
+    </div>
 
-<!-- WHALES CTA -->
-<section class="cta">
-  <div>
-    <h3>Whale Tracker</h3>
-    <p class="muted">Large transfers & smart money behavior.</p>
-  </div>
-  <a href="/whales" class="btn primary">Open</a>
-</section>
+    <!-- Mobile menu -->
+    <div class="sb-container sb-mobile" id="sbMobileMenu">
+      <a href="/analysis">{{ 'تحليل' if is_ar else 'Analysis' }}</a>
+      <a href="/whales">{{ 'الحيتان' if is_ar else 'Whales' }}</a>
+      <a href="/auto-trade">{{ 'التداول الآلي' if is_ar else 'Auto Trade' }}</a>
+      <a href="/blog">{{ 'المدونة' if is_ar else 'Blog' }}</a>
+      <a href="/pricing">{{ 'الأسعار' if is_ar else 'Pricing' }}</a>
+      <div class="sb-mobile-cta">
+        <a class="sb-btn sb-btn-ghost" href="/login">{{ 'تسجيل الدخول' if is_ar else 'Sign in' }}</a>
+        <a class="sb-btn sb-btn-primary" href="/register">{{ 'ابدأ مجانًا' if is_ar else 'Start free' }}</a>
+      </div>
+    </div>
+  </header>
 
-{% endblock %}
+  <!-- Hero -->
+  <main class="sb-main">
+    <section class="sb-hero">
+      <div class="sb-container sb-hero-grid">
+        <div class="sb-hero-left">
+          <div class="sb-pill">
+            <span class="dot"></span>
+            <span>{{ 'منصة ذكاء اصطناعي للأسواق' if is_ar else 'AI-powered market intelligence' }}</span>
+          </div>
+
+          <h1 class="sb-h1">
+            {{ 'حلّل الأسواق بثقة —' if is_ar else 'Analyze markets with confidence —' }}
+            <span class="sb-grad">{{ 'بذكاء' if is_ar else 'with AI' }}</span>
+          </h1>
+
+          <p class="sb-sub">
+            {{ 'Crypto • Gold • Halal Stocks — تحليل سريع، تتبع الحيتان، ولوحة تحكم واضحة.' if is_ar
+               else 'Crypto • Gold • Halal stocks — fast analysis, whale tracking, and a clean dashboard.' }}
+          </p>
+
+          <div class="sb-hero-cta">
+            <a class="sb-btn sb-btn-primary sb-btn-lg" href="/register">
+              {{ 'ابدأ الآن مجانًا' if is_ar else 'Start free now' }}
+            </a>
+            <a class="sb-btn sb-btn-ghost sb-btn-lg" href="/analysis">
+              {{ 'جرّب التحليل' if is_ar else 'Try analysis' }}
+            </a>
+          </div>
+
+          <div class="sb-trust">
+            <div class="sb-trust-item">🔒 <span>{{ 'Live مقفول حتى التحقق' if is_ar else 'Live locked until verification' }}</span></div>
+            <div class="sb-trust-item">⚡ <span>{{ 'سريع وخفيف' if is_ar else 'Fast & lightweight' }}</span></div>
+            <div class="sb-trust-item">📱 <span>{{ 'Responsive للهاتف والحاسوب' if is_ar else 'Mobile + desktop ready' }}</span></div>
+          </div>
+        </div>
+
+        <!-- Right card -->
+        <div class="sb-hero-right">
+          <div class="sb-card sb-card-glow">
+            <div class="sb-card-top">
+              <div class="sb-card-title">
+                <span class="sb-icon">📊</span>
+                <strong>{{ 'اللوحة الذكية' if is_ar else 'Smart Dashboard' }}</strong>
+              </div>
+              <span class="sb-status">{{ 'جاهز' if is_ar else 'Ready' }}</span>
+            </div>
+
+            <div class="sb-mock">
+              <div class="sb-mock-row">
+                <div class="sb-mock-kpi">
+                  <div class="kpi-label">{{ 'تحليل' if is_ar else 'Analysis' }}</div>
+                  <div class="kpi-value">AI</div>
+                </div>
+                <div class="sb-mock-kpi">
+                  <div class="kpi-label">{{ 'حيتان' if is_ar else 'Whales' }}</div>
+                  <div class="kpi-value">24/7</div>
+                </div>
+                <div class="sb-mock-kpi">
+                  <div class="kpi-label">{{ 'تداول' if is_ar else 'Trade' }}</div>
+                  <div class="kpi-value">Paper</div>
+                </div>
+              </div>
+
+              <div class="sb-mock-line"></div>
+              <div class="sb-mock-list">
+                <div class="sb-mock-item">
+                  <span class="tag">{{ 'Halal' }}</span>
+                  <span class="txt">{{ 'Screen stocks • alerts' }}</span>
+                </div>
+                <div class="sb-mock-item">
+                  <span class="tag">{{ 'Gold' }}</span>
+                  <span class="txt">{{ 'Trend • levels • risk' }}</span>
+                </div>
+                <div class="sb-mock-item">
+                  <span class="tag">{{ 'Crypto' }}</span>
+                  <span class="txt">{{ 'Signals • confidence' }}</span>
+                </div>
+              </div>
+
+              <a class="sb-mini-link" href="/dashboard">
+                {{ 'اذهب للوحة التحكم' if is_ar else 'Open dashboard' }} →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features (4 cards only) -->
+    <section class="sb-section">
+      <div class="sb-container">
+        <h2 class="sb-h2">{{ 'ماذا تستطيع أن تفعل؟' if is_ar else 'What you can do' }}</h2>
+
+        <div class="sb-features">
+          <a class="sb-feature" href="/analysis">
+            <div class="ic">🔍</div>
+            <div>
+              <div class="t">{{ 'Market Analysis' }}</div>
+              <div class="d">{{ 'Crypto • Gold • Halal stocks' }}</div>
+            </div>
+          </a>
+
+          <a class="sb-feature" href="/whales">
+            <div class="ic">🐋</div>
+            <div>
+              <div class="t">{{ 'Whale Tracking' }}</div>
+              <div class="d">{{ 'Big moves • smart alerts' }}</div>
+            </div>
+          </a>
+
+          <a class="sb-feature" href="/auto-trade">
+            <div class="ic">🤖</div>
+            <div>
+              <div class="t">{{ 'Auto Trading' }}</div>
+              <div class="d">{{ 'Paper first • Live later' }}</div>
+            </div>
+          </a>
+
+          <a class="sb-feature" href="/dashboard">
+            <div class="ic">📈</div>
+            <div>
+              <div class="t">{{ 'Dashboard' }}</div>
+              <div class="d">{{ 'PnL • trades • performance' }}</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog preview -->
+    <section class="sb-section">
+      <div class="sb-container sb-blog-head">
+        <h2 class="sb-h2">{{ 'المدونة' if is_ar else 'From the blog' }}</h2>
+        <a class="sb-mini-link" href="/blog">{{ 'المزيد' if is_ar else 'See all' }} →</a>
+      </div>
+
+      <div class="sb-container sb-blog-grid">
+        <!-- If you already have posts in backend, loop here -->
+        {% if posts %}
+          {% for p in posts[:3] %}
+          <a class="sb-post" href="/blog/{{ p.slug }}">
+            <div class="sb-post-top">
+              <span class="sb-post-tag">{{ p.tag or 'Guide' }}</span>
+              <span class="sb-post-date">{{ p.date or '' }}</span>
+            </div>
+            <div class="sb-post-title">{{ p.title }}</div>
+            <div class="sb-post-desc">{{ p.excerpt }}</div>
+          </a>
+          {% endfor %}
+        {% else %}
+          <!-- Fallback placeholders -->
+          <a class="sb-post" href="/blog">
+            <div class="sb-post-top">
+              <span class="sb-post-tag">Guide</span>
+              <span class="sb-post-date">•</span>
+            </div>
+            <div class="sb-post-title">How to start with Paper mode</div>
+            <div class="sb-post-desc">Safer testing before Live trading.</div>
+          </a>
+          <a class="sb-post" href="/blog">
+            <div class="sb-post-top">
+              <span class="sb-post-tag">Halal</span>
+              <span class="sb-post-date">•</span>
+            </div>
+            <div class="sb-post-title">Halal stocks screening basics</div>
+            <div class="sb-post-desc">Simple checks to stay compliant.</div>
+          </a>
+          <a class="sb-post" href="/blog">
+            <div class="sb-post-top">
+              <span class="sb-post-tag">Whales</span>
+              <span class="sb-post-date">•</span>
+            </div>
+            <div class="sb-post-title">Whale alerts: what matters</div>
+            <div class="sb-post-desc">Avoid noise, focus on real signals.</div>
+          </a>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="sb-cta">
+      <div class="sb-container sb-cta-inner">
+        <div>
+          <h3 class="sb-h3">{{ 'ابدأ الآن مجانًا' if is_ar else 'Start free now' }}</h3>
+          <p class="sb-sub2">{{ 'بدون بطاقة بنكية — Paper أولاً، ثم Live بعد التحقق.' if is_ar else 'No card required — Paper first, Live after verification.' }}</p>
+        </div>
+        <a class="sb-btn sb-btn-primary sb-btn-lg" href="/register">
+          {{ 'ابدأ مجانًا' if is_ar else 'Start free' }}
+        </a>
+      </div>
+    </section>
+
+    <footer class="sb-footer">
+      <div class="sb-container sb-footer-inner">
+        <div class="sb-foot-left">
+          <div class="sb-brand-foot"><span class="sb-badge">⚡</span> SmartBot</div>
+          <div class="sb-foot-note">{{ 'AI tools for smarter decisions.' }}</div>
+        </div>
+
+        <div class="sb-foot-links">
+          <a href="/about">{{ 'حول' if is_ar else 'About' }}</a>
+          <a href="/contact">{{ 'اتصل بنا' if is_ar else 'Contact' }}</a>
+          <a href="/terms">{{ 'الشروط' if is_ar else 'Terms' }}</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Chat Widget (small like messenger) -->
+  {% include "chat_widget.html" %}
+
+  <script>
+    const burger = document.getElementById('sbBurger');
+    const menu = document.getElementById('sbMobileMenu');
+    if (burger && menu) burger.addEventListener('click', () => menu.classList.toggle('open'));
+  </script>
+
+  <script src="{{ url_for('static', filename='chat_widget.js') }}"></script>
+</body>
+</html>

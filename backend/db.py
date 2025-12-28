@@ -97,3 +97,16 @@ def init_history_table(conn):
     """)
 # Create tables at import time
 init_db()
+
+def init_notifications_table(conn):
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        title TEXT,
+        message TEXT,
+        type TEXT,        -- signal / whale / system
+        is_read INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)

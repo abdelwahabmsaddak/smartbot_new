@@ -246,3 +246,13 @@ save_history(
     result=response_text
 )
     return response
+
+from services.notification_service import create_notification
+
+if confidence >= 0.7:
+    create_notification(
+        user_id=user_id,
+        title="📊 AI Signal",
+        message=f"{asset} → {signal} (Confidence {int(confidence*100)}%)",
+        type="signal"
+    )

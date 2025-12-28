@@ -1,29 +1,16 @@
 from flask import Blueprint, request, jsonify
-from backend.services.ai_client import get_ai_client
+from backend.ai_core import chat_answer
 
-chatbot_bp = Blueprint("chatbot", __name__, url_prefix="/api")
+chat_bp = Blueprint("chat", __name__)
 
-@chatbot_bp.route("/chat", methods=["POST"])
+@chat_bp.route("/api/chat", methods=["POST"])
 def chat():
-    try:
-        data = request.get_json()
-        message = data.get("message")
+    data = request.get_json()
+    message = data.get("message", "").strip()
+    user_id = data.get("user_id")
 
-        if not message:
-            return jsonify({"error": "Message required"}), 400
+    if not message:
+        return jsonify({"reply": "❗ Please type a message."})
 
-        client = get_ai_client()
-
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "user", "content": message}
-            ]
-        )
-
-        return jsonify({
-            "reply": response.choices[0].message.content
-        })
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    reply = chat_answer(message, user_id=user_id)
+    return jsonify({"reply": reply})

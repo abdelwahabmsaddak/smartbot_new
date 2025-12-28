@@ -131,3 +131,55 @@ def detect_asset(question: str) -> Dict:
         "timeframe": timeframe,
         "confidence": 0.0
     }
+
+import random
+
+def analyze_asset(asset_info: dict) -> dict:
+    """
+    Smart analysis engine (no external API)
+    Returns:
+    - trend
+    - signal
+    - confidence
+    - risk
+    - whale_hint
+    """
+
+    if asset_info["type"] == "unknown":
+        return {
+            "error": "Unknown asset"
+        }
+
+    # -------------------------
+    # Simulated market logic
+    # (later replace with real indicators)
+    # -------------------------
+
+    trend = random.choice(["Bullish", "Bearish", "Neutral"])
+
+    if trend == "Bullish":
+        signal = "Buy"
+        confidence = random.randint(60, 75)
+        risk = "Pullback risk if momentum weakens"
+        whale_hint = "Possible accumulation detected"
+    elif trend == "Bearish":
+        signal = "Sell"
+        confidence = random.randint(60, 75)
+        risk = "Sharp volatility spikes possible"
+        whale_hint = "Exchange inflows suggest distribution"
+    else:
+        signal = "Wait"
+        confidence = random.randint(45, 60)
+        risk = "Sideways market, false signals likely"
+        whale_hint = "No strong whale activity"
+
+    return {
+        "asset": asset_info["symbol"],
+        "type": asset_info["type"],
+        "timeframe": asset_info["timeframe"],
+        "trend": trend,
+        "signal": signal,
+        "confidence": confidence,
+        "risk": risk,
+        "whale_hint": whale_hint
+    }

@@ -1,4 +1,4 @@
-{% set lang = lang or request.args.get('lang','en') %}
+{% set lang = request.args.get('lang') if request.args.get('lang') else 'en' %}
 {% set is_ar = (lang == 'ar') %}
 <!doctype html>
 <html lang="{{ 'ar' if is_ar else 'en' }}" dir="{{ 'rtl' if is_ar else 'ltr' }}">

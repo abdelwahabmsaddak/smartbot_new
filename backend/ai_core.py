@@ -184,7 +184,7 @@ def analyze_asset(asset_info: dict) -> dict:
         "whale_hint": whale_hint
     }
 
-def chat_answer(question: str, user_id=None, guest: bool = True) -> str:
+def chat_answer(question: str, user_id=None, guest=True) -> str:
     """
     Main SmartBot chat brain
     """
@@ -205,68 +205,75 @@ def chat_answer(question: str, user_id=None, guest: bool = True) -> str:
     analysis = analyze_asset(asset_info)
 
     if "error" in analysis:
-        return "⚠️ حدث خطأ أثناء التحليل، حاول لاحقًا."
+        return "⚠️ خطأ أثناء التحليل، حاول لاحقاً."
+
+    asset = analysis["asset"]
+    signal = analysis["signal"]
+    confidence = analysis["confidence"]
 
     # 3️⃣ بناء الرد
     response = (
-        f"📊 **{analysis['asset']} – {analysis['timeframe']}**\n"
-        f"Trend: {analysis['trend']}\n"
-        f"Signal: {analysis['signal']} ({analysis['confidence']}%)\n"
-        f"🐋 Whales: {analysis['whale_hint']}\n"
-        f"⚠️ Risk: {analysis['risk']}\n"
+        f"📊 **تحليل {asset}**\n"
+        f"📈 الإشارة: {signal}\n"
+        f"🎯 Confidence: {confidence*100:.0f}%\n"
     )
 
-    # 4️⃣ فرق بين Guest و User
     if guest:
         response += (
-            "\n🔐 **تحليل مختصر للزوار**\n"
-            "سجّل مجانًا للحصول على:\n"
-            "• Confidence أدق\n"
+            "\n🔒 **تحليل مختصر للزوار**\n"
+            "سجّل مجاناً للحصول على:\n"
             "• بيانات الحيتان\n"
             "• تنبيهات فورية\n"
+            "• Dashboard كامل\n"
         )
     else:
-        response += (
-            "\n✅ **تحليل كامل للمستخدم المسجّل**\n"
-            "👉 انتقل إلى Dashboard للتفاصيل الكاملة.\n"
+        response += "\n✅ **تحليل كامل للمستخدم المسجّل**"
+
+    # 4️⃣ حفظ History (داخل الدالة)
+    try:
+        from services.history_service import save_history
+        save_history(
+            user_id=user_id,
+            source="chat",
+            asset=asset,
+            asset_type=analysis["type"],
+            signal=signal,
+            confidence=confidence,
+            result=response
         )
+    except Exception as e:
+        print("History error:", e)
 
-    # 5️⃣ تنبيه قانوني
-    response += "\n📌 *Educational only – Not financial advice.*"
+    # 5️⃣ Notifications
+    try:
+        if confidence >= 0.7:
+            from services.notification_service import create_notification
+            create_notification(
+                user_id=user_id,
+                title="📊 AI Signal",
+                message=f"{asset} → {signal} ({confidence*100:.0f}%)",
+                type="signal"
+            )
+    except Exception as e:
+        print("Notification error:", e)
 
-    from services.history_service import save_history
+    # 6️⃣ Whale alerts
+    if "whale" in question.lower():
+        try:
+            from services.whale_service import detect_whale
+            whale = detect_whale(asset=asset)
 
-save_history(
-    user_id=user_id,
-    source="chat",
-    asset=analysis.get("asset"),
-    asset_type=analysis.get("type"),
-    signal=analysis.get("signal"),
-    confidence=analysis.get("confidence"),
-    result=response_text
-)
+            if not whale:
+                return "🐋 لا توجد تحركات حيتان كبيرة حالياً."
+
+            return (
+                f"🐋 **Whale Alert!**\n"
+                f"{whale['asset']} {whale['direction']}\n"
+                f"💰 Amount: {whale['amount']:,.0f}$\n"
+                f"🏦 Exchange: {whale['exchange']}"
+            )
+        except Exception as e:
+            print("Whale error:", e)
+
+    # ✅ آخر سطر فقط
     return response
-
-from services.notification_service import create_notification
-
-if confidence >= 0.7:
-    create_notification(
-        user_id=user_id,
-        title="📊 AI Signal",
-        message=f"{asset} → {signal} (Confidence {int(confidence*100)}%)",
-        type="signal"
-    )
-
-if "whale" in question.lower():
-    from services.whale_service import detect_whale
-
-    whale = detect_whale(asset=asset_info["symbol"], user_id=user_id)
-    if not whale:
-        return "🐋 لا توجد تحركات حيتان كبيرة حالياً."
-
-    return (
-        f"🐋 Whale Alert!\n"
-        f"{whale['asset']} {whale['direction']}\n"
-        f"Amount: {whale['amount']:,.0f}$\n"
-        f"Exchange: {whale['exchange']}"
-    )

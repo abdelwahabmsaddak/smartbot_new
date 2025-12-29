@@ -1,4 +1,6 @@
-from flask import Flask, render_template, jsonify, request
+import os
+from flask import Flask, render_template, request, jsonify, session
+from flask_cors import CORS
 
 app = Flask(__name__)
 

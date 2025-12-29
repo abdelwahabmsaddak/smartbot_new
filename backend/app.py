@@ -3,7 +3,7 @@ import importlib
 from flask import Flask
 from flask_cors import CORS
 from flask import request, jsonify, session
-from ai_core import chat_answer
+from backend.ai_core import chat_answer
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():

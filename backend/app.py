@@ -1,44 +1,46 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, redirect, url_for
 
+# =========================
+# Base paths (مهم جدا)
+# =========================
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+# =========================
+# Flask app
+# =========================
 app = Flask(
     __name__,
-    template_folder=os.path.join(BASE_DIR, "templates"),
-    static_folder=os.path.join(BASE_DIR, "static")
+    template_folder=TEMPLATES_DIR,
+    static_folder=STATIC_DIR
 )
 
 app.secret_key = "smartbot_secret_key"
 
-
-# =====================
-# ROUTES
-# =====================
+# =========================
+# Pages routes
+# =========================
 
 @app.route("/")
-def index():
+def home():
     return render_template("index.html")
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login")
 def login():
-    if request.method == "POST":
-        session["user"] = request.form.get("email", "user")
-        return redirect(url_for("dashboard"))
     return render_template("login.html")
 
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("index"))
+@app.route("/register")
+def register():
+    return render_template("register.html")
 
 
 @app.route("/dashboard")
 def dashboard():
-    if not session.get("user"):
-        return redirect(url_for("login"))
     return render_template("dashboard.html")
 
 
@@ -62,19 +64,9 @@ def settings():
     return render_template("settings.html")
 
 
-@app.route("/market-screener")
-def market_screener():
-    return render_template("market_screener.html")
-
-
-@app.route("/whales")
-def whales():
-    return render_template("whales.html")
-
-
-@app.route("/usage")
-def usage():
-    return render_template("usage.html")
+@app.route("/pricing")
+def pricing():
+    return render_template("pricing.html")
 
 
 @app.route("/subscription")
@@ -82,19 +74,57 @@ def subscription():
     return render_template("subscription.html")
 
 
+@app.route("/usage")
+def usage():
+    return render_template("usage.html")
+
+
+@app.route("/whales")
+def whales():
+    return render_template("whales.html")
+
+
 @app.route("/withdraw")
 def withdraw():
     return render_template("withdraw.html")
 
 
+@app.route("/market")
+def market():
+    return render_template("market_screener.html")
+
+
 @app.route("/chat")
 def chat():
-    return render_template("chat_widget.html")
+    return render_template("chatbot_trader.html")
 
 
-# =====================
-# RUN
-# =====================
+@app.route("/blog")
+def blog():
+    return render_template("blog.html")
+
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+
+
+# =========================
+# Health check (Render)
+# =========================
+@app.route("/health")
+def health():
+    return {"status": "ok"}
+
+
+# =========================
+# Run (Render compatible)
+# =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
